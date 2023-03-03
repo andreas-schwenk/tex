@@ -108,6 +108,11 @@ class TeX {
         svg += _generate(sup, indent + 2);
       }
       svg += _indent('</g>', indent);
+      // args
+      if (node.svgPathId.isEmpty) svg = '';
+      for (var i = 0; i < node.args.length; i++) {
+        svg += _generate(node.args[i], indent);
+      }
       return svg;
     }
   }
@@ -140,9 +145,11 @@ class TeX {
           node.dx = entry["d"] as int;
         }
         node.height = 750;
-      } else if (tk == "\\mathbb") {
-        // TODO: flatter-function that replaces lists with one node by that node
-        var bp = 1337;
+      } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
+        _setFont(node.args[0], tk);
+        _layout(node.args[0], x, y, scaling);
+        x += node.args[0].width;
+        node.height = node.args[0].height;
       } else {
         throw Exception("unimplemented token '$tk'");
       }
@@ -164,6 +171,17 @@ class TeX {
         node.height = node.height > height ? node.height : height;
       }
       node.width = x - baseX;
+    }
+  }
+
+  // replaces e.g. "A" by "\mathbb{A}" recursively
+  void _setFont(TeXNode node, font) {
+    if (node.tk.isNotEmpty) node.tk = '$font{${node.tk}}';
+    for (var arg in node.args) {
+      _setFont(arg, font);
+    }
+    for (var item in node.items) {
+      _setFont(item, font);
     }
   }
 
