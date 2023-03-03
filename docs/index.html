@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tex</title>
+    <link rel="stylesheet" href="index.css?v=1" />
+  </head>
+  <body>
+    <div id="tex" class="container">
+      <h1>tex - a tiny TeX engine written in Dart</h1>
+      <p>
+        GitHub:
+        <a href="https://github.com/andreas-schwenk/tex"
+          >https://github.com/andreas-schwenk/tex</a
+        >
+      </p>
+    </div>
+
+    <div id="tex" class="container">
+      <h2>Playground</h2>
+
+      <div class="row">
+        <b>Input TeX Code:</b>&nbsp;
+        <input type="text" id="tex-input" class="u-full-width" />
+        <button id="runTex" type="button">typeset</button>
+        <button id="runTexWithBorder" type="button">debug</button>
+        <br />
+      </div>
+
+      <div class="row" style="padding-top: 5px">
+        <b>Parsed Term:</b>&nbsp;
+        <div id="tex-term">(empty)</div>
+      </div>
+
+      <div class="row" style="padding-top: 5px">
+        <b>Rendering:</b>&nbsp;
+        <div id="tex-rendering"></div>
+      </div>
+    </div>
+
+    <br /><br />
+
+    <div id="tex" class="container">
+      <h2>List of Glyphs</h2>
+
+      <div class="row" style="padding-top: 5px">
+        <table class="">
+          <thead>
+            <tr>
+              <th>TeX</th>
+              <th>Rendering</th>
+              <th>Width</th>
+              <th>Padding</th>
+            </tr>
+          </thead>
+          <tbody id="glyph-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <br />
+
+    <div id="tex" class="container">&copy; 2023 by Andreas Schwenk</div>
+
+    <br />
+  </body>
+
+  <script src="index.min.js?version=1677852815"></script>
+</html>

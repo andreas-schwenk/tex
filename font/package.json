@@ -1,0 +1,16 @@
+{
+  "name": "tex-font-generation",
+  "version": "0.0.1",
+  "description": "",
+  "main": "font.js",
+  "scripts": {
+    "run": "./run.sh"
+  },
+  "author": "Andreas Schwenk",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "mathjax": "^3.2.2",
+    "mathjax-full": "^3.2.2",
+    "svg-parser": "^2.0.4"
+  }
+}

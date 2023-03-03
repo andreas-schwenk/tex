@@ -1,0 +1,15 @@
+# tex - a tiny TeX engine
+# (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
+# License: GPL-3.0-or-later
+
+name: tex
+description: Tiny TeX math engine; outputs SVG images
+version: 0.0.1
+repository: https://github.com/andreas-schwenk/tex
+
+environment:
+  sdk: ">=2.19.2 <3.0.0"
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
