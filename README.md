@@ -1,2 +1,2 @@
 # tex
-tiny TeX math engine, written in Dart
+Tiny TeX math engine, written in Dart
