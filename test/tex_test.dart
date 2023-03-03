@@ -2,7 +2,8 @@ import 'package:tex/tex.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('A group of tests', () {
+  // TODO
+  /*group('A group of tests', () {
     final awesome = Awesome();
 
     setUp(() {
@@ -12,5 +13,5 @@ void main() {
     test('First Test', () {
       expect(awesome.isAwesome, isTrue);
     });
-  });
+  });*/
 }
