@@ -41,12 +41,17 @@ void main() {
     tr.append(cell1);
 
     var cell2 = document.createElement('td') as TableCellElement;
-    var outputBase64 = base64Encode(utf8.encode(output));
-    var img = document.createElement('img') as ImageElement;
-    img.style.height = "36px";
-    img.src = "data:image/svg+xml;base64,$outputBase64";
-    cell2.append(img);
-    tr.append(cell2);
+    if (output.isEmpty) {
+      cell2.innerHtml = '<code>Error: ${tex.error}</code>';
+      tr.append(cell2);
+    } else {
+      var outputBase64 = base64Encode(utf8.encode(output));
+      var img = document.createElement('img') as ImageElement;
+      img.style.height = "36px";
+      img.src = "data:image/svg+xml;base64,$outputBase64";
+      cell2.append(img);
+      tr.append(cell2);
+    }
 
     var cell3 = document.createElement('td') as TableCellElement;
     cell3.innerHtml = (rowData["w"] as int).toString();
@@ -63,9 +68,9 @@ void main() {
 void typeset(bool paintBox) {
   var src = (querySelector('#tex-input') as InputElement).value as String;
   var tex = TeX();
-  //print(src);
+  print(src);
   var output = tex.tex2svg(src, paintBox);
-  //print(output);
+  print(output);
   if (output.isNotEmpty) {
     var outputBase64 = base64Encode(utf8.encode(output));
     var img = document.createElement('img') as ImageElement;
