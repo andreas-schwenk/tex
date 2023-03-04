@@ -2,8 +2,8 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
-import 'dart:io';
-import 'package:test/test.dart';
+//import 'dart:io';
+//import 'package:test/test.dart';
 import 'package:tex/tex.dart';
 
 void main() {
