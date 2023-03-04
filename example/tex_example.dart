@@ -1,5 +1,4 @@
 import 'package:tex/tex.dart';
-//import 'dart:tex';
 
 void main() {
   var tex = TeX();
