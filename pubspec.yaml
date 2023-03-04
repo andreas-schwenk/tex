@@ -3,8 +3,9 @@
 # License: GPL-3.0-or-later
 
 name: tex
-description: Tiny TeX math engine; outputs SVG images
+description: Tiny TeX to SVG engine by Andreas Schwenk
 version: 0.0.1
+homepage: https://andreas-schwenk.github.io/tex/
 repository: https://github.com/andreas-schwenk/tex
 
 environment:
@@ -13,3 +14,7 @@ environment:
 dev_dependencies:
   lints: ^2.0.0
   test: ^1.21.0
+
+screenshots:
+  - description: 'This screenshot shows the output for "f(x)=x^2+y^2".'
+    path: img/example.png
