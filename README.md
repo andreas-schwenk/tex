@@ -1,16 +1,3 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
 `tex` is a tiny TeX engine that creates SVG images from TeX strings.
 Currently, only the math environment (e.g. `$ f(x) = x^2 $`) is supported.
 Compared to other TeX renderers, this package does NOT rely on JavaScript or any other dependencies.
@@ -22,7 +9,7 @@ You will find a playground at [https://andreas-schwenk.github.io/tex](https://an
 ## Features
 
 - Rendering of SVG images from TeX sources
-- All data is packed into code. There is no need to load any data at runtime.
+- All data is packed into code. There is no need to load anything at runtime.
 
 ## Getting started
 
@@ -37,11 +24,8 @@ Make sure to use the latest version!
 
 ## Usage
 
-<!-- TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. -->
-
 ```dart
-import 'package:tex';
+import 'package:tex/tex.dart';
 
 void main() {
   var tex = TeX();
@@ -56,25 +40,20 @@ void main() {
 
 Output SVG:
 
-<img src="img/example.svg" style="height:48px; background-color: white;">
+<img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/img/example.svg" style="height:48px; background-color: white;">
 
 ## Additional information
 
-For building the fonts, `Python` and `node` must be installed. This is only required for developers of this package.
+File `meta/glyphs.csv` specifies the glyphs.
+
+For building the fonts, [python3](https://www.python.org) and [node](https://nodejs.org/en/) must be installed. This is only required for developers of this package.
 
 ```bash
 ./build.sh
 ```
-
-File `meta/glyphs.csv` specifies the glyphs.
 
 ## License of MathJax
 
 This package extracts SVG image data of glyphs from [MathJax](https://www.mathjax.org). All rights remain to the authors. MathJax is licensed under the Apache2 license. You will find a copy of Apache2 license in folder `ext-licenses/` of this repository.
 
 All extracted data from MathJax can be found in variable `svgData` of file `/lib/src/svg.dart`.
-
-<!--TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
--->
