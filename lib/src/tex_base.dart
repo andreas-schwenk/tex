@@ -44,20 +44,28 @@ class TeX {
       var defs = '';
       for (var id in _usedLetters) {
         var d = svgData[id];
-        defs += '    <path id="${id}" d="${d}"></path>\n';
+        defs += '    <path id="$id" d="$d"></path>\n';
       }
 
       String boundingBoxes = '';
       if (paintBox) {
-        boundingBoxes =
-            '    <rect x="0" y="${-belowHeight}" width="$width" height="$height" fill="none" stroke="rgb(200,200,200)" stroke-width="50"></rect>\n' +
-                '    <rect x="0" y="0" width="$width" height="${height - belowHeight}" fill="none" stroke="rgb(200,200,200)" stroke-width="25"></rect>\n';
+        boundingBoxes = '    '
+            '<rect x="0" y="${-belowHeight}" width="$width" height="$height"'
+            ' fill="none" stroke="rgb(200,200,200)" stroke-width="50"></rect>\n'
+            '    '
+            '<rect x="0" y="0" width="$width" height="${height - belowHeight}"'
+            ' fill="none" stroke="rgb(200,200,200)"'
+            ' stroke-width="25"></rect>\n';
       }
 
       commands =
-          '  <g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)">\n$boundingBoxes$commands  </g>';
-      var svg =
-          '<svg style="" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" viewBox="$minX $minY $width $height" xmlns:xlink="http://www.w3.org/1999/xlink">\n  <defs>\n$defs  </defs>\n$commands\n</svg>\n';
+          '  <g stroke="currentColor" fill="currentColor" stroke-width="0"'
+          ' transform="scale(1,-1)">\n$boundingBoxes$commands  </g>';
+      var svg = '<svg style="" xmlns="http://www.w3.org/2000/svg" role="img"'
+          ' focusable="false" viewBox="$minX $minY $width $height"'
+          ' xmlns:xlink="http://www.w3.org/1999/xlink">\n'
+          '  <defs>\n$defs  </defs>\n$commands\n'
+          '</svg>\n';
       return svg;
     } catch (e) {
       _error = e.toString();
@@ -96,7 +104,9 @@ class TeX {
       svg += _indent('<use xlink:href="#${node.svgPathId}"></use>', indent + 2);
       if (_paintBox) {
         svg += _indent(
-            '<rect x="${-dx}" y="0" width="${node.width}" height="${node.height}" fill="none" stroke="rgb(220,120,120)" stroke-width="15"></rect>',
+            '<rect x="${-dx}" y="0"'
+            ' width="${node.width}" height="${node.height}" fill="none"'
+            ' stroke="rgb(220,120,120)" stroke-width="15"></rect>',
             indent + 2);
       }
       if (node.sub != null) {
