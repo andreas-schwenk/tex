@@ -1,4 +1,6 @@
 {
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "Dart-Code.dart-code",
   "cSpell.words": [
     "Andreas",
     "Downarrow",
