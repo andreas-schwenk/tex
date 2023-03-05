@@ -14,8 +14,8 @@ void main() {
       "(c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>");
   print("License: GPL-3.0-or-later");
 
-  setTextInput(
-      'tex-input', 'f(x,y)=3x+y^{2^{8+1}}+z^{3+2}+\\alpha_{\\gamma}+\\beta+X');
+  setTextInput('tex-input',
+      'f(x,y)=3x+y^{2^{8+1}}+z^{3+2}+\\alpha_{\\gamma}+\\beta+\\sin(x)+\\frac x {y+1}');
   querySelector('#runTex')?.onClick.listen((event) {
     typeset(false);
   });
