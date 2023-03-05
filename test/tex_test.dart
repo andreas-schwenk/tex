@@ -8,7 +8,7 @@ import 'package:tex/tex.dart';
 
 void main() {
   var tex = TeX();
-  var src = "\\mathbb{A}"; //"\\frac x{ \\sum_1^{{6}} w } \\cdot 5";
+  var src = "\\frac x {y+1}"; //"\\frac x{ \\sum_1^{{6}} w } \\cdot 5";
   //"x^2  + {4*5}";
   var output = '';
   var paintBox = true;
