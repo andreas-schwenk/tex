@@ -3,7 +3,7 @@
 # License: GPL-3.0-or-later
 
 name: tex
-description: Tiny TeX to SVG engine by Andreas Schwenk
+description: Tiny TeX to SVG engine by Andreas Schwenk. Glyphs are taken from MathJax.
 version: 0.0.2
 homepage: https://andreas-schwenk.github.io/tex/
 repository: https://github.com/andreas-schwenk/tex

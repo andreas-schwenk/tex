@@ -2,14 +2,21 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
+/// Tokenizer for TeX strings.
 class Lex {
+  // The end token.
   static const lexEnd = '%%%';
 
+  /// The list of tokens.
   List<String> _tokens = [];
 
-  int _pos = 0; // current position
-  int _len = 0; // number of tokens
+  /// The current position.
+  int _pos = 0;
 
+  /// The number of tokens.
+  int _len = 0;
+
+  /// Sets a source code [src] that is tokenized.
   set(String src) {
     _tokens = [];
     _pos = 0;
@@ -48,9 +55,3 @@ class Lex {
     return _pos >= _len ? lexEnd : _tokens[_pos];
   }
 }
-
-/*void main() {
-  var src = "f(x,y)=3x+y^{2^{8+1}}+z^{3+2}+\\alpha_{\\gamma}+\\beta+X+abc";
-  var lex = new Lex(src);
-}*/
-

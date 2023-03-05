@@ -6,7 +6,9 @@ import 'lex.dart';
 import 'node.dart';
 import 'tab.dart';
 
-//G texList = { texNode };
+/// Parses a TeX list. Braces "{", "}" are consumed, if [parseBraces] is true.
+///
+/// Formal grammar: texList = "{" { texNode } "}";
 TeXNode parseTexList(Lex lex, bool parseBraces) {
   if (parseBraces) {
     if (lex.token == '{') {
@@ -46,7 +48,9 @@ TeXNode parseTexList(Lex lex, bool parseBraces) {
   return list;
 }
 
-//G texNode = "\" ID { "{" texList "}" } | ID | INT | ...;
+/// Parses a TeX node.
+///
+/// Formal grammar: texNode = "\" ID { "{" texList "}" } | ID | INT | ...;
 TeXNode parseTexNode(Lex lex) {
   if (lex.token == '{') {
     return parseTexList(lex, true);

@@ -6,6 +6,8 @@ import 'help.dart';
 import 'node.dart';
 import 'tab.dart';
 
+/// Typesets node [node], starting from base coordinates [baseX] and [baseY]
+/// with [scaling].
 void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
   if (node.isList) {
     node.x = baseX;
@@ -100,7 +102,11 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
   }
 }
 
-// replaces e.g. "A" by "\mathbb{A}" recursively
+/// Replaces all TeX nodes tokens starting from node [node] recursively by font
+/// [font].
+///
+/// Example: node token "A" is replaced by "\mathbb{A}", in case font is
+/// "\mathbb".
 void setFont(TeXNode node, String font) {
   if (node.tk.isNotEmpty) node.tk = '$font{${node.tk}}';
   for (var arg in node.args) {

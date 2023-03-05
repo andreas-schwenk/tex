@@ -5,6 +5,7 @@
 import 'help.dart';
 import 'node.dart';
 
+/// Generates SVG code for [node] with indentation [indent].
 String gen(bool paintBox, TeXNode node, int indent) {
   if (node.isList) {
     var svg = indentString(

@@ -52,7 +52,7 @@ for line in lines:
     delta_x = tokens[3].strip()
     res += '  "' + tex + '": {"code": "' + mjx_id + \
         '", "w": ' + width + ', "d": ' + delta_x + '},\n'
-res += '};\n\n'
+res += '};\n'
 
 f = open("lib/src/tab.dart", "w")
 f.write(res)

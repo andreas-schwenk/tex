@@ -2,8 +2,6 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
-// TODO: documentation
-
 import 'package:tex/src/node.dart';
 
 import 'gen.dart';
@@ -12,20 +10,30 @@ import 'parse.dart';
 import 'svg.dart';
 import 'typeset.dart';
 
+/// Root class that provides TeX to SVG conversion.
 class TeX {
+  /// The lexer.
   final Lex _lex = Lex();
 
+  /// Recently parsed TeX input, stringified.
   String _lastParsed = '';
+
+  /// Error messages.
   String _error = '';
 
+  /// Gets the parsed and stringified TeX input for the last call of [tex2svg].
   String get lastParsed {
     return _lastParsed;
   }
 
+  /// Gets the error for the last call of [tex2svg].
   String get error {
     return _error;
   }
 
+  /// Generates an SVG String from TeX [src].
+  ///
+  /// A debug output can be achieved by rendering bounding boxes via [paintBox].
   String tex2svg(String src, [paintBox = false]) {
     _lex.set(src);
     try {
@@ -41,7 +49,7 @@ class TeX {
       int height = root.height + belowHeight;
       var defs = '';
       Set<String> usedLetters = {};
-      _getUsedLetters(usedLetters, root);
+      _getUsedGlyphs(usedLetters, root);
       for (var id in usedLetters) {
         var d = svgData[id];
         defs += '    <path id="$id" d="$d"></path>\n';
@@ -72,21 +80,22 @@ class TeX {
     }
   }
 
-  void _getUsedLetters(Set<String> usedLetters, TeXNode node) {
+  /// Gets a set of all actually used glyphs for a [node].
+  void _getUsedGlyphs(Set<String> usedLetters, TeXNode node) {
     if (node.svgPathId.isNotEmpty) {
       usedLetters.add(node.svgPathId);
     }
     for (var item in node.items) {
-      _getUsedLetters(usedLetters, item);
+      _getUsedGlyphs(usedLetters, item);
     }
     for (var arg in node.args) {
-      _getUsedLetters(usedLetters, arg);
+      _getUsedGlyphs(usedLetters, arg);
     }
     if (node.sub != null) {
-      _getUsedLetters(usedLetters, node.sub as TeXNode);
+      _getUsedGlyphs(usedLetters, node.sub as TeXNode);
     }
     if (node.sup != null) {
-      _getUsedLetters(usedLetters, node.sup as TeXNode);
+      _getUsedGlyphs(usedLetters, node.sup as TeXNode);
     }
   }
 }

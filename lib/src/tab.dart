@@ -272,4 +272,3 @@ const table = {
   "\\mathcal{Y}": {"code": "MJX-1-TEX-C-59", "w": 850, "d": 0},
   "\\mathcal{Z}": {"code": "MJX-1-TEX-C-5A", "w": 900, "d": 0},
 };
-
