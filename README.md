@@ -54,6 +54,6 @@ For building the fonts, [python3](https://www.python.org) and [node](https://nod
 
 ## License of MathJax
 
-This package extracts SVG image data of glyphs from [MathJax](https://www.mathjax.org). All rights remain to the authors. MathJax is licensed under the Apache2 license. You will find a copy of Apache2 license in folder `ext-licenses/` of this repository.
+This package extracts SVG image data of glyphs from [MathJax](https://www.mathjax.org). All rights remain to the authors. MathJax is licensed under the Apache2 license. You will find a copy of Apache2 license in folder `licenses/mathJax/` of this repository.
 
 All extracted data from MathJax can be found in variable `svgData` of file `/lib/src/svg.dart`.
