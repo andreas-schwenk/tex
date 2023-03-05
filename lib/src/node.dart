@@ -4,10 +4,10 @@
 
 /// Logical parts of a TeX string.
 class TeXNode {
-  /// Is node a list.
+  /// Whether the object represents a list. Otherwise, it represents a node.
   bool isList;
 
-  /// Is node a fractions (e.g. "\\frac{x}{y}").
+  /// Whether the node is a fractions (e.g. "\\frac{x}{y}").
   bool isFraction = false;
 
   /// The children.
