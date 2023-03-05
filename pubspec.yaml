@@ -4,12 +4,12 @@
 
 name: tex
 description: Tiny TeX to SVG engine by Andreas Schwenk. Glyphs are taken from MathJax.
-version: 0.0.2
+version: 0.0.3
 homepage: https://andreas-schwenk.github.io/tex/
 repository: https://github.com/andreas-schwenk/tex
 
 environment:
-  sdk: ">=2.19.2 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dev_dependencies:
   lints: ^2.0.0
