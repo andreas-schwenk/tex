@@ -1,3 +1,7 @@
+## 0.0.3
+
+- code documentation
+
 ## 0.0.2
 
 - added rudimentary support for fractions
