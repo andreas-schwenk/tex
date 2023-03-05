@@ -39,7 +39,6 @@ class TeX {
     try {
       var root = parseTexList(_lex, false);
       _lastParsed = root.toString();
-      print(_lastParsed); // TODO: remove this
       typeset(root, 0, 0);
       var commands = gen(paintBox, root, 4);
       final int belowHeight = 275; // TODO
