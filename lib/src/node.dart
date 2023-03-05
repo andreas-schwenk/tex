@@ -4,6 +4,8 @@
 
 class TeXNode {
   bool isList;
+  bool isFraction = false;
+
   List<TeXNode> items = [];
   List<TeXNode> args = [];
   String tk = '';
