@@ -21,6 +21,9 @@ class TeX {
   /// Error messages.
   String _error = '';
 
+  //// Scaling factor.
+  double _scalingFactor = 1.0;
+
   /// Gets the parsed and stringified TeX input for the last call of [tex2svg].
   String get lastParsed {
     return _lastParsed;
@@ -29,6 +32,11 @@ class TeX {
   /// Gets the error for the last call of [tex2svg].
   String get error {
     return _error;
+  }
+
+  /// Sets the scaling factor
+  set scalingFactor(double factor) {
+    _scalingFactor = factor;
   }
 
   /// Generates an SVG String from TeX [src].
@@ -41,11 +49,13 @@ class TeX {
       _lastParsed = root.toString();
       typeset(root, 0, 0);
       var commands = gen(paintBox, root, 4);
-      final int belowHeight = 275; // TODO
+      var xx = _calcMinY(root);
+      print('xx = $xx');
+      final int belowHeight = -xx + 275; //275; // TODO
       int minX = 0;
       int minY = -root.height;
       int width = root.width;
-      int height = root.height + belowHeight;
+      int height = root.height + belowHeight - xx;
       var defs = '';
       Set<String> usedLetters = {};
       _getUsedGlyphs(usedLetters, root);
@@ -67,7 +77,8 @@ class TeX {
       commands =
           '  <g stroke="currentColor" fill="currentColor" stroke-width="0"'
           ' transform="scale(1,-1)">\n$boundingBoxes$commands  </g>';
-      var svg = '<svg style="" xmlns="http://www.w3.org/2000/svg" role="img"'
+      var svg =
+          '<svg width="${(width * 0.02 * _scalingFactor).round()}" style="" xmlns="http://www.w3.org/2000/svg" role="img"'
           ' focusable="false" viewBox="$minX $minY $width $height"'
           ' xmlns:xlink="http://www.w3.org/1999/xlink">\n'
           '  <defs>\n$defs  </defs>\n$commands\n'
@@ -77,6 +88,24 @@ class TeX {
       _error = e.toString();
       return "";
     }
+  }
+
+  int _calcMinY(TeXNode node) {
+    int minY = 0;
+    for (var item in node.items) {
+      int itemY = node.y + (_calcMinY(item) * item.scaling).round();
+      if (itemY < minY) minY = itemY;
+    }
+    for (var arg in node.args) {
+      int argY = node.y + (_calcMinY(arg) * arg.scaling).round();
+      if (argY < minY) minY = argY;
+    }
+    if (node.sub != null) {
+      var sub = node.sub as TeXNode;
+      int subY = node.y + (_calcMinY(sub) * sub.scaling).round();
+      if (subY < minY) minY = subY;
+    }
+    return minY;
   }
 
   /// Gets a set of all actually used glyphs for a [node].
