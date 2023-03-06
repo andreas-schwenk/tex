@@ -4,7 +4,7 @@
 
 name: tex
 description: Tiny TeX to SVG engine by Andreas Schwenk. Glyphs are taken from MathJax.
-version: 0.0.3
+version: 0.0.4
 homepage: https://andreas-schwenk.github.io/tex/
 repository: https://github.com/andreas-schwenk/tex
 
