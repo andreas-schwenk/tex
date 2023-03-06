@@ -51,14 +51,14 @@ String gen(bool paintBox, TeXNode node, int indent) {
     if (node.sup != null) {
       svg += gen(paintBox, node.sup as TeXNode, indent + 2);
     }
-    svg += indentString('</g>', indent);
     // args
-    if (node.svgPathId.isEmpty && node.isFraction == false) {
+    /*if (node.svgPathId.isEmpty && node.isFraction == false) {
       svg = '';
-    }
+    }*/
     for (var i = 0; i < node.args.length; i++) {
-      svg += gen(paintBox, node.args[i], indent);
+      svg += gen(paintBox, node.args[i], indent + 2);
     }
+    svg += indentString('</g>', indent);
     return svg;
   }
 }
