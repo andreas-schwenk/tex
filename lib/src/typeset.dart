@@ -60,30 +60,33 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
       x += node.width;
     } else if (tk == '\\frac') {
       node.isFraction = true;
-      if (node.args[0].isList == false) {
-        node.args[0] = TeXNode(true, [node.args[0]]);
+      var numerator = node.args[0];
+      var denominator = node.args[1];
+      if (numerator.isList == false) {
+        node.args[0] = TeXNode(true, [numerator]);
+        numerator = node.args[0];
       }
-      if (node.args[1].isList == false) {
-        node.args[1] = TeXNode(true, [node.args[1]]);
+      if (denominator.isList == false) {
+        node.args[1] = TeXNode(true, [denominator]);
+        denominator = node.args[1];
       }
-      typeset(node.args[0], 0, 0, 0.7071);
-      typeset(node.args[1], 0, 0, 0.7071);
-      var wn = node.args[0].width; // width numerator
-      var wd = node.args[1].width; // width denominator
+      typeset(numerator, 0, 0, 0.7071);
+      typeset(denominator, 0, 0, 0.7071);
+      var wn = numerator.width; // width numerator
+      var wd = denominator.width; // width denominator
       node.width = max(wn, wd);
-      //node.height = TODO!!
-      node.args[0].y += 350;
-      node.args[1].y -= 300; // TODO: must depend on args[1].height
-      node.args[0].x =
-          x + ((node.width - node.args[0].width) * 0.7071 / 2.0).round();
-      node.args[1].x =
-          x + ((node.width - node.args[1].width) * 0.7071 / 2.0).round();
+      numerator.x = ((node.width - numerator.width) * 0.7071 / 2.0).round();
+      denominator.x = ((node.width - denominator.width) * 0.7071 / 2.0).round();
       x += (node.width * 0.7071).round();
+      numerator.y += 400;
+      denominator.y -= 400; // TODO: must depend on args[1].height
+      node.height =
+          ((numerator.y + numerator.height - denominator.y) * 0.7071).round();
     } else {
       throw Exception("unimplemented token '$tk'");
     }
     if (node.sub != null) {
-      var dy = -250;
+      var dy = -150;
       var sub = node.sub as TeXNode;
       typeset(sub, x - baseX, dy, 0.7071);
       x += (sub.width * 0.7071).round();
@@ -91,7 +94,7 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
       node.height = max(node.height, height);
     }
     if (node.sup != null) {
-      var dy = 500;
+      var dy = 350;
       var sup = node.sup as TeXNode;
       typeset(sup, x - baseX, dy, 0.7071);
       x += (sup.width * 0.7071).round();
