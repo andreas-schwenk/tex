@@ -14,6 +14,8 @@
         <a href="https://github.com/andreas-schwenk/tex"
           >https://github.com/andreas-schwenk/tex</a
         >
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dart Package:
+        <a href="https://pub.dev/packages/tex">https://pub.dev/packages/tex</a>
       </p>
     </div>
 
@@ -24,14 +26,17 @@
         <b>Input TeX Code:</b>&nbsp;
         <input type="text" id="tex-input" class="u-full-width" />
         <button id="runTex" type="button">typeset</button>
-        <button id="runTexWithBorder" type="button">debug</button>
         <br />
       </div>
+
+      <br />
 
       <div class="row" style="padding-top: 5px">
         <b>Parsed Term:</b>&nbsp;
         <div id="tex-term">(empty)</div>
       </div>
+
+      <br />
 
       <div class="row" style="padding-top: 5px">
         <b>Rendering:</b>&nbsp;
@@ -42,8 +47,35 @@
     <br /><br />
 
     <div id="tex" class="container">
-      <h2>List of Glyphs</h2>
+      <h2>Examples</h2>
+      <div class="row" style="padding-top: 5px">
+        <table class="">
+          <thead>
+            <tr>
+              <th>TeX</th>
+              <th>Rendering</th>
+              <th>Rendering (with boxes)</th>
+            </tr>
+          </thead>
+          <tbody id="examples-table"></tbody>
+        </table>
+        <p>
+          Blind text. Blind text. Blind text. Blind text. Blind text. Blind
+          text. Blind text. Blind text. Blind text. Blind text. Blind text. Some
+          inline equation here <span id="example-inline-1"></span> and another
+          one here <span id="example-inline-2"></span>. Blind text. Blind text.
+          Blind text. Blind text. Blind text. Blind text. Blind text. Blind
+          text. Blind text. Blind text. Blind text. Blind text. Blind text.
+          Blind text. Blind text. Blind text. Blind text. Blind text. Blind
+          text. Blind text. Blind text. Blind text.
+        </p>
+      </div>
+    </div>
 
+    <br /><br />
+
+    <div id="tex" class="container">
+      <h2>List of Glyphs</h2>
       <div class="row" style="padding-top: 5px">
         <table class="">
           <thead>
@@ -66,5 +98,5 @@
     <br />
   </body>
 
-  <script src="index.min.js?version=1678029618"></script>
+  <script src="index.min.js?version=1678117175"></script>
 </html>
