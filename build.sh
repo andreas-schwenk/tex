@@ -18,5 +18,3 @@ dart format lib/src/tab.dart
 cd docs
 ./build.sh
 cd ..
-
-dart doc
