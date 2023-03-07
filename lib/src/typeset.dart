@@ -2,6 +2,7 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
+import 'config.dart';
 import 'help.dart';
 import 'node.dart';
 import 'tab.dart';
@@ -28,27 +29,27 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
     }
     node.width = x;
   } else {
-    // TODO: is baseX|baseY here anywhere != 0?????
-    int x = baseX;
-    int y = baseY;
+    int x = node.x = baseX;
+    int y = node.y = baseY;
     var tk = node.tk;
-    node.x = x;
-    node.y = y;
-    if (table.containsKey(tk)) {
+    if (table.containsKey(tk) && tk != '\\sqrt') {
+      // -------- glyphs from tabular --------
       var entry = table[tk] as Map<Object, Object>;
       node.svgPathId = entry["code"] as String;
       x += entry["w"] as int;
       if (entry.containsKey("d")) {
         node.dx = entry["d"] as int;
       }
-      node.height = 750;
+      node.height = standardFontHeight;
     } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
+      // -------- font --------
       setFont(node.args[0], tk);
       typeset(node.args[0], x, y, scaling);
       x += node.args[0].width;
       node.height = node.args[0].height;
     } else if (["\\sin", "\\cos", "\\exp", "\\tan"].contains(tk)) {
-      // TODO: store list (sin, cos, ...) into config file unter /meta/
+      // -------- functions --------
+      // TODO: store list (sin, cos, ...) into config file under /meta/
       if (x > 0) x += 300;
       node.isList = true;
       for (var i = 0; i < tk.length - 1; i++) {
@@ -58,17 +59,29 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
       }
       typeset(node, x, y, scaling);
       x += node.width;
+    } else if (tk == '\\sqrt') {
+      // -------- sqrt --------
+      var entry = table[tk] as Map<Object, Object>;
+      node.svgPathId = entry["code"] as String;
+      x += entry["w"] as int;
+      var arg = node.args[0];
+      if (arg.isList == false) {
+        node.args[0] = arg = TeXNode(true, [arg]);
+      }
+      typeset(arg, x, 0, 1.0);
+      arg.isSqrt = true;
+      x += node.width + arg.width;
+      node.height = max(arg.height + 50, 850);
     } else if (tk == '\\frac') {
+      // -------- fractions --------
       node.isFraction = true;
       var numerator = node.args[0];
       var denominator = node.args[1];
       if (numerator.isList == false) {
-        node.args[0] = TeXNode(true, [numerator]);
-        numerator = node.args[0];
+        node.args[0] = numerator = TeXNode(true, [numerator]);
       }
       if (denominator.isList == false) {
-        node.args[1] = TeXNode(true, [denominator]);
-        denominator = node.args[1];
+        node.args[1] = denominator = TeXNode(true, [denominator]);
       }
       typeset(numerator, 0, 0, 0.7071);
       typeset(denominator, 0, 0, 0.7071);
@@ -83,17 +96,20 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
       node.height =
           ((numerator.y + numerator.height - denominator.y) * 0.7071).round();
     } else {
+      // -------- error --------
       throw Exception("unimplemented token '$tk'");
     }
     if (node.sub != null) {
+      // -------- subscript --------
       var dy = -150;
       var sub = node.sub as TeXNode;
       typeset(sub, x - baseX, dy, 0.7071);
       x += (sub.width * 0.7071).round();
-      var height = (dy + sub.height * 0.7071).round(); // TODO!!
+      var height = (dy + sub.height * 0.7071).round();
       node.height = max(node.height, height);
     }
     if (node.sup != null) {
+      // -------- superscript --------
       var dy = 350;
       var sup = node.sup as TeXNode;
       typeset(sup, x - baseX, dy, 0.7071);
