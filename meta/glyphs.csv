@@ -133,6 +133,7 @@ z; MJX-1-TEX-I-1D467; 600; 0
 
 # ----- Misc -----
 # TODO: separate arrows to own category
+\sqrt; MJX-1-TEX-N-221A; 860; 100
 \cap; MJX-1-TEX-N-2229; 950; 100
 \circ; MJX-1-TEX-N-2218; 600; 50
 \cup; MJX-1-TEX-N-222A; 950; 100
