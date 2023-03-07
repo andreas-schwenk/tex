@@ -1,3 +1,11 @@
+## 0.0.5
+
+- inline text rendering is now correctly vertical aligned
+- basic support for \sqrt
+- SVG output is not any more hierarchically; all glyphs have global coordinates
+- increased code readability
+- added code comments
+
 ## 0.0.4
 
 - image width encoded into SVG data
