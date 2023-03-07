@@ -9,6 +9,7 @@ const Map<String, int> numArgs = {
   "\\frac": 2,
   "\\mathbb": 1,
   "\\mathcal": 1,
+  "\\sqrt": 1,
   "\\text": 1,
 };
 
@@ -130,6 +131,7 @@ const table = {
   "\\Psi": {"code": "MJX-1-TEX-N-3A8", "w": 750, "d": 0},
   "\\omega": {"code": "MJX-1-TEX-I-1D714", "w": 650, "d": 0},
   "\\Omega": {"code": "MJX-1-TEX-N-3A9", "w": 750, "d": 0},
+  "\\sqrt": {"code": "MJX-1-TEX-N-221A", "w": 860, "d": 100},
   "\\cap": {"code": "MJX-1-TEX-N-2229", "w": 950, "d": 100},
   "\\circ": {"code": "MJX-1-TEX-N-2218", "w": 600, "d": 50},
   "\\cup": {"code": "MJX-1-TEX-N-222A", "w": 950, "d": 100},
