@@ -44,7 +44,7 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
     } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
       // -------- font --------
       setFont(node.args[0], tk);
-      typeset(node.args[0], x, y, scaling);
+      typeset(node.args[0], x - baseX, y, scaling);
       x += node.args[0].width;
       node.height = node.args[0].height;
     } else if (["\\sin", "\\cos", "\\exp", "\\tan"].contains(tk)) {
@@ -68,7 +68,7 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
       if (arg.isList == false) {
         node.args[0] = arg = TeXNode(true, [arg]);
       }
-      typeset(arg, x, 0, 1.0);
+      typeset(arg, x - baseX, y, scaling);
       arg.isSqrt = true;
       x += node.width + arg.width;
       node.height = max(arg.height + 50, 850);
