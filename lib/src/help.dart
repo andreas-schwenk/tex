@@ -24,3 +24,13 @@ String indentString(String text, int numSpaces) {
   }
   return s;
 }
+
+/// Encodes an XML string.
+String xmlStringEncode(String s) {
+  return s
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll('\'', '&apos;')
+      .replaceAll('&', '&amp;');
+}
