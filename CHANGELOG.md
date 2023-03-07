@@ -1,3 +1,7 @@
+## 0.0.6
+
+- bug fixes
+
 ## 0.0.5
 
 - inline text rendering is now correctly vertical aligned
