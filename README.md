@@ -4,7 +4,7 @@ Compared to other TeX renderers, this package does NOT rely on JavaScript or any
 
 You will find a playground at [https://andreas-schwenk.github.io/tex](https://andreas-schwenk.github.io/tex). Alternatively, open file `/docs/index.html` in your browser. A local web server is not required.
 
-**Warning: this package is under development. Many TeX macros, e.g. `\frac{1}{2}`, will be supported soon**
+**Warning: this package is under development. Many more TeX macros will be supported soon**
 
 ## Features
 
@@ -17,7 +17,7 @@ Add the package into your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tex: ^0.0.1
+  tex: ^0.0.5
 ```
 
 Make sure to use the latest version!
