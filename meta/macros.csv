@@ -1,0 +1,12 @@
+#########################################
+# FORMAT = COMMAND; REPLACEMENT
+# 2023 by Andreas Schwenk
+#########################################
+
+# NOTE: parameters will be supported later
+
+\CC; \mathbb{C}
+\NN; \mathbb{N}
+\QQ; \mathbb{Q}
+\RR; \mathbb{R}
+\ZZ; \mathbb{Z}

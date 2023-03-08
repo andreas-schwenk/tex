@@ -16,10 +16,27 @@ class Lex {
   /// The number of tokens.
   int _len = 0;
 
-  /// Sets a source code [src] that is tokenized.
+  /// Sets a source code [src], performs tokenization and replaces tokens.
   set(String src) {
-    _tokens = [];
     _pos = 0;
+    _tokens = _tokenize(src);
+    _tokens.add(lexEnd);
+    _len = _tokens.length;
+  }
+
+  /// Tokenizes a string [src], inserts it to the current position and returns
+  /// the successes.
+  bool insert(String src) {
+    if (_pos >= _len) return false;
+    var tokens = _tokenize(src);
+    _tokens.insertAll(_pos, tokens);
+    _len = _tokens.length;
+    return true;
+  }
+
+  /// Tokenizes a string [src].
+  List<String> _tokenize(String src) {
+    List<String> tokens = [];
     var n = src.length;
     for (var i = 0; i < n; i++) {
       var c = src[i];
@@ -33,25 +50,37 @@ class Lex {
               (ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
                   ch.codeUnitAt(0) <= 'z'.codeUnitAt(0))) {
             tk += ch;
+          } else if (j == i + 1 && (ch == '{' || ch == '}')) {
+            tk += ch;
+            j++;
+            break;
           } else {
             break;
           }
         }
         i = j - 1;
-        _tokens.add(tk);
+        tokens.add(tk);
       } else if (" \n\t".contains(c) == false) {
-        _tokens.add(c);
+        tokens.add(c);
       }
     }
-    _tokens.add(lexEnd);
-    _len = _tokens.length;
+    return tokens;
   }
 
+  /// Moves the position pointer to the next token.
   next() {
     _pos++;
   }
 
+  /// Gets the current token.
   String get token {
     return _pos >= _len ? lexEnd : _tokens[_pos];
   }
 }
+/* 
+void main() {
+  var lex = Lex();
+  lex.set('abc\\{def\\}ghi');
+  var bp = 1337;
+}
+*/

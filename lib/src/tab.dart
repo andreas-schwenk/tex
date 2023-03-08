@@ -5,6 +5,14 @@
 // !!! THIS FILE WAS AUTO-CREATED BY gen.py !!!
 // !!! ANY CHANGES IN THIS FILE WILL BE OVERWRITTEN !!!
 
+const Map<String, String> macros = {
+  "\\CC": "\\mathbb{C}",
+  "\\NN": "\\mathbb{N}",
+  "\\QQ": "\\mathbb{Q}",
+  "\\RR": "\\mathbb{R}",
+  "\\ZZ": "\\mathbb{Z}",
+};
+
 const Map<String, int> numArgs = {
   "\\frac": 2,
   "\\mathbb": 1,
@@ -77,6 +85,7 @@ const table = {
   "8": {"code": "MJX-1-TEX-N-38", "w": 500, "d": 0},
   "9": {"code": "MJX-1-TEX-N-39", "w": 500, "d": 0},
   "-": {"code": "MJX-1-TEX-N-2212", "w": 1200, "d": 200},
+  ".": {"code": "MJX-1-TEX-N-2E", "w": 250, "d": 0},
   ",": {"code": "MJX-1-TEX-N-2C", "w": 350, "d": 0},
   ":": {"code": "MJX-1-TEX-N-3A", "w": 350, "d": 0},
   "!": {"code": "MJX-1-TEX-N-21", "w": 350, "d": 0},
@@ -84,6 +93,8 @@ const table = {
   ")": {"code": "MJX-1-TEX-N-29", "w": 300, "d": 0},
   "[": {"code": "MJX-1-TEX-N-5B", "w": 300, "d": 0},
   "]": {"code": "MJX-1-TEX-N-5D", "w": 300, "d": 0},
+  "\\{": {"code": "MJX-1-TEX-N-7B", "w": 475, "d": 0},
+  "\\}": {"code": "MJX-1-TEX-N-7D", "w": 475, "d": 0},
   "*": {"code": "MJX-1-TEX-N-2217", "w": 700, "d": 100},
   "\\cdot": {"code": "MJX-1-TEX-N-22C5", "w": 500, "d": 100},
   "/": {"code": "MJX-1-TEX-N-2F", "w": 700, "d": 150},
@@ -131,13 +142,13 @@ const table = {
   "\\Psi": {"code": "MJX-1-TEX-N-3A8", "w": 750, "d": 0},
   "\\omega": {"code": "MJX-1-TEX-I-1D714", "w": 650, "d": 0},
   "\\Omega": {"code": "MJX-1-TEX-N-3A9", "w": 750, "d": 0},
-  "\\sqrt": {"code": "MJX-1-TEX-N-221A", "w": 860, "d": 100},
   "\\cap": {"code": "MJX-1-TEX-N-2229", "w": 950, "d": 100},
   "\\circ": {"code": "MJX-1-TEX-N-2218", "w": 600, "d": 50},
   "\\cup": {"code": "MJX-1-TEX-N-222A", "w": 950, "d": 100},
   "\\dots": {"code": "MJX-1-TEX-N-2026", "w": 1000, "d": 0},
   "\\downarrow": {"code": "MJX-1-TEX-N-2193", "w": 950, "d": 200},
   "\\Downarrow": {"code": "MJX-1-TEX-N-21D3", "w": 950, "d": 200},
+  "\\emptyset": {"code": "MJX-1-TEX-N-2205", "w": 500, "d": 0},
   "\\exists": {"code": "MJX-1-TEX-N-2203", "w": 750, "d": 50},
   "\\forall": {"code": "MJX-1-TEX-N-2200", "w": 750, "d": 50},
   "\\geq": {"code": "MJX-1-TEX-N-2265", "w": 950, "d": 100},
@@ -163,6 +174,7 @@ const table = {
   "\\rightharpoonup": {"code": "MJX-1-TEX-N-21C0", "w": 1400, "d": 200},
   "\\rightleftharpoons": {"code": "MJX-1-TEX-V-21CC", "w": 1400, "d": 200},
   "\\searrow": {"code": "MJX-1-TEX-N-2198", "w": 1400, "d": 200},
+  "\\sqrt": {"code": "MJX-1-TEX-N-221A", "w": 860, "d": 100},
   "\\swarrow": {"code": "MJX-1-TEX-N-2199", "w": 1400, "d": 200},
   "\\times": {"code": "MJX-1-TEX-N-D7", "w": 950, "d": 100},
   "\\to": {"code": "MJX-1-TEX-N-2192", "w": 1200, "d": 100},

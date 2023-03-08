@@ -7,17 +7,51 @@
     <link rel="stylesheet" href="index.css?v=1" />
   </head>
   <body>
-    <div id="tex" class="container">
-      <h1>tex - a tiny TeX engine written in Dart</h1>
+    <br />
+
+    <div id="tex" class="container" style="text-align: center">
+      <h1>
+        <code>tex</code> &mdash; a tiny TeX Engine written in the Dart
+        Programming Language
+      </h1>
+    </div>
+
+    <div id="tex" class="container" style="opacity: 0.8; text-align: center">
       <p>
+        &copy; 2023 by Andreas Schwenk
+        <br /><br />
+        License: GPLv3 (GNU General Public License, Version 3)
+        <br />
         GitHub:
         <a href="https://github.com/andreas-schwenk/tex"
           >https://github.com/andreas-schwenk/tex</a
         >
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dart Package:
+        <br />
+        Dart Package:
         <a href="https://pub.dev/packages/tex">https://pub.dev/packages/tex</a>
       </p>
     </div>
+
+    <div id="tex" class="container">
+      <h2>Info</h2>
+      <p>
+        <!-- -->
+        <code>tex</code> is a tiny TeX engine that creates SVG images from TeX
+        strings. Currently, only the math environment (e.g.
+        <code>$ f(x) = x^2 $</code>) is supported. Compared to other TeX
+        renderers, this package does NOT rely on JavaScript or any other
+        dependencies.
+      </p>
+      <p style="color: #aa322c; text-align: center">
+        <!-- -->
+        <b
+          >THE LIBRARY IS CURRENTLY UNDER DEVELOPMENT.<br />
+          MANY FEATURES WILL BE ADDED SOON.</b
+        >
+      </p>
+    </div>
+
+    <br />
 
     <div id="tex" class="container">
       <h2>Playground</h2>
@@ -29,20 +63,41 @@
         <br />
       </div>
 
-      <br />
-
       <div class="row" style="padding-top: 5px">
         <b>Parsed Term:</b>&nbsp;
         <div id="tex-term">(empty)</div>
       </div>
 
-      <br />
-
       <div class="row" style="padding-top: 5px">
         <b>Rendering:</b>&nbsp;
-        <div id="tex-rendering"></div>
+        <div
+          id="tex-rendering"
+          style="
+            border-style: solid;
+            border-color: rgb(187, 187, 187);
+            border-width: 2px;
+            border-radius: 5px;
+            padding: 8px;
+            overflow-y: scroll;
+            margin: 5px auto;
+          "
+        ></div>
+      </div>
+
+      <div class="row" style="padding-top: 5px">
         <b>Rendering (with boxes):</b>&nbsp;
-        <div id="tex-rendering-with-boxes"></div>
+        <div
+          id="tex-rendering-with-boxes"
+          style="
+            border-style: solid;
+            border-color: rgb(187, 187, 187);
+            border-width: 2px;
+            border-radius: 5px;
+            padding: 8px;
+            overflow-y: scroll;
+            margin: 5px auto;
+          "
+        ></div>
       </div>
     </div>
 
@@ -51,7 +106,7 @@
     <div id="tex" class="container">
       <h2>Examples</h2>
       <div class="row" style="padding-top: 5px">
-        <table class="">
+        <table class="" style="margin-left: auto; margin-right: auto">
           <thead>
             <tr>
               <th>TeX</th>
@@ -63,6 +118,26 @@
         </table>
       </div>
     </div>
+
+    <br />
+
+    <div id="tex" class="container">
+      <h2>Custom Macros</h2>
+      <div class="row" style="padding-top: 5px">
+        <table class="" style="margin-left: auto; margin-right: auto">
+          <thead>
+            <tr>
+              <th>TeX</th>
+              <th>Rendering</th>
+              <th>Rendering (with boxes)</th>
+            </tr>
+          </thead>
+          <tbody id="custom-macros-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <br />
 
     <div id="tex" class="container">
       <h2>Inline Examples</h2>
@@ -90,12 +165,12 @@
       </div>
     </div>
 
-    <br /><br />
+    <br />
 
     <div id="tex" class="container">
       <h2>List of Glyphs</h2>
       <div class="row" style="padding-top: 5px">
-        <table class="">
+        <table class="" style="margin-left: auto; margin-right: auto">
           <thead>
             <tr>
               <th>TeX</th>
@@ -111,10 +186,8 @@
 
     <br />
 
-    <div id="tex" class="container">&copy; 2023 by Andreas Schwenk</div>
-
     <br />
   </body>
 
-  <script src="index.min.js?version=1678203057"></script>
+  <script src="index.min.js?version=1678272120"></script>
 </html>

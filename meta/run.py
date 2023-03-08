@@ -13,6 +13,25 @@ res = '''/// tex - a tiny TeX engine
 
 '''
 
+f = open("meta/macros.csv")
+lines = f.readlines()
+f.close()
+res += 'const Map<String, String> macros = {\n'
+for i, line in enumerate(lines):
+    line = line.strip()
+    if line.startswith('#') or len(line) == 0:
+        continue
+    tokens = line.split(';')
+    if len(tokens) < 2:
+        print("ERROR:gen.py: macros.csv:" + str(i) +
+              ": the following line is not well formatted:")
+        print(line)
+        exit(-1)
+    command = tokens[0].strip().replace('\\', '\\\\')
+    replacement = tokens[1].strip().replace('\\', '\\\\')
+    res += '  "' + command + '": "' + replacement + '",\n'
+res += '};\n\n'
+
 f = open("meta/params.csv")
 lines = f.readlines()
 f.close()
@@ -27,9 +46,9 @@ for i, line in enumerate(lines):
               ": the following line is not well formatted:")
         print(line)
         exit(-1)
-    tex = tokens[0].strip().replace('\\', '\\\\')
-    num_params = tokens[1].strip()
-    res += '  "' + tex + '": ' + num_params + ',\n'
+    command = tokens[0].strip().replace('\\', '\\\\')
+    replacement = tokens[1].strip()
+    res += '  "' + command + '": ' + replacement + ',\n'
 res += '};\n\n'
 
 f = open("meta/glyphs.csv")
@@ -46,11 +65,11 @@ for line in lines:
               ": the following line is not well formatted:")
         print(line)
         exit(-1)
-    tex = tokens[0].strip().replace('\\', '\\\\')
+    command = tokens[0].strip().replace('\\', '\\\\')
     mjx_id = tokens[1].strip()
     width = tokens[2].strip()
     delta_x = tokens[3].strip()
-    res += '  "' + tex + '": {"code": "' + mjx_id + \
+    res += '  "' + command + '": {"code": "' + mjx_id + \
         '", "w": ' + width + ', "d": ' + delta_x + '},\n'
 res += '};\n'
 

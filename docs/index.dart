@@ -16,6 +16,8 @@ final examples = [
   "\\sqrt{x+1}"
 ];
 
+final customMacros = ['\\CC', '\\NN', '\\QQ', '\\RR', '\\ZZ'];
+
 void main() {
   print("tex - a tiny TeX engine");
   print(
@@ -57,10 +59,49 @@ void main() {
   }
 
   // examples
+  showExamples('examples-table', examples);
+  showExamples('custom-macros-table', customMacros);
+
+  // glyph tests
+  showGlyphTests();
+}
+
+void typeset() {
+  var src = (querySelector('#tex-input') as InputElement).value as String;
+  document.getElementById('tex-rendering')?.innerHtml = '';
+  document.getElementById('tex-rendering-with-boxes')?.innerHtml = '';
   var tex = TeX();
-  var examplesTable = querySelector('#examples-table') as TableSectionElement;
+  print(src);
+  tex.scalingFactor = 2.0;
+  for (var i = 0; i < 2; i++) {
+    var output = tex.tex2svg(src, i == 0 ? false : true);
+    if (i == 0) print(output);
+    if (output.isNotEmpty) {
+      var outputBase64 = base64Encode(utf8.encode(output));
+      var img = document.createElement('img') as ImageElement;
+      img.src = "data:image/svg+xml;base64,$outputBase64";
+      img.style.verticalAlign = "bottom";
+      document.getElementById('tex-term')?.innerHtml = tex.parsed;
+      if (i == 0) {
+        document.getElementById('tex-rendering')?.append(img);
+      } else {
+        document.getElementById('tex-rendering-with-boxes')?.append(img);
+      }
+    } else {
+      document.getElementById('tex-term')?.innerHtml = tex.error;
+    }
+  }
+}
+
+void setTextInput(String elementId, String value) {
+  (document.getElementById(elementId) as InputElement).value = value;
+}
+
+void showExamples(String tableId, List<String> exampleList) {
+  var tex = TeX();
+  var examplesTable = querySelector('#$tableId') as TableSectionElement;
   examplesTable.innerHtml = '';
-  for (var example in examples) {
+  for (var example in exampleList) {
     var tr = document.createElement('tr') as TableRowElement;
 
     var cell1 = document.createElement('td') as TableCellElement;
@@ -79,7 +120,12 @@ void main() {
       var outputBase64 = base64Encode(utf8.encode(output));
       var img = document.createElement('img') as ImageElement;
       img.src = "data:image/svg+xml;base64,$outputBase64";
-      cell2.append(img);
+      img.style.verticalAlign = "bottom";
+      var span = document.createElement('span');
+      span.style.verticalAlign = "middle";
+      span.style.display = "inline-block";
+      span.append(img);
+      cell2.append(span);
       tr.append(cell2);
     }
 
@@ -95,14 +141,20 @@ void main() {
       var outputBase64 = base64Encode(utf8.encode(output));
       var img = document.createElement('img') as ImageElement;
       img.src = "data:image/svg+xml;base64,$outputBase64";
-      cell3.append(img);
+      img.style.verticalAlign = "bottom";
+      var span = document.createElement('span');
+      span.style.verticalAlign = "middle";
+      span.style.display = "inline-block";
+      span.append(img);
+      cell3.append(span);
       tr.append(cell3);
     }
 
     examplesTable.append(tr);
   }
+}
 
-  // glyph tests
+void showGlyphTests() {
   var glyphTable = querySelector('#glyph-table') as TableSectionElement;
   glyphTable.innerHtml = '';
   for (var texSrc in tab.table.keys) {
@@ -110,6 +162,7 @@ void main() {
 
     if (texSrc == '\\sqrt') texSrc = '\\sqrt{}';
 
+    var tex = TeX();
     var output = tex.tex2svg(texSrc, true);
     if (output.isEmpty) {
       print(tex.error);
@@ -127,9 +180,13 @@ void main() {
     } else {
       var outputBase64 = base64Encode(utf8.encode(output));
       var img = document.createElement('img') as ImageElement;
-      //img.style.height = "36px";
       img.src = "data:image/svg+xml;base64,$outputBase64";
-      cell2.append(img);
+      img.style.verticalAlign = "bottom";
+      var span = document.createElement('span');
+      span.style.verticalAlign = "middle";
+      span.style.display = "inline-block";
+      span.append(img);
+      cell2.append(span);
       tr.append(cell2);
     }
 
@@ -143,34 +200,4 @@ void main() {
 
     glyphTable.append(tr);
   }
-}
-
-void typeset() {
-  var src = (querySelector('#tex-input') as InputElement).value as String;
-  document.getElementById('tex-rendering')?.innerHtml = '';
-  document.getElementById('tex-rendering-with-boxes')?.innerHtml = '';
-  var tex = TeX();
-  print(src);
-  tex.scalingFactor = 2.0;
-  for (var i = 0; i < 2; i++) {
-    var output = tex.tex2svg(src, i == 0 ? false : true);
-    if (i == 0) print(output);
-    if (output.isNotEmpty) {
-      var outputBase64 = base64Encode(utf8.encode(output));
-      var img = document.createElement('img') as ImageElement;
-      img.src = "data:image/svg+xml;base64,$outputBase64";
-      document.getElementById('tex-term')?.innerHtml = tex.parsed;
-      if (i == 0) {
-        document.getElementById('tex-rendering')?.append(img);
-      } else {
-        document.getElementById('tex-rendering-with-boxes')?.append(img);
-      }
-    } else {
-      document.getElementById('tex-term')?.innerHtml = tex.error;
-    }
-  }
-}
-
-void setTextInput(String elementId, String value) {
-  (document.getElementById(elementId) as InputElement).value = value;
 }

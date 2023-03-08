@@ -60,6 +60,13 @@ TeXNode parseTexNode(Lex lex) {
     if (node.tk.startsWith("\\") == false && node.tk.length != 1) {
       throw Exception("unimplemented!");
     }
+    if (node.tk.startsWith("\\") && macros.containsKey(node.tk)) {
+      var command = node.tk;
+      lex.next();
+      var replacement = macros[command] as String;
+      lex.insert(replacement);
+      node = parseTexList(lex, false);
+    }
     lex.next();
     while (lex.token == '^' || lex.token == '_') {
       var del = lex.token;

@@ -74,6 +74,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 
 # ----- standard -----
 -; MJX-1-TEX-N-2212; 1200; 200
+.; MJX-1-TEX-N-2E; 250; 0
 ,; MJX-1-TEX-N-2C; 350; 0
 :; MJX-1-TEX-N-3A; 350; 0
 !; MJX-1-TEX-N-21; 350; 0
@@ -81,6 +82,8 @@ z; MJX-1-TEX-I-1D467; 500; 0
 ); MJX-1-TEX-N-29; 300; 0
 [; MJX-1-TEX-N-5B; 300; 0
 ]; MJX-1-TEX-N-5D; 300; 0
+\{; MJX-1-TEX-N-7B; 475; 0
+\}; MJX-1-TEX-N-7D; 475; 0
 *; MJX-1-TEX-N-2217; 700; 100
 \cdot; MJX-1-TEX-N-22C5; 500; 100
 /; MJX-1-TEX-N-2F; 700; 150
@@ -133,13 +136,13 @@ z; MJX-1-TEX-I-1D467; 500; 0
 
 # ----- Misc -----
 # TODO: separate arrows to own category
-\sqrt; MJX-1-TEX-N-221A; 860; 100
 \cap; MJX-1-TEX-N-2229; 950; 100
 \circ; MJX-1-TEX-N-2218; 600; 50
 \cup; MJX-1-TEX-N-222A; 950; 100
 \dots; MJX-1-TEX-N-2026; 1000; 0
 \downarrow; MJX-1-TEX-N-2193; 950; 200
 \Downarrow; MJX-1-TEX-N-21D3; 950; 200
+\emptyset; MJX-1-TEX-N-2205; 500; 0
 \exists; MJX-1-TEX-N-2203; 750; 50
 \forall; MJX-1-TEX-N-2200; 750; 50
 \geq; MJX-1-TEX-N-2265; 950; 100
@@ -165,6 +168,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 \rightharpoonup; MJX-1-TEX-N-21C0; 1400; 200
 \rightleftharpoons; MJX-1-TEX-V-21CC; 1400; 200
 \searrow; MJX-1-TEX-N-2198; 1400; 200
+\sqrt; MJX-1-TEX-N-221A; 860; 100
 \swarrow; MJX-1-TEX-N-2199; 1400; 200
 \times; MJX-1-TEX-N-D7; 950; 100
 \to; MJX-1-TEX-N-2192; 1200; 100
