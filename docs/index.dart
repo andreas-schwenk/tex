@@ -14,7 +14,10 @@ final examples = [
   '\\sin x',
   '\\sin(x)',
   "\\sqrt{x+1}",
-  "\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}"
+  "\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}",
+  "\\int_2^5 x \\, dx",
+  "\\sum_{i=1}^5 i^2",
+  "\\prod_{i=1}^5 i^2",
 ];
 
 final customMacros = ['\\CC', '\\NN', '\\QQ', '\\RR', '\\ZZ'];

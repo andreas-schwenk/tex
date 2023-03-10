@@ -1,3 +1,9 @@
+## 0.1.1
+
+- integrals via \int
+- (initial) support for sums and products via \sum and \prod
+- spacing via \, and ~
+
 ## 0.1.0
 
 - initial support for matrices

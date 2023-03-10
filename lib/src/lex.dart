@@ -40,8 +40,8 @@ class Lex {
     var n = src.length;
     for (var i = 0; i < n; i++) {
       var c = src[i];
-      if (c == '\\' && (i + 1) < n && src[i + 1] == '\\') {
-        tokens.add('\\\\');
+      if (c == '\\' && (i + 1) < n && '\\,'.contains(src[i + 1])) {
+        tokens.add('\\${src[i + 1]}');
         i++;
       } else if (c == '\\') {
         var tk = '\\';

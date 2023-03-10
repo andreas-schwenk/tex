@@ -10,6 +10,7 @@ import 'tab.dart';
 
 /// Typesets node [node].
 void typeset(TeXNode node) {
+  var skipSubAndSup = false;
   switch (node.type) {
     case TeXNodeType.list:
       {
@@ -27,21 +28,12 @@ void typeset(TeXNode node) {
     case TeXNodeType.unary:
       {
         var tk = node.tk;
-        if (table.containsKey(tk) && tk != '\\sqrt') {
-          // -------- glyphs from tabular --------
-          var entry = table[tk] as Map<Object, Object>;
-          var rtn = RenderedTeXNode();
-          rtn.tk = node.tk;
-          rtn.svgPathId = entry["code"] as String;
-          if (entry.containsKey("d")) {
-            rtn.x = (entry["d"] as int).toDouble(); // delta x
-          }
-          rtn.width = (entry["w"] as int).toDouble();
-          rtn.height = standardFontHeight;
-          node.renderedNodes.add(rtn);
-          node.calcGeometry();
+        if (tk == '\\,' || tk == '~') {
+          // ================ spacing ================
+          node.postfixSpacing = 300; // TODO: \, and ~ are not the same...
+          return;
         } else if (["\\sin", "\\cos", "\\exp", "\\tan"].contains(tk)) {
-          // -------- functions --------
+          // ================ functions ================
           // TODO: store list (sin, cos, ...) into config file under /meta/
           node.type = TeXNodeType.list;
           for (var i = 0; i < tk.length - 1; i++) {
@@ -51,15 +43,14 @@ void typeset(TeXNode node) {
           }
           typeset(node);
           node.calcGeometry();
-
-          // TODO
         } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
-          // -------- font --------
+          // ================ font ================
           setFont(node.args[0], tk);
           typeset(node.args[0]);
           node.renderedNodes.addAll(node.args[0].renderedNodes);
           node.calcGeometry();
         } else if (tk == "\\frac") {
+          // ================ fraction ================
           var numerator = node.args[0];
           var denominator = node.args[1];
           typeset(numerator);
@@ -83,6 +74,7 @@ void typeset(TeXNode node) {
           node.renderedNodes.add(rtn);
           node.postfixSpacing = 200; // TODO: add constant to config.dart
         } else if (tk == "\\sqrt") {
+          // ================ sqrt ================
           // root
           var root = RenderedTeXNode();
           var entry = table[tk] as Map<Object, Object>;
@@ -106,8 +98,86 @@ void typeset(TeXNode node) {
           root.yScaling =
               overline.y / 780.0; // TODO: add constant to config.dart
           node.calcGeometry();
+        } else if (tk == '\\int') {
+          // ================ integral ================
+          // int
+          var entry = table[tk] as Map<Object, Object>;
+          var intGlyph = RenderedTeXNode();
+          intGlyph.tk = node.tk;
+          intGlyph.svgPathId = entry["code"] as String;
+          intGlyph.width = (entry["w"] as int).toDouble();
+          intGlyph.height = standardFontHeight;
+          node.renderedNodes.add(intGlyph);
+          // TODO: set node.min + node.height; this is necesssary, when sub/sup are not given!
+          // sub
+          if (node.sub != null) {
+            var sub = node.sub as TeXNode;
+            typeset(sub);
+            sub.scale(0.7071, 0.7071);
+            sub.calcGeometry();
+            sub.translate(450, -1200);
+            node.renderedNodes.addAll(sub.renderedNodes);
+          }
+          // sup
+          if (node.sup != null) {
+            var sup = node.sup as TeXNode;
+            typeset(sup);
+            sup.scale(0.7071, 0.7071);
+            sup.calcGeometry();
+            sup.translate(1100, 1200);
+            node.renderedNodes.addAll(sup.renderedNodes);
+          }
+          node.calcGeometry();
+          skipSubAndSup = true;
+        } else if (tk == '\\sum' || tk == '\\prod') {
+          // ================ sum, product ================
+          // main
+          var entry = table[tk] as Map<Object, Object>;
+          var mainGlyph = RenderedTeXNode();
+          mainGlyph.tk = node.tk;
+          mainGlyph.svgPathId = entry["code"] as String;
+          mainGlyph.width = (entry["w"] as int).toDouble();
+          mainGlyph.height = standardFontHeight;
+          node.renderedNodes.add(mainGlyph);
+          // TODO: set node.min + node.height; this is necesssary, when sub/sup are not given!
+          // TODO: must move everthing to the right, in case that sub or sup is too wide
+          // sub
+          if (node.sub != null) {
+            var sub = node.sub as TeXNode;
+            typeset(sub);
+            sub.scale(0.7071, 0.7071);
+            sub.calcGeometry();
+            sub.translate((mainGlyph.width - sub.width) / 2.0,
+                -1150); // TODO: y must depends on sub dimensions
+            node.renderedNodes.addAll(sub.renderedNodes);
+          }
+          // sup
+          if (node.sup != null) {
+            var sup = node.sup as TeXNode;
+            typeset(sup);
+            sup.scale(0.7071, 0.7071);
+            sup.calcGeometry();
+            sup.translate((mainGlyph.width - sup.width) / 2.0,
+                1200); // TODO: y must depends on sup dimensions
+            node.renderedNodes.addAll(sup.renderedNodes);
+          }
+          node.calcGeometry();
+          skipSubAndSup = true;
+        } else if (table.containsKey(tk)) {
+          // ================ glyphs from tabular ================
+          var entry = table[tk] as Map<Object, Object>;
+          var rtn = RenderedTeXNode();
+          rtn.tk = node.tk;
+          rtn.svgPathId = entry["code"] as String;
+          if (entry.containsKey("d")) {
+            rtn.x = (entry["d"] as int).toDouble(); // delta x
+          }
+          rtn.width = (entry["w"] as int).toDouble();
+          rtn.height = standardFontHeight;
+          node.renderedNodes.add(rtn);
+          node.calcGeometry();
         } else {
-          // -------- error --------
+          // ================ error ================
           throw Exception("unknown token '$tk'");
         }
         break;
@@ -182,7 +252,6 @@ void typeset(TeXNode node) {
                 x = 0;
                 y += rowHeights[i] + verticalPadding; // TODO!!
               }
-
               // "("
               var leftParenthesis = RenderedTeXNode();
               var entry = table["("] as Map<Object, Object>;
@@ -214,7 +283,7 @@ void typeset(TeXNode node) {
         }
       }
   }
-  if (node.sup != null) {
+  if (!skipSubAndSup && node.sup != null) {
     var dy = 350.0; // TODO: move to config.dart
     var sup = node.sup as TeXNode;
     typeset(sup);
@@ -222,7 +291,7 @@ void typeset(TeXNode node) {
     sup.translate(node.width, dy);
     node.renderedNodes.addAll(sup.renderedNodes);
   }
-  if (node.sub != null) {
+  if (!skipSubAndSup && node.sub != null) {
     var dy = -150.0; // TODO: move to config.dart
     var sub = node.sub as TeXNode;
     typeset(sub);
