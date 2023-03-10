@@ -5,137 +5,122 @@
 import 'config.dart';
 import 'help.dart';
 import 'node.dart';
+import 'rendered_node.dart';
 import 'tab.dart';
 
-/// Typesets node [node], starting from base coordinates [baseX] and [baseY]
-/// with [scaling].
-void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
+/// Typesets node [node].
+void typeset(TeXNode node) {
   switch (node.type) {
     case TeXNodeType.list:
       {
-        node.x = baseX;
-        node.y = baseY;
-        node.scaling = scaling;
-        int x = 0;
-        int y = 0;
-        var lastWasSin = false;
+        double x = 0;
+        double y = 0;
         for (var i = 0; i < node.items.length; i++) {
           var item = node.items[i];
-          if (lastWasSin && ["\\{", "[", "("].contains(item.tk) == false) {
-            x += 300;
-          }
-          typeset(item, x, y, scaling);
-          x += item.width;
-          node.height = max(node.height, item.height);
-          lastWasSin = item.tk == '\\sin'; // TODO: cos, ...
+          typeset(item);
+          item.translate(x, y);
+          node.renderedNodes.addAll(item.renderedNodes);
+          x += item.width + item.postfixSpacing;
         }
-        node.width = x;
         break;
       }
     case TeXNodeType.unary:
       {
-        int x = node.x = baseX;
-        int y = node.y = baseY;
         var tk = node.tk;
         if (table.containsKey(tk) && tk != '\\sqrt') {
           // -------- glyphs from tabular --------
           var entry = table[tk] as Map<Object, Object>;
-          node.svgPathId = entry["code"] as String;
-          x += entry["w"] as int;
+          var rtn = RenderedTeXNode();
+          rtn.tk = node.tk;
+          rtn.svgPathId = entry["code"] as String;
           if (entry.containsKey("d")) {
-            node.dx = entry["d"] as int;
+            rtn.x = (entry["d"] as int).toDouble(); // delta x
           }
-          node.height = standardFontHeight;
-        } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
-          // -------- font --------
-          setFont(node.args[0], tk);
-          typeset(node.args[0], x - baseX, y, scaling);
-          x += node.args[0].width;
-          node.height = node.args[0].height;
+          rtn.width = (entry["w"] as int).toDouble();
+          rtn.height = standardFontHeight;
+          node.renderedNodes.add(rtn);
+          node.calcGeometry();
         } else if (["\\sin", "\\cos", "\\exp", "\\tan"].contains(tk)) {
           // -------- functions --------
           // TODO: store list (sin, cos, ...) into config file under /meta/
-          if (x > 0) x += 300;
           node.type = TeXNodeType.list;
           for (var i = 0; i < tk.length - 1; i++) {
             var n = TeXNode(TeXNodeType.unary, []);
             n.tk = '\\text{${tk[i + 1]}}';
             node.items.add(n);
           }
-          typeset(node, x, y, scaling);
-          x += node.width;
-        } else if (tk == '\\sqrt') {
-          // -------- sqrt --------
-          var entry = table[tk] as Map<Object, Object>;
-          node.svgPathId = entry["code"] as String;
-          x += entry["w"] as int;
-          var arg = node.args[0];
-          if (arg.type == TeXNodeType.unary) {
-            node.args[0] = arg = TeXNode(TeXNodeType.list, [arg]);
-          }
-          typeset(arg, x - baseX, y, scaling);
-          arg.isSqrt = true;
-          x += node.width + arg.width;
-          node.height = max(arg.height + 50, 850);
-        } else if (tk == '\\frac') {
-          // -------- fractions --------
-          node.isFraction = true;
+          typeset(node);
+          node.calcGeometry();
+
+          // TODO
+        } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
+          // -------- font --------
+          setFont(node.args[0], tk);
+          typeset(node.args[0]);
+          node.renderedNodes.addAll(node.args[0].renderedNodes);
+          node.calcGeometry();
+        } else if (tk == "\\frac") {
           var numerator = node.args[0];
           var denominator = node.args[1];
-          if (numerator.type == TeXNodeType.unary) {
-            node.args[0] = numerator = TeXNode(TeXNodeType.list, [numerator]);
-          }
-          if (denominator.type == TeXNodeType.unary) {
-            node.args[1] =
-                denominator = TeXNode(TeXNodeType.list, [denominator]);
-          }
-          typeset(numerator, 0, 0, 0.7071);
-          typeset(denominator, 0, 0, 0.7071);
-          var wn = numerator.width; // width numerator
-          var wd = denominator.width; // width denominator
-          node.width = max(wn, wd);
-          numerator.x = ((node.width - numerator.width) * 0.7071 / 2.0).round();
-          denominator.x =
-              ((node.width - denominator.width) * 0.7071 / 2.0).round();
-          x += (node.width * 0.7071).round();
-          numerator.y += 400;
-          denominator.y -= 400; // TODO: must depend on args[1].height
-          node.height =
-              ((numerator.y + numerator.height - denominator.y) * 0.7071)
-                  .round();
+          typeset(numerator);
+          typeset(denominator);
+          numerator.scale(0.7071, 0.7071);
+          numerator.translate(
+              0, 600 - numerator.minY); // TODO: add constant to config.dart
+          denominator.scale(0.7071, 0.7071);
+          denominator.translate(
+              0, 150 - denominator.height); // TODO: add constant to config.dart
+          node.renderedNodes.addAll(numerator.renderedNodes);
+          node.renderedNodes.addAll(denominator.renderedNodes);
+          node.calcGeometry();
+          numerator.translate((node.width - numerator.width) / 2.0, 0);
+          denominator.translate((node.width - denominator.width) / 2.0, 0);
+          node.calcGeometry();
+          var rtn = RenderedTeXNode();
+          rtn.svgPathId = '!fraction';
+          rtn.width = node.width;
+          rtn.y = 240; // TODO: add constant to config.dart
+          node.renderedNodes.add(rtn);
+          node.postfixSpacing = 200; // TODO: add constant to config.dart
+        } else if (tk == "\\sqrt") {
+          // root
+          var root = RenderedTeXNode();
+          var entry = table[tk] as Map<Object, Object>;
+          root.svgPathId = entry["code"] as String;
+          root.width = (entry["w"] as int).toDouble();
+          node.renderedNodes.add(root);
+          // arg
+          var arg = node.args[0];
+          typeset(arg);
+          arg.translate(root.width, 0);
+          node.renderedNodes.addAll(arg.renderedNodes);
+          // overline
+          var overline = RenderedTeXNode();
+          overline.svgPathId = '!sqrt';
+          overline.width = arg.width;
+          overline.x = root.width;
+          overline.y =
+              arg.minY + arg.height + 200; // TODO: add constant to config.dart
+          node.renderedNodes.add(overline);
+          // scale root
+          root.yScaling =
+              overline.y / 780.0; // TODO: add constant to config.dart
+          node.calcGeometry();
         } else {
           // -------- error --------
-          throw Exception("unimplemented token '$tk'");
+          throw Exception("unknown token '$tk'");
         }
-        if (node.sub != null) {
-          // -------- subscript --------
-          var dy = -150;
-          var sub = node.sub as TeXNode;
-          typeset(sub, x - baseX, dy, 0.7071);
-          x += (sub.width * 0.7071).round();
-          //var height =  ;//(-dy + sub.height * 0.7071).round();
-          node.height -= dy; //max(node.height, height);
-        }
-        if (node.sup != null) {
-          // -------- superscript --------
-          var dy = 350;
-          var sup = node.sup as TeXNode;
-          typeset(sup, x - baseX, dy, 0.7071);
-          x += (sup.width * 0.7071).round();
-          var height = (dy + sup.height * 0.7071).round();
-          node.height = max(node.height, height);
-        }
-        node.width = x - baseX;
         break;
       }
-    case TeXNodeType.env:
+    case TeXNodeType.environment:
       {
         switch (node.tk) {
           case "pmatrix":
             {
-              var horizontalPadding =
-                  500; // TODO: depends on concrete matrix???
-              var verticalPadding = 200;
+              // matrix
+              double horizontalPadding =
+                  500.0; // TODO: depends on concrete matrix???
+              double verticalPadding = 200.0;
               List<TeXNode> elements = [];
               int rows = -1;
               int cols = -1;
@@ -165,10 +150,11 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
               elements.add(element);
               rows = i + 1;
               for (var element in elements) {
-                typeset(element, 0, 0);
+                typeset(element);
+                node.renderedNodes.addAll(element.renderedNodes);
               }
-              List<int> colWidths = List.generate(cols, (index) => 0);
-              List<int> rowHeights = List.generate(rows, (index) => 0);
+              List<double> colWidths = List.generate(cols, (index) => 0.0);
+              List<double> rowHeights = List.generate(rows, (index) => 0.0);
               for (var i = 0; i < rows; i++) {
                 for (var j = 0; j < cols; j++) {
                   var e = elements[i * cols + j];
@@ -176,39 +162,75 @@ void typeset(TeXNode node, int baseX, int baseY, [scaling = 1.0]) {
                     colWidths[j] = e.width;
                   }
                   if (e.height > rowHeights[i]) {
+                    // TODO: not calculated correctly!!
                     rowHeights[i] = e.height;
                   }
                 }
               }
-              int totalWidth = sum(colWidths) + (cols - 1) * horizontalPadding;
-              int totalHeight = sum(rowHeights) + (rows - 1) * verticalPadding;
-              var x = 0;
-              var y = 0;
+              double totalWidth =
+                  sum(colWidths) + (cols - 1).toDouble() * horizontalPadding;
+              double totalHeight =
+                  sum(rowHeights) + (rows - 1) * verticalPadding;
+              var x = 0.0;
+              var y = 0.0;
               for (var i = rows - 1; i >= 0; i--) {
                 for (var j = 0; j < cols; j++) {
                   var e = elements[i * cols + j];
-                  e.x = x + ((colWidths[j] - e.width) / 2.0).round();
-                  e.y = y;
+                  e.translate(x + ((colWidths[j] - e.width) / 2.0).round(), y);
                   x += colWidths[j] + horizontalPadding;
                 }
                 x = 0;
                 y += rowHeights[i] + verticalPadding; // TODO!!
               }
-              node.type = TeXNodeType.list;
-              node.items = elements;
-              node.width = totalWidth;
-              node.height = totalHeight;
-              node.x = baseX;
-              node.y =
-                  baseY - ((totalHeight - standardFontHeight) / 2.0).round();
+
+              // "("
+              var leftParenthesis = RenderedTeXNode();
+              var entry = table["("] as Map<Object, Object>;
+              leftParenthesis.svgPathId = entry["code"] as String;
+              leftParenthesis.width = (entry["w"] as int).toDouble();
+              leftParenthesis.yScaling = totalHeight / 900;
+              leftParenthesis.y -= 120 * leftParenthesis.yScaling;
+              // ")""
+              var rightParenthesis = RenderedTeXNode();
+              entry = table[")"] as Map<Object, Object>;
+              rightParenthesis.svgPathId = entry["code"] as String;
+              rightParenthesis.width = (entry["w"] as int).toDouble();
+              rightParenthesis.yScaling = totalHeight / 900; // TODO
+              rightParenthesis.x = leftParenthesis.width + totalWidth;
+              rightParenthesis.y -= 120 * rightParenthesis.yScaling; // TODO
+              // translate matrix
+              node.translate(leftParenthesis.width,
+                  (standardFontHeight - totalHeight) / 2.0);
+              // add parentheses at the end to prevent simultaneous
+              // transformation with matrix.
+              node.renderedNodes.add(leftParenthesis);
+              node.renderedNodes.add(rightParenthesis);
+              node.calcGeometry();
+              node.postfixSpacing = 150; // TODO
               break;
             }
           default:
-            throw Exception("unknown env $node.tk");
+            throw Exception("unknown environment $node.tk");
         }
-        break;
       }
   }
+  if (node.sup != null) {
+    var dy = 350.0; // TODO: move to config.dart
+    var sup = node.sup as TeXNode;
+    typeset(sup);
+    sup.scale(0.7071, 0.7071);
+    sup.translate(node.width, dy);
+    node.renderedNodes.addAll(sup.renderedNodes);
+  }
+  if (node.sub != null) {
+    var dy = -150.0; // TODO: move to config.dart
+    var sub = node.sub as TeXNode;
+    typeset(sub);
+    sub.scale(0.7071, 0.7071);
+    sub.translate(node.width, dy);
+    node.renderedNodes.addAll(sub.renderedNodes);
+  }
+  node.calcGeometry();
 }
 
 /// Replaces all TeX nodes tokens starting from node [node] recursively by font

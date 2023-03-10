@@ -9,14 +9,14 @@ import 'tab.dart';
 /// Parses a TeX list. Braces "{", "}" are consumed, if [parseBraces] is true.
 ///
 /// Formal grammar: texList = "{" { texNode } "}";
-TeXNode parseTexList(Lex lex, bool parseBraces) {
+TeXNode parseTexList(Lex lex, bool parseBraces, bool forbidParsingSubSup) {
   if (parseBraces) lex.terminal('{');
   var list = TeXNode(TeXNodeType.list, []);
   while (lex.token != Lex.lexEnd && lex.token != '}') {
-    list.items.add(parseTexNode(lex));
+    list.items.add(parseTexNode(lex, false));
   }
   if (parseBraces) lex.terminal('}');
-  // post-process: populate node.args
+  // post-process: populate node.args (as lists)
   for (var i = 0; i < list.items.length; i++) {
     if (list.items[i].type == TeXNodeType.unary &&
         numArgs.containsKey(list.items[i].tk)) {
@@ -28,10 +28,17 @@ TeXNode parseTexList(Lex lex, bool parseBraces) {
               'ERROR: ${item.tk} excepts ${n.toString()} arguments!');
         }
         var item2 = list.items.removeAt(i + 1);
+
+        if (item2.type == TeXNodeType.unary) {
+          item2 = TeXNode(TeXNodeType.list, [item2]);
+        }
+
         item.args.add(item2);
       }
-      i += n - 1;
     }
+  }
+  if (forbidParsingSubSup == false) {
+    parseSubSup(lex, list);
   }
   return list;
 }
@@ -39,9 +46,9 @@ TeXNode parseTexList(Lex lex, bool parseBraces) {
 /// Parses a TeX node.
 ///
 /// Formal grammar: texNode = "\" ID { "{" texList "}" } | ID | INT | ...;
-TeXNode parseTexNode(Lex lex) {
+TeXNode parseTexNode(Lex lex, bool forbidParsingSubSup) {
   if (lex.token == '{') {
-    return parseTexList(lex, true);
+    return parseTexList(lex, true, false);
   } else {
     var node = TeXNode(TeXNodeType.unary, []);
     node.tk += lex.token;
@@ -55,29 +62,36 @@ TeXNode parseTexNode(Lex lex) {
       lex.next();
       var replacement = macros[command] as String;
       lex.insert(replacement);
-      node = parseTexList(lex, false);
+      node = parseTexList(lex, false, false);
     }
     lex.next();
-    while (lex.token == '^' || lex.token == '_') {
-      var del = lex.token;
-      lex.next();
-      if (del == '^' && node.sup != null) {
-        throw Exception('ERROR: use { } when chaining ^');
-      } else if (del == '_' && node.sub != null) {
-        throw Exception('ERROR: use { } when chaining _');
-      }
-      if (del == '_') {
-        node.sub = lex.token == '{'
-            ? parseTexList(lex, true)
-            : TeXNode(TeXNodeType.list, [parseTexNode(lex)]);
-      }
-      if (del == '^') {
-        node.sup = lex.token == '{'
-            ? parseTexList(lex, true)
-            : TeXNode(TeXNodeType.list, [parseTexNode(lex)]);
-      }
+    if (forbidParsingSubSup == false) {
+      parseSubSup(lex, node);
     }
     return node;
+  }
+}
+
+// TODO: docs + grammar + grammer where called
+void parseSubSup(Lex lex, TeXNode node) {
+  while (lex.token == '^' || lex.token == '_') {
+    var del = lex.token;
+    lex.next();
+    if (del == '^' && node.sup != null) {
+      throw Exception('ERROR: use { } when chaining ^');
+    } else if (del == '_' && node.sub != null) {
+      throw Exception('ERROR: use { } when chaining _');
+    }
+    if (del == '_') {
+      node.sub = lex.token == '{'
+          ? parseTexList(lex, true, true)
+          : TeXNode(TeXNodeType.list, [parseTexNode(lex, true)]);
+    }
+    if (del == '^') {
+      node.sup = lex.token == '{'
+          ? parseTexList(lex, true, true)
+          : TeXNode(TeXNodeType.list, [parseTexNode(lex, true)]);
+    }
   }
 }
 
@@ -95,7 +109,7 @@ TeXNode parseTexEnv(Lex lex) {
   lex.terminal('}');
   List<TeXNode> nodes = [];
   while (lex.token != Lex.lexEnd && lex.token != '\\end') {
-    nodes.add(parseTexNode(lex));
+    nodes.add(parseTexNode(lex, false));
   }
   lex.terminal('\\end');
   lex.terminal('{');
@@ -108,6 +122,5 @@ TeXNode parseTexEnv(Lex lex) {
   if (envID != envID2) {
     throw Exception('unexpected \\end{$envID2}');
   }
-  // TODO: set env name!
-  return TeXNode(TeXNodeType.env, nodes, envID);
+  return TeXNode(TeXNodeType.environment, nodes, envID);
 }

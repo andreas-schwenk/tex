@@ -90,6 +90,7 @@ class Lex {
     return _pos >= _len ? lexEnd : _tokens[_pos];
   }
 }
+
 /* 
 void main() {
   var lex = Lex();

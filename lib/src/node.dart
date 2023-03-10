@@ -2,19 +2,24 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
-/// TODO: doc
-enum TeXNodeType { unary, list, env }
+import 'rendered_node.dart';
+
+/// The type of the node
+enum TeXNodeType {
+  /// A single token.
+  unary,
+
+  /// A list of tokens.
+  list,
+
+  /// An environment, described by \begin{..} ... \end{..} in (La)TeX.
+  environment
+}
 
 /// Logical parts of a TeX string.
 class TeXNode {
   /// The node type;
   TeXNodeType type;
-
-  /// Whether the node is a fractions (e.g. "\\frac{x}{y}").
-  bool isFraction = false;
-
-  /// Whether the node is a root.
-  bool isSqrt = false;
 
   /// The children.
   List<TeXNode> items = [];
@@ -31,215 +36,115 @@ class TeXNode {
   /// The optional superscript node.
   TeXNode? sup;
 
-  /// The relative scaling.
-  double scaling = 1.0;
+  /// The list rendered glyphs.
+  List<RenderedTeXNode> renderedNodes = [];
 
-  /// The relative x coordinate.
-  int x = 0;
+  /// The x minimum positions of all rendered glyphs.
+  double minX = 0.0;
 
-  /// The relative left padding.
-  int dx = 0;
+  /// The y minimum positions of all rendered glyphs.
+  double minY = 0.0;
 
-  /// The relative y coordinate.
-  int y = 0;
+  /// The total width of all rendered glyphs.
+  double width = 0.0;
 
-  /// The relative width.
-  int width = 0;
+  /// The spacing after the node.
+  double postfixSpacing = 0.0;
 
-  /// The relative height.
-  int height = 0;
-
-  /// The global x coordinate
-  double globalX = 0;
-
-  /// The global left padding. Only valid for type unary.
-  double globalDx = 0;
-
-  /// The global y coordinate
-  double globalY = 0;
-
-  /// The global scaling.
-  double globalScaling = 1.0;
-
-  /// The global width.
-  double globalWidth = 0;
-
-  /// The global height.
-  double globalHeight = 0;
-
-  /// The ID of map "svgData" in file svg.dart.
-  String svgPathId = '';
+  /// The total height of all rendered glyphs.
+  double height = 0.0;
 
   /// Constructor.
   TeXNode(this.type, this.items, [this.tk = '']);
 
+  // TODO: doc
+  void calcGeometry() {
+    minX = double.infinity;
+    minY = double.infinity;
+    var maxX = -double.infinity;
+    var maxY = -double.infinity;
+    width = 0.0;
+    height = 0.0;
+    for (var n in renderedNodes) {
+      if (n.x < minX) minX = n.x;
+      if (n.y < minY) minY = n.y;
+      if (n.x + n.width > maxX) maxX = n.x + n.width;
+      if (n.y + n.height > maxY) maxY = n.y + n.height;
+    }
+    width = maxX - minX;
+    height = maxY - minY;
+  }
+
+  // Translates all rendered nodes.
+  void translate(double x, double y) {
+    minX += x;
+    minY += y;
+    for (var n in renderedNodes) {
+      n.x += x;
+      n.y += y;
+    }
+  }
+
+  // Scales all rendered nodes.
+  void scale(double xFactor, double yFactor) {
+    minX *= xFactor;
+    minY *= yFactor;
+    width *= xFactor;
+    height *= yFactor;
+    postfixSpacing *= xFactor;
+    for (var n in renderedNodes) {
+      n.xScaling *= xFactor;
+      n.yScaling *= yFactor;
+      n.x *= xFactor;
+      n.y *= yFactor;
+      n.width *= xFactor;
+      n.height *= yFactor;
+    }
+  }
+
   /// Gets a set of all actually used glyphs for a [node].
   void getActuallyUsedGlyphs(Set<String> usedLetters) {
-    if (svgPathId.isNotEmpty) {
-      usedLetters.add(svgPathId);
-    }
-    for (var item in items) {
-      item.getActuallyUsedGlyphs(usedLetters);
-    }
-    for (var arg in args) {
-      arg.getActuallyUsedGlyphs(usedLetters);
-    }
-    if (sub != null) {
-      sub?.getActuallyUsedGlyphs(usedLetters);
-    }
-    if (sup != null) {
-      sup?.getActuallyUsedGlyphs(usedLetters);
-    }
-  }
-
-  /*void addToXRecursively(int value) {
-    //x += value;
-    for (var item in items) {
-      item.addToXRecursively(value);
-    }
-    for (var arg in args) {
-      arg.addToXRecursively(value);
-    }
-    if (sub != null) {
-      sub?.addToXRecursively(value);
-    }
-    if (sup != null) {
-      sup?.addToXRecursively(value);
-    }
-  }*/
-
-  /// Calculates global coordinate values
-  void calculateGlobalCoordinates() {
-    globalX = 0;
-    globalY = 0;
-    globalWidth = width.toDouble();
-    globalHeight = height.toDouble();
-    globalDx = dx.toDouble();
-    for (var item in items) {
-      item.calculateGlobalCoordinates();
-    }
-    if (sub != null) sub?.calculateGlobalCoordinates();
-    if (sup != null) sup?.calculateGlobalCoordinates();
-    for (var arg in args) {
-      arg.calculateGlobalCoordinates();
-    }
-    scaleGlobalCoordinates(scaling);
-    translateGlobalCoordinates(x.toDouble(), y.toDouble());
-  }
-
-  /// Calculates the global minimum y coordinate value.
-  double getGlobalMinY() {
-    double min = globalY;
-    for (var item in items) {
-      double m = item.getGlobalMinY();
-      if (m < min) min = m;
-    }
-    if (sub != null) {
-      var s = sub as TeXNode;
-      double m = s.getGlobalMinY();
-      if (m < min) min = m;
-    }
-    if (sup != null) {
-      var s = sup as TeXNode;
-      double m = s.getGlobalMinY();
-      if (m < min) min = m;
-    }
-    for (var arg in args) {
-      double m = arg.getGlobalMinY();
-      if (m < min) min = m;
-    }
-    return min;
-  }
-
-  /// Calculates the global maximum y coordinate value.
-  double getGlobalMaxY() {
-    //double max = globalY + globalHeight;
-    double max = getGlobalMinY() + globalHeight;
-    for (var item in items) {
-      double m = item.getGlobalMaxY();
-      if (m > max) max = m;
-    }
-    if (sub != null) {
-      var s = sub as TeXNode;
-      double m = s.getGlobalMaxY();
-      if (m > max) max = m;
-    }
-    if (sup != null) {
-      var s = sup as TeXNode;
-      double m = s.getGlobalMaxY();
-      if (m > max) max = m;
-    }
-    for (var arg in args) {
-      double m = arg.getGlobalMaxY();
-      if (m > max) max = m;
-    }
-    return max;
-  }
-
-  /// Recursively scales a node by a [factor].
-  void scaleGlobalCoordinates(double factor) {
-    globalX *= factor;
-    globalY *= factor;
-    globalScaling *= factor;
-    globalWidth *= factor;
-    globalHeight *= factor;
-    globalDx *= factor;
-    for (var item in items) {
-      item.scaleGlobalCoordinates(factor);
-    }
-    if (sub != null) sub?.scaleGlobalCoordinates(factor);
-    if (sup != null) sup?.scaleGlobalCoordinates(factor);
-    for (var arg in args) {
-      arg.scaleGlobalCoordinates(factor);
-    }
-  }
-
-  /// Recursively translates a node by [x] and [y].
-  void translateGlobalCoordinates(double x, double y) {
-    globalX += x;
-    globalY += y;
-    for (var item in items) {
-      item.translateGlobalCoordinates(x, y);
-    }
-    if (sub != null) sub?.translateGlobalCoordinates(x, y);
-    if (sup != null) sup?.translateGlobalCoordinates(x, y);
-    for (var arg in args) {
-      arg.translateGlobalCoordinates(x, y);
+    for (var n in renderedNodes) {
+      if (n.svgPathId.isNotEmpty) {
+        usedLetters.add(n.svgPathId);
+      }
     }
   }
 
   /// Stringifies TeX node.
   @override
   String toString() {
+    var s = '';
     switch (type) {
       case TeXNodeType.unary:
         {
-          var s = tk;
-          if (sub != null) {
-            s += '_${sub.toString()}';
-          }
-          if (sup != null) {
-            s += '^${sup.toString()}';
-          }
+          s = tk;
           if (args.isNotEmpty) {
             for (var arg in args) {
               s += ' %arg ${arg.toString()}';
             }
           }
-          return s;
+          break;
         }
       case TeXNodeType.list:
-      case TeXNodeType.env:
+      case TeXNodeType.environment:
         {
-          var s = type == TeXNodeType.env ? '\\begin{$tk}' : '{';
+          s = type == TeXNodeType.environment ? '\\begin{$tk}' : '{';
           for (var i = 0; i < items.length; i++) {
             if (i > 0) s += ' ';
             var item = items[i];
             s += item.toString();
           }
-          s += type == TeXNodeType.env ? '\\end{$tk}' : '}';
-          return s;
+          s += type == TeXNodeType.environment ? '\\end{$tk}' : '}';
+          break;
         }
     }
+    if (sub != null) {
+      s += '_${sub.toString()}';
+    }
+    if (sup != null) {
+      s += '^${sup.toString()}';
+    }
+    return s;
   }
 }

@@ -1,3 +1,9 @@
+## 0.1.0
+
+- initial support for matrices
+- restructured and simplified code
+- bug fixes
+
 ## 0.0.7
 
 - support for macros (yet w/o parameters)

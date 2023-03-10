@@ -2,19 +2,19 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
-/// Returns the minimum of two values integral [x] and [y].
-int min(int x, int y) {
+/// Returns the minimum of two values [x] and [y].
+double min(double x, double y) {
   return x < y ? x : y;
 }
 
-/// Returns the maximum of two values integral [x] and [y].
-int max(int x, int y) {
+/// Returns the maximum of two values [x] and [y].
+double max(double x, double y) {
   return x > y ? x : y;
 }
 
-/// Returns the sum of a list of integer values.
-int sum(List<int> l) {
-  var s = 0;
+/// Returns the sum of a list of values.
+double sum(List<double> l) {
+  var s = 0.0;
   for (var li in l) {
     s += li;
   }

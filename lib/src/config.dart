@@ -4,5 +4,5 @@
 
 // TODO: move ALL constants to here
 
-const int standardFontHeight = 750;
-const int globalTranslateY = -210;
+const double standardFontHeight = 750.0;
+const double globalTranslateY = -210.0;

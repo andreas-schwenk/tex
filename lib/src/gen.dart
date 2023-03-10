@@ -7,82 +7,36 @@ import 'node.dart';
 
 /// Generates SVG code for [node] with indentation [indent].
 String gen(bool paintBox, TeXNode node, int indent) {
-  switch (node.type) {
-    case TeXNodeType.list:
-      {
-        var svg = '';
-        for (var i = 0; i < node.items.length; i++) {
-          var item = node.items[i];
-          svg += gen(paintBox, item, indent + 2);
-        }
-        if (node.isSqrt) {
-          svg += indentString(
-              '<rect x="${node.globalX + node.globalDx}" y="${node.globalY + node.globalHeight}"'
-              ' width="${node.width}" height="20" fill="none"'
-              ' stroke="rgb(0,0,0)" stroke-width="20" data-token="\\sqrt">'
-              '</rect>',
-              indent + 2);
-        }
-        return svg;
-      }
-    case TeXNodeType.unary:
-      {
-        var svg = indentString(
-            '<g transform="translate('
-            '${(node.globalX + node.globalDx).round()},${node.globalY.round()}'
-            ') scale(${node.globalScaling.toStringAsFixed(4)})"'
-            ' data-token="${xmlStringEncode(node.tk)}">',
-            indent);
-        svg += indentString(
-            '<use xlink:href="#${node.svgPathId}"></use>', indent + 2);
-        svg += indentString('</g>', indent);
-
-        if (node.isFraction) {
-          svg += indentString(
-              '<rect x="${node.globalX}" y="${node.globalY + 250}"'
-              ' width="${node.width}" height="20" fill="none"'
-              ' stroke="rgb(0,0,0)" stroke-width="20" data-token="\\frac">'
-              '</rect>',
-              indent + 2);
-        }
-        if (node.sub != null) {
-          svg += gen(paintBox, node.sub as TeXNode, indent + 2);
-        }
-        if (node.sup != null) {
-          svg += gen(paintBox, node.sup as TeXNode, indent + 2);
-        }
-        for (var i = 0; i < node.args.length; i++) {
-          svg += gen(paintBox, node.args[i], indent + 2);
-        }
-        return svg;
-      }
-    case TeXNodeType.env:
-      {
-        print("generation of TeXNodeType.env is not yet implemented");
-        return '';
-      }
-    //throw Exception("this should never happen...");
+  String svg = '';
+  for (var n in node.renderedNodes) {
+    if (n.svgPathId == '!fraction' || n.svgPathId == '!sqrt') {
+      // TODO: put height into constants.dart
+      svg += indentString(
+          '<rect x="${n.x}" y="${n.y}"'
+          ' width="${n.width}" height="20" fill="none"'
+          ' stroke="rgb(0,0,0)" stroke-width="20" data-token="\\frac">'
+          '</rect>',
+          indent + 2);
+    } else if (n.svgPathId.isNotEmpty) {
+      svg += indentString(
+          '<g transform="translate('
+          '${n.x},${n.y}'
+          ') scale(${n.xScaling.toStringAsFixed(4)}'
+          ',${n.yScaling.toStringAsFixed(4)})"'
+          ' data-token="${xmlStringEncode(n.tk)}">',
+          indent);
+      svg +=
+          indentString('<use xlink:href="#${n.svgPathId}"></use>', indent + 2);
+      svg += indentString('</g>', indent);
+    }
+    if (paintBox) {
+      svg += indentString(
+          '<rect x="${n.x}" y="${n.y}"'
+          ' width="${n.width}" height="${n.height}" fill="none"'
+          ' stroke="rgb(200,200,200)" stroke-width="20" data-token="\\frac">'
+          '</rect>',
+          indent + 2);
+    }
   }
-}
-
-String genBoundingBoxes(TeXNode node) {
-  var minY = node.getGlobalMinY();
-  String res =
-      '<rect x="${node.globalX}" y="${-(/*node.globalY*/ minY + node.globalHeight)}"'
-      ' width="${node.globalWidth}" height="${node.globalHeight}"'
-      ' fill="none" stroke="rgb(200,200,200)" stroke-width="20">'
-      '</rect>\n';
-  for (var item in node.items) {
-    res += genBoundingBoxes(item);
-  }
-  if (node.sub != null) {
-    res += genBoundingBoxes(node.sub as TeXNode);
-  }
-  if (node.sup != null) {
-    res += genBoundingBoxes(node.sup as TeXNode);
-  }
-  for (var arg in node.args) {
-    res += genBoundingBoxes(arg);
-  }
-  return res;
+  return svg;
 }

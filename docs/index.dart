@@ -13,7 +13,8 @@ final examples = [
   '\\frac 1 {x+1}',
   '\\sin x',
   '\\sin(x)',
-  "\\sqrt{x+1}"
+  "\\sqrt{x+1}",
+  "\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}"
 ];
 
 final customMacros = ['\\CC', '\\NN', '\\QQ', '\\RR', '\\ZZ'];
@@ -75,7 +76,9 @@ void typeset() {
   tex.scalingFactor = 2.0;
   for (var i = 0; i < 2; i++) {
     var output = tex.tex2svg(src, i == 0 ? false : true);
-    if (i == 0) print(output);
+    if (i == 0) {
+      print(output);
+    }
     if (output.isNotEmpty) {
       var outputBase64 = base64Encode(utf8.encode(output));
       var img = document.createElement('img') as ImageElement;

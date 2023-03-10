@@ -54,25 +54,29 @@ class TeX {
     _lex.set(src);
     try {
       // recursively parse input into TexNodes
-      var root = parseTexList(_lex, false);
+      var root = parseTexList(_lex, false, false);
       // stringify TexNodes for debug purposes
       _parsed = root.toString();
       // typeset, i.e. calculate relative positions and scaling
-      typeset(root, 0, 0);
-      // transform local coordinates into global coordinates
-      root.calculateGlobalCoordinates();
+      typeset(root);
       // vertically move all glyphs, s.t. y=0 is exactly where the two lines of
       // glyph "x" intersect.
-      root.translateGlobalCoordinates(0, globalTranslateY.toDouble());
+      root.translate(0, globalTranslateY);
       // generate SVG data
       var svgDATA = gen(paintBox, root, 4);
+      if (svgDATA.isEmpty) {
+        // TODO: do NOT handle as error!
+        _error += "nothing to render";
+        return "";
+      }
       // calculate the view box of the SVG image; note that the y-axis is
       // mirrored, since glyphs data in "svg.dart" are mirrored.
-      var globalMin = root.getGlobalMinY();
-      var globalMax = root.getGlobalMaxY();
-      var deltaY = -globalMin > globalMax ? -globalMin : globalMax;
+      var rootMinY = root.minY;
+      var rootMaxY = root.minY + root.height;
+      var deltaY = -rootMinY > rootMaxY ? -rootMinY : rootMaxY;
+      deltaY += 100; // TODO: add const to config.dart
       int viewBoxX = 0;
-      int viewBoxWidth = root.width;
+      int viewBoxWidth = root.width.round();
       int viewBoxY = -deltaY.round();
       int viewBoxHeight = (deltaY * 2.0).ceil();
       // make sure, that the view box width is always positive;
@@ -96,7 +100,16 @@ class TeX {
             ' width="100" height="100"'
             ' fill="red">'
             '</rect>\n';
-        boundingBoxes += genBoundingBoxes(root);
+        boundingBoxes += '<rect x="${viewBoxWidth - 50}" y="-50"'
+            ' width="100" height="100"'
+            ' fill="red">'
+            '</rect>\n';
+        /*boundingBoxes +=
+            '<rect x="${root.minX}" y="${root.minY /* - root.height - globalTranslateY*/}"'
+            ' width="${root.width}" height="${root.height}"'
+            ' fill="none" stroke="rgb(200,200,200)" stroke-width="20">'
+            '</rect>\n';*/
+        //boundingBoxes += genBoundingBoxes(root);
       }
       // create final output
       var output =
@@ -110,7 +123,9 @@ class TeX {
           '  </g>'
           '</svg>\n';
       return output;
-    } catch (e) {
+    } catch (e, stacktrace) {
+      var s = stacktrace.toString();
+      print(s);
       _error = e.toString();
       return "";
     }
