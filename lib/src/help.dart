@@ -12,6 +12,15 @@ int max(int x, int y) {
   return x > y ? x : y;
 }
 
+/// Returns the sum of a list of integer values.
+int sum(List<int> l) {
+  var s = 0;
+  for (var li in l) {
+    s += li;
+  }
+  return s;
+}
+
 /// Indents a single or multiline string [text] by [numSpaces] spaces.
 String indentString(String text, int numSpaces) {
   var lines = text.split("\n");

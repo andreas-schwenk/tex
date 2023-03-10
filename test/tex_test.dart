@@ -8,7 +8,11 @@ import 'package:tex/tex.dart';
 
 void main() {
   var tex = TeX();
-  var src = "abc\\NN def";
+  var src =
+      //"xx\\begin{pmatrix} a xxxxxx & \\alpha \\\\ c+1 & d^2 \\end{pmatrix}yy";
+      "sssss\\begin{pmatrix}aaa&b^{3^{3^{44}}}\\\\c&d_3\\\\1&2\\end{pmatrix}xx^33";
+
+  //var src = "abc\\NN def";
   //"\\sqrt 3"; //"\\frac x {y+1}"; //"\\frac x{ \\sum_1^{{6}} w } \\cdot 5";
   //"x^2  + {4*5}";
   var output = '';

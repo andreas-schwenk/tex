@@ -10,27 +10,15 @@ import 'tab.dart';
 ///
 /// Formal grammar: texList = "{" { texNode } "}";
 TeXNode parseTexList(Lex lex, bool parseBraces) {
-  if (parseBraces) {
-    if (lex.token == '{') {
-      lex.next();
-    } else {
-      throw Exception('ERROR: expected {');
-    }
-  }
-  var list = TeXNode(true, []);
+  if (parseBraces) lex.terminal('{');
+  var list = TeXNode(TeXNodeType.list, []);
   while (lex.token != Lex.lexEnd && lex.token != '}') {
     list.items.add(parseTexNode(lex));
   }
-  if (parseBraces) {
-    if (lex.token == '}') {
-      lex.next();
-    } else {
-      throw Exception('ERROR: expected }');
-    }
-  }
+  if (parseBraces) lex.terminal('}');
   // post-process: populate node.args
   for (var i = 0; i < list.items.length; i++) {
-    if (list.items[i].isList == false &&
+    if (list.items[i].type == TeXNodeType.unary &&
         numArgs.containsKey(list.items[i].tk)) {
       var item = list.items[i];
       var n = numArgs[item.tk] as int;
@@ -55,12 +43,14 @@ TeXNode parseTexNode(Lex lex) {
   if (lex.token == '{') {
     return parseTexList(lex, true);
   } else {
-    var node = TeXNode(false, []);
+    var node = TeXNode(TeXNodeType.unary, []);
     node.tk += lex.token;
     if (node.tk.startsWith("\\") == false && node.tk.length != 1) {
       throw Exception("unimplemented!");
     }
-    if (node.tk.startsWith("\\") && macros.containsKey(node.tk)) {
+    if (node.tk == '\\begin') {
+      return parseTexEnv(lex);
+    } else if (node.tk.startsWith("\\") && macros.containsKey(node.tk)) {
       var command = node.tk;
       lex.next();
       var replacement = macros[command] as String;
@@ -79,14 +69,45 @@ TeXNode parseTexNode(Lex lex) {
       if (del == '_') {
         node.sub = lex.token == '{'
             ? parseTexList(lex, true)
-            : TeXNode(true, [parseTexNode(lex)]);
+            : TeXNode(TeXNodeType.list, [parseTexNode(lex)]);
       }
       if (del == '^') {
         node.sup = lex.token == '{'
             ? parseTexList(lex, true)
-            : TeXNode(true, [parseTexNode(lex)]);
+            : TeXNode(TeXNodeType.list, [parseTexNode(lex)]);
       }
     }
     return node;
   }
+}
+
+/// Parses a TeX environment.
+///
+/// Formal grammar: env = "\begin" "{" {ID} "}" { texNode } "\end" "{" {ID} "}";
+TeXNode parseTexEnv(Lex lex) {
+  lex.terminal('\\begin');
+  lex.terminal('{');
+  var envID = '';
+  while (lex.token != Lex.lexEnd && lex.token != '}') {
+    envID += lex.token;
+    lex.next();
+  }
+  lex.terminal('}');
+  List<TeXNode> nodes = [];
+  while (lex.token != Lex.lexEnd && lex.token != '\\end') {
+    nodes.add(parseTexNode(lex));
+  }
+  lex.terminal('\\end');
+  lex.terminal('{');
+  var envID2 = '';
+  while (lex.token != Lex.lexEnd && lex.token != '}') {
+    envID2 += lex.token;
+    lex.next();
+  }
+  lex.terminal('}');
+  if (envID != envID2) {
+    throw Exception('unexpected \\end{$envID2}');
+  }
+  // TODO: set env name!
+  return TeXNode(TeXNodeType.env, nodes, envID);
 }

@@ -63,7 +63,7 @@ class TeX {
       root.calculateGlobalCoordinates();
       // vertically move all glyphs, s.t. y=0 is exactly where the two lines of
       // glyph "x" intersect.
-      root.translate(0, globalTranslateY.toDouble());
+      root.translateGlobalCoordinates(0, globalTranslateY.toDouble());
       // generate SVG data
       var svgDATA = gen(paintBox, root, 4);
       // calculate the view box of the SVG image; note that the y-axis is
@@ -92,7 +92,11 @@ class TeX {
       // purposes
       String boundingBoxes = '';
       if (paintBox) {
-        boundingBoxes = genBoundingBoxes(root);
+        boundingBoxes = '<rect x="-50" y="-50"'
+            ' width="100" height="100"'
+            ' fill="red">'
+            '</rect>\n';
+        boundingBoxes += genBoundingBoxes(root);
       }
       // create final output
       var output =

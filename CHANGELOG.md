@@ -1,6 +1,6 @@
 ## 0.0.7
 
-- support for macros w/o parameters
+- support for macros (yet w/o parameters)
 - added glyphs: decimal point, braces, emptyset
 - extended example page
 

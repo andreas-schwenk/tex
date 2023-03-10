@@ -2,10 +2,13 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
+/// TODO: doc
+enum TeXNodeType { unary, list, env }
+
 /// Logical parts of a TeX string.
 class TeXNode {
-  /// Whether the object represents a list. Otherwise, it represents a node.
-  bool isList;
+  /// The node type;
+  TeXNodeType type;
 
   /// Whether the node is a fractions (e.g. "\\frac{x}{y}").
   bool isFraction = false;
@@ -49,7 +52,7 @@ class TeXNode {
   /// The global x coordinate
   double globalX = 0;
 
-  /// The global left padding.
+  /// The global left padding. Only valid for type unary.
   double globalDx = 0;
 
   /// The global y coordinate
@@ -68,7 +71,7 @@ class TeXNode {
   String svgPathId = '';
 
   /// Constructor.
-  TeXNode(this.isList, this.items);
+  TeXNode(this.type, this.items, [this.tk = '']);
 
   /// Gets a set of all actually used glyphs for a [node].
   void getActuallyUsedGlyphs(Set<String> usedLetters) {
@@ -89,6 +92,22 @@ class TeXNode {
     }
   }
 
+  /*void addToXRecursively(int value) {
+    //x += value;
+    for (var item in items) {
+      item.addToXRecursively(value);
+    }
+    for (var arg in args) {
+      arg.addToXRecursively(value);
+    }
+    if (sub != null) {
+      sub?.addToXRecursively(value);
+    }
+    if (sup != null) {
+      sup?.addToXRecursively(value);
+    }
+  }*/
+
   /// Calculates global coordinate values
   void calculateGlobalCoordinates() {
     globalX = 0;
@@ -104,8 +123,8 @@ class TeXNode {
     for (var arg in args) {
       arg.calculateGlobalCoordinates();
     }
-    scale(scaling);
-    translate((x).toDouble(), y.toDouble());
+    scaleGlobalCoordinates(scaling);
+    translateGlobalCoordinates(x.toDouble(), y.toDouble());
   }
 
   /// Calculates the global minimum y coordinate value.
@@ -134,7 +153,8 @@ class TeXNode {
 
   /// Calculates the global maximum y coordinate value.
   double getGlobalMaxY() {
-    double max = globalY + globalHeight;
+    //double max = globalY + globalHeight;
+    double max = getGlobalMinY() + globalHeight;
     for (var item in items) {
       double m = item.getGlobalMaxY();
       if (m > max) max = m;
@@ -157,7 +177,7 @@ class TeXNode {
   }
 
   /// Recursively scales a node by a [factor].
-  void scale(double factor) {
+  void scaleGlobalCoordinates(double factor) {
     globalX *= factor;
     globalY *= factor;
     globalScaling *= factor;
@@ -165,55 +185,61 @@ class TeXNode {
     globalHeight *= factor;
     globalDx *= factor;
     for (var item in items) {
-      item.scale(factor);
+      item.scaleGlobalCoordinates(factor);
     }
-    if (sub != null) sub?.scale(factor);
-    if (sup != null) sup?.scale(factor);
+    if (sub != null) sub?.scaleGlobalCoordinates(factor);
+    if (sup != null) sup?.scaleGlobalCoordinates(factor);
     for (var arg in args) {
-      arg.scale(factor);
+      arg.scaleGlobalCoordinates(factor);
     }
   }
 
   /// Recursively translates a node by [x] and [y].
-  void translate(double x, double y) {
+  void translateGlobalCoordinates(double x, double y) {
     globalX += x;
     globalY += y;
     for (var item in items) {
-      item.translate(x, y);
+      item.translateGlobalCoordinates(x, y);
     }
-    if (sub != null) sub?.translate(x, y);
-    if (sup != null) sup?.translate(x, y);
+    if (sub != null) sub?.translateGlobalCoordinates(x, y);
+    if (sup != null) sup?.translateGlobalCoordinates(x, y);
     for (var arg in args) {
-      arg.translate(x, y);
+      arg.translateGlobalCoordinates(x, y);
     }
   }
 
   /// Stringifies TeX node.
   @override
   String toString() {
-    if (isList) {
-      var s = '{';
-      for (var i = 0; i < items.length; i++) {
-        if (i > 0) s += ' ';
-        var item = items[i];
-        s += item.toString();
-      }
-      s += '}';
-      return s;
-    } else {
-      var s = tk;
-      if (sub != null) {
-        s += '_${sub.toString()}';
-      }
-      if (sup != null) {
-        s += '^${sup.toString()}';
-      }
-      if (args.isNotEmpty) {
-        for (var arg in args) {
-          s += ' %arg ${arg.toString()}';
+    switch (type) {
+      case TeXNodeType.unary:
+        {
+          var s = tk;
+          if (sub != null) {
+            s += '_${sub.toString()}';
+          }
+          if (sup != null) {
+            s += '^${sup.toString()}';
+          }
+          if (args.isNotEmpty) {
+            for (var arg in args) {
+              s += ' %arg ${arg.toString()}';
+            }
+          }
+          return s;
         }
-      }
-      return s;
+      case TeXNodeType.list:
+      case TeXNodeType.env:
+        {
+          var s = type == TeXNodeType.env ? '\\begin{$tk}' : '{';
+          for (var i = 0; i < items.length; i++) {
+            if (i > 0) s += ' ';
+            var item = items[i];
+            s += item.toString();
+          }
+          s += type == TeXNodeType.env ? '\\end{$tk}' : '}';
+          return s;
+        }
     }
   }
 }

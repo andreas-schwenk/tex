@@ -40,7 +40,10 @@ class Lex {
     var n = src.length;
     for (var i = 0; i < n; i++) {
       var c = src[i];
-      if (c == '\\') {
+      if (c == '\\' && (i + 1) < n && src[i + 1] == '\\') {
+        tokens.add('\\\\');
+        i++;
+      } else if (c == '\\') {
         var tk = '\\';
         var j = i + 1;
         for (; j < n; j++) {
@@ -70,6 +73,16 @@ class Lex {
   /// Moves the position pointer to the next token.
   next() {
     _pos++;
+  }
+
+  /// Expects that the current token equals [t] or throws an exception
+  /// otherwise
+  void terminal(String t) {
+    if (token == t) {
+      next();
+    } else {
+      throw Exception('ERROR: expected $t');
+    }
   }
 
   /// Gets the current token.

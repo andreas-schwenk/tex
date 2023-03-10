@@ -12,8 +12,12 @@ for (let line of lines) {
   if (line.startsWith("#") || line.length == 0) continue;
   let tokens = line.split(";");
   let tex = tokens[0].trim();
+  if (tex == "\\sqrt") {
+    tex += "{}";
+  }
   src += tex + " ";
 }
+console.log(src);
 
 require("mathjax")
   .init({
