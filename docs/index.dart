@@ -9,12 +9,19 @@ import 'package:tex/tex.dart';
 import 'package:tex/src/tab.dart' as tab;
 
 final examples = [
-  'y(x)=x^2',
+  'f(x)=x^2',
   '\\frac 1 {x+1}',
   '\\sin x',
   '\\sin(x)',
   "\\sqrt{x+1}",
-  "\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}",
+  "\\overline{abc}",
+  "\\begin{matrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}",
+  "\\begin{pmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{pmatrix}",
+  "\\begin{bmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{bmatrix}",
+  "\\begin{Bmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{Bmatrix}",
+  "\\begin{vmatrix}\n  1+\\alpha & 2 \\\\\n  3 & 4 \\\\\n\\end{vmatrix}",
+  "\\begin{vmatrix}[lc]\n  1+\\alpha & 2 \\\\\n  3 & 4 \\\\\n\\end{vmatrix}",
+  "sgn(x)=\\begin{cases}\n  -1 & x<0 \\\\\n  1 & x>0 \\\\\n  0 & \\text{otherwise}\n\\end{cases}",
   "\\int_2^5 x \\, dx",
   "\\sum_{i=1}^5 i^2",
   "\\prod_{i=1}^5 i^2",
@@ -111,7 +118,9 @@ void showExamples(String tableId, List<String> exampleList) {
     var tr = document.createElement('tr') as TableRowElement;
 
     var cell1 = document.createElement('td') as TableCellElement;
-    cell1.innerHtml = '<code>$example</code>';
+    cell1.innerHtml = '<pre><code>$example</code></pre>';
+    cell1.style.maxWidth = "250px";
+    cell1.style.wordBreak = "break-all";
     tr.append(cell1);
 
     var cell2 = document.createElement('td') as TableCellElement;
@@ -167,6 +176,7 @@ void showGlyphTests() {
     var rowData = tab.table[texSrc] as Map<String, Object>;
 
     if (texSrc == '\\sqrt') texSrc = '\\sqrt{}';
+    if (texSrc == "'") texSrc = "{}'";
 
     var tex = TeX();
     var output = tex.tex2svg(texSrc, true);

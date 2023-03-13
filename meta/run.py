@@ -51,6 +51,24 @@ for i, line in enumerate(lines):
     res += '  "' + command + '": ' + replacement + ',\n'
 res += '};\n\n'
 
+f = open("meta/functions.csv")
+lines = f.readlines()
+f.close()
+res += 'const Set<String> functions = {\n'
+for i, line in enumerate(lines):
+    line = line.strip()
+    if line.startswith('#') or len(line) == 0:
+        continue
+    tokens = line.split(';')
+    if len(tokens) < 1:
+        print("ERROR:gen.py: functions.csv:" + str(i) +
+              ": the following line is not well formatted:")
+        print(line)
+        exit(-1)
+    function = tokens[0].strip().replace('\\', '\\\\')
+    res += '  "' + function + '",\n'
+res += '};\n\n'
+
 f = open("meta/glyphs.csv")
 lines = f.readlines()
 f.close()

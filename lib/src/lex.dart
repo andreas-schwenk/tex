@@ -63,6 +63,16 @@ class Lex {
         }
         i = j - 1;
         tokens.add(tk);
+      } else if (c == "'") {
+        //TODO: multiple '
+        tokens.add("^");
+        tokens.add("{");
+        while (i < n && src[i] == "'") {
+          tokens.add("'");
+          i++;
+        }
+        i--;
+        tokens.add("}");
       } else if (" \n\t".contains(c) == false) {
         tokens.add(c);
       }

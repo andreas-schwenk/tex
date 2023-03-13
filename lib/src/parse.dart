@@ -16,27 +16,7 @@ TeXNode parseTexList(Lex lex, bool parseBraces, bool forbidParsingSubSup) {
     list.items.add(parseTexNode(lex, false));
   }
   if (parseBraces) lex.terminal('}');
-  // post-process: populate node.args (as lists)
-  for (var i = 0; i < list.items.length; i++) {
-    if (list.items[i].type == TeXNodeType.unary &&
-        numArgs.containsKey(list.items[i].tk)) {
-      var item = list.items[i];
-      var n = numArgs[item.tk] as int;
-      for (var j = 0; j < n; j++) {
-        if (i + 1 >= list.items.length) {
-          throw Exception(
-              'ERROR: ${item.tk} excepts ${n.toString()} arguments!');
-        }
-        var item2 = list.items.removeAt(i + 1);
-
-        if (item2.type == TeXNodeType.unary) {
-          item2 = TeXNode(TeXNodeType.list, [item2]);
-        }
-
-        item.args.add(item2);
-      }
-    }
-  }
+  postProcessList(list.items);
   if (forbidParsingSubSup == false) {
     parseSubSup(lex, list);
   }
@@ -122,5 +102,30 @@ TeXNode parseTexEnv(Lex lex) {
   if (envID != envID2) {
     throw Exception('unexpected \\end{$envID2}');
   }
+  postProcessList(nodes);
   return TeXNode(TeXNodeType.environment, nodes, envID);
+}
+
+/// post-process: populate node.args (as lists)
+void postProcessList(List<TeXNode> items) {
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type == TeXNodeType.unary &&
+        numArgs.containsKey(items[i].tk)) {
+      var item = items[i];
+      var n = numArgs[item.tk] as int;
+      for (var j = 0; j < n; j++) {
+        if (i + 1 >= items.length) {
+          throw Exception(
+              'ERROR: ${item.tk} excepts ${n.toString()} arguments!');
+        }
+        var item2 = items.removeAt(i + 1);
+
+        if (item2.type == TeXNodeType.unary) {
+          item2 = TeXNode(TeXNodeType.list, [item2]);
+        }
+
+        item.args.add(item2);
+      }
+    }
+  }
 }

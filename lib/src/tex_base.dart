@@ -14,17 +14,26 @@ class TeX {
   /// The lexer.
   final Lex _lex = Lex();
 
-  /// Recently parsed TeX input, stringified.
+  /// The recently parsed TeX input, stringified.
   String _parsed = '';
 
-  /// Width of recently parsed TeX rendering.
+  /// The width of recently parsed TeX rendering.
   int _width = 0;
 
-  /// Error messages.
+  /// The error messages.
   String _error = '';
 
-  //// Scaling factor.
+  //// The Scaling factor.
   double _scalingFactor = 1.0;
+
+  /// The red color
+  int _colorRed = 0;
+
+  /// The green color
+  int _colorGreen = 0;
+
+  /// The blue color
+  int _colorBlue = 0;
 
   /// Gets the parsed and stringified TeX input for the last call of [tex2svg].
   String get parsed {
@@ -41,9 +50,16 @@ class TeX {
     return _width;
   }
 
-  /// Sets the scaling factor
+  /// Sets the scaling factor.
   set scalingFactor(double factor) {
     _scalingFactor = factor;
+  }
+
+  /// Sets the RGB color in range 0 to 255.
+  void setColor(int red, int green, int blue) {
+    _colorRed = red;
+    _colorGreen = green;
+    _colorBlue = blue;
   }
 
   /// Generates an SVG String from TeX [src].
@@ -63,7 +79,7 @@ class TeX {
       // glyph "x" intersect.
       root.translate(0, globalTranslateY);
       // generate SVG data
-      var svgDATA = gen(paintBox, root, 4);
+      var svgDATA = gen(paintBox, root, 4, _colorRed, _colorGreen, _colorBlue);
       if (svgDATA.isEmpty) {
         // TODO: do NOT handle as error!
         _error += "nothing to render";

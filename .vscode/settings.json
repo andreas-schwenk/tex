@@ -4,6 +4,10 @@
   "cSpell.words": [
     "Andreas",
     "apos",
+    "arccos",
+    "arcsin",
+    "arctan",
+    "bmatrix",
     "Downarrow",
     "emptyset",
     "focusable",
@@ -14,6 +18,8 @@
     "leftharpoondown",
     "leftharpoonup",
     "Leftrightarrow",
+    "liminf",
+    "limsup",
     "longmapsto",
     "mapsto",
     "mathbb",
@@ -30,6 +36,8 @@
     "rightleftharpoons",
     "Schwenk",
     "searrow",
+    "subseteq",
+    "supseteq",
     "swarrow",
     "Tokenizes",
     "Uparrow",
@@ -39,6 +47,7 @@
     "varrho",
     "varsigma",
     "vartheta",
+    "vmatrix",
     "xlink"
   ]
 }

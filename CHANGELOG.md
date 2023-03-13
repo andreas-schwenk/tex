@@ -1,3 +1,14 @@
+## 0.2.0
+
+- color can be set as RGB value
+- added glyphs for ', \oint, \otimes, \oplus, \subset, \supset, \subseteq, \supseteq, \sim, \approx, \partial
+- added \matrix, \bmatrix, \Bmatrix, \vmatrix
+- matrix columns now be aligned to left, center or right
+- added \cases
+- added \overline
+- added standard functions \arccos, \arcsin, \arctan, \arg, \cos, \cosh, \cot, \coth, \csc, \deg, \det, \dim, \exp, \gcd, \hom, \inf, \ker, \lg, \lim, \liminf, \limsup, \ln, \log, \max, \min, \mod, \Pr, \sec, \sin, \sinh, \sup, \tan, \tanh
+- improved glyph dimensions
+
 ## 0.1.1
 
 - integrals via \int

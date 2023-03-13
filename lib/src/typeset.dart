@@ -32,9 +32,8 @@ void typeset(TeXNode node) {
           // ================ spacing ================
           node.postfixSpacing = 300; // TODO: \, and ~ are not the same...
           return;
-        } else if (["\\sin", "\\cos", "\\exp", "\\tan"].contains(tk)) {
+        } else if (functions.contains(tk)) {
           // ================ functions ================
-          // TODO: store list (sin, cos, ...) into config file under /meta/
           node.type = TeXNodeType.list;
           for (var i = 0; i < tk.length - 1; i++) {
             var n = TeXNode(TeXNodeType.unary, []);
@@ -88,7 +87,7 @@ void typeset(TeXNode node) {
           node.renderedNodes.addAll(arg.renderedNodes);
           // overline
           var overline = RenderedTeXNode();
-          overline.svgPathId = '!sqrt';
+          overline.svgPathId = '!overline';
           overline.width = arg.width;
           overline.x = root.width;
           overline.y =
@@ -98,7 +97,23 @@ void typeset(TeXNode node) {
           root.yScaling =
               overline.y / 780.0; // TODO: add constant to config.dart
           node.calcGeometry();
-        } else if (tk == '\\int') {
+        } else if (tk == "\\overline") {
+          // ================ overline ================
+          // arg
+          var arg = node.args[0];
+          typeset(arg);
+          arg.translate(0, 0);
+          node.renderedNodes.addAll(arg.renderedNodes);
+          // overline
+          var overline = RenderedTeXNode();
+          overline.svgPathId = '!overline';
+          overline.width = arg.width;
+          overline.x = 0;
+          overline.y =
+              arg.minY + arg.height + 200; // TODO: add constant to config.dart
+          node.renderedNodes.add(overline);
+          node.calcGeometry();
+        } else if (tk == '\\int' || tk == '\\oint') {
           // ================ integral ================
           // int
           var entry = table[tk] as Map<Object, Object>;
@@ -106,7 +121,7 @@ void typeset(TeXNode node) {
           intGlyph.tk = node.tk;
           intGlyph.svgPathId = entry["code"] as String;
           intGlyph.width = (entry["w"] as int).toDouble();
-          intGlyph.height = standardFontHeight;
+          intGlyph.height = 1400;
           node.renderedNodes.add(intGlyph);
           // TODO: set node.min + node.height; this is necesssary, when sub/sup are not given!
           // sub
@@ -137,9 +152,8 @@ void typeset(TeXNode node) {
           mainGlyph.tk = node.tk;
           mainGlyph.svgPathId = entry["code"] as String;
           mainGlyph.width = (entry["w"] as int).toDouble();
-          mainGlyph.height = standardFontHeight;
+          mainGlyph.height = 1000;
           node.renderedNodes.add(mainGlyph);
-          // TODO: set node.min + node.height; this is necesssary, when sub/sup are not given!
           // TODO: must move everthing to the right, in case that sub or sup is too wide
           // sub
           if (node.sub != null) {
@@ -185,19 +199,45 @@ void typeset(TeXNode node) {
     case TeXNodeType.environment:
       {
         switch (node.tk) {
+          case "matrix":
           case "pmatrix":
+          case "bmatrix":
+          case "Bmatrix":
+          case "vmatrix":
+          case "cases":
             {
               // matrix
               double horizontalPadding =
                   500.0; // TODO: depends on concrete matrix???
               double verticalPadding = 200.0;
+              // parse
+              var itemPos = 0;
+              // (a) parse alignment
+              //   each char in variable "alignment" represents the alignment
+              //   for a column, with "l" := left, "c" := center, "r" := right
+              String alignment = "";
+              if (itemPos < node.items.length &&
+                  node.items[itemPos].tk == '[') {
+                itemPos++;
+                while (itemPos < node.items.length &&
+                    node.items[itemPos].tk != ']') {
+                  var a = node.items[itemPos].tk;
+                  if ("lcr".contains(a) == false) {
+                    throw Exception("unknown alignment '$a'");
+                  }
+                  alignment += a;
+                  itemPos++;
+                }
+                itemPos++; // skip ']'
+              }
+              // (b) parse matrix
               List<TeXNode> elements = [];
               int rows = -1;
               int cols = -1;
-              int i = 0;
               int j = 0;
               TeXNode element = TeXNode(TeXNodeType.list, []);
-              for (var item in node.items) {
+              while (itemPos < node.items.length) {
+                var item = node.items[itemPos++];
                 if (item.tk == "&") {
                   elements.add(element);
                   element = TeXNode(TeXNodeType.list, []);
@@ -212,17 +252,26 @@ void typeset(TeXNode node) {
                         "matrix has inconsistent number of columns");
                   }
                   j = 0;
-                  i++;
                 } else {
                   element.items.add(item);
                 }
               }
-              elements.add(element);
-              rows = i + 1;
+              if (element.items.isNotEmpty) {
+                elements.add(element);
+              }
+              if ((elements.length % cols) != 0) {
+                throw Exception("matrix is inconsistent");
+              }
+              rows = (elements.length / cols).round();
               for (var element in elements) {
                 typeset(element);
                 node.renderedNodes.addAll(element.renderedNodes);
               }
+              // fill alignment that was not set explicitly
+              for (var i = alignment.length; i < cols; i++) {
+                alignment += node.tk == "cases" ? "l" : "c";
+              }
+              // calculate column and row dimensions
               List<double> colWidths = List.generate(cols, (index) => 0.0);
               List<double> rowHeights = List.generate(rows, (index) => 0.0);
               for (var i = 0; i < rows; i++) {
@@ -241,39 +290,77 @@ void typeset(TeXNode node) {
                   sum(colWidths) + (cols - 1).toDouble() * horizontalPadding;
               double totalHeight =
                   sum(rowHeights) + (rows - 1) * verticalPadding;
+              // translate elements and apply alignment
               var x = 0.0;
               var y = 0.0;
               for (var i = rows - 1; i >= 0; i--) {
                 for (var j = 0; j < cols; j++) {
                   var e = elements[i * cols + j];
-                  e.translate(x + ((colWidths[j] - e.width) / 2.0).round(), y);
+                  e.translate(x, y);
+                  switch (alignment[j]) {
+                    case "c":
+                      e.translate((colWidths[j] - e.width) / 2.0, 0);
+                      break;
+                  }
                   x += colWidths[j] + horizontalPadding;
                 }
                 x = 0;
                 y += rowHeights[i] + verticalPadding; // TODO!!
               }
-              // "("
+              // parentheses
               var leftParenthesis = RenderedTeXNode();
-              var entry = table["("] as Map<Object, Object>;
-              leftParenthesis.svgPathId = entry["code"] as String;
-              leftParenthesis.width = (entry["w"] as int).toDouble();
-              leftParenthesis.yScaling = totalHeight / 900;
-              leftParenthesis.y -= 120 * leftParenthesis.yScaling;
-              // ")""
               var rightParenthesis = RenderedTeXNode();
-              entry = table[")"] as Map<Object, Object>;
-              rightParenthesis.svgPathId = entry["code"] as String;
-              rightParenthesis.width = (entry["w"] as int).toDouble();
-              rightParenthesis.yScaling = totalHeight / 900; // TODO
-              rightParenthesis.x = leftParenthesis.width + totalWidth;
-              rightParenthesis.y -= 120 * rightParenthesis.yScaling; // TODO
+              var leftChar = '';
+              var rightChar = '';
+              switch (node.tk) {
+                case "pmatrix":
+                  leftChar = "(";
+                  rightChar = ")";
+                  break;
+                case "bmatrix":
+                  leftChar = "[";
+                  rightChar = "]";
+                  break;
+                case "Bmatrix":
+                  leftChar = "\\{";
+                  rightChar = "\\}";
+                  break;
+                case "vmatrix":
+                  leftChar = "|";
+                  rightChar = "|";
+                  break;
+                case "cases":
+                  leftChar = "\\{";
+                  break;
+              }
+              if (leftChar.isNotEmpty) {
+                // left parenthesis
+                var entry = table[leftChar] as Map<Object, Object>;
+                leftParenthesis.svgPathId = entry["code"] as String;
+                leftParenthesis.width = (entry["w"] as int).toDouble();
+                leftParenthesis.yScaling = totalHeight / 900;
+                leftParenthesis.y -= 120 * leftParenthesis.yScaling;
+              }
+              if (rightChar.isNotEmpty) {
+                // right parenthesis
+                var entry = table[rightChar] as Map<Object, Object>;
+                rightParenthesis.svgPathId = entry["code"] as String;
+                rightParenthesis.width = (entry["w"] as int).toDouble();
+                rightParenthesis.yScaling = totalHeight / 900; // TODO
+                rightParenthesis.x = leftParenthesis.width + totalWidth;
+                rightParenthesis.y -= 120 * rightParenthesis.yScaling; // TODO
+              }
               // translate matrix
-              node.translate(leftParenthesis.width,
+              node.translate(leftChar.isEmpty ? 0 : leftParenthesis.width,
                   (standardFontHeight - totalHeight) / 2.0);
               // add parentheses at the end to prevent simultaneous
               // transformation with matrix.
-              node.renderedNodes.add(leftParenthesis);
-              node.renderedNodes.add(rightParenthesis);
+              if (leftChar.isNotEmpty) {
+                node.renderedNodes.add(leftParenthesis);
+              }
+              if (rightChar.isNotEmpty) {
+                node.renderedNodes.add(rightParenthesis);
+              }
               node.calcGeometry();
               node.postfixSpacing = 150; // TODO
               break;

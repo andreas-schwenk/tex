@@ -1,0 +1,40 @@
+#########################################
+# FORMAT = FUNCTION_NAME
+# keep all entries in alphabetical order!
+#########################################
+
+# this file defines standard functions that are rendered as \text{..}
+
+\arccos
+\arcsin
+\arctan
+\arg
+\cos
+\cosh
+\cot
+\coth
+\csc
+\deg
+\det
+\dim
+\exp
+\gcd
+\hom
+\inf
+\ker
+\lg
+\lim
+\liminf
+\limsup
+\ln
+\log
+\max
+\min
+\mod
+\Pr
+\sec
+\sin
+\sinh
+\sup
+\tan
+\tanh

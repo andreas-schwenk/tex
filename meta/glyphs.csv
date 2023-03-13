@@ -51,7 +51,7 @@ o; MJX-1-TEX-I-1D45C; 550; 0
 p; MJX-1-TEX-I-1D45D; 550; 0
 q; MJX-1-TEX-I-1D45E; 550; 0
 r; MJX-1-TEX-I-1D45F; 450; 0
-s; MJX-1-TEX-I-1D460; 550; 0
+s; MJX-1-TEX-I-1D460; 475; 0
 t; MJX-1-TEX-I-1D461; 400; 0
 u; MJX-1-TEX-I-1D462; 600; 0
 v; MJX-1-TEX-I-1D463; 500; 0
@@ -78,6 +78,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 ,; MJX-1-TEX-N-2C; 350; 0
 :; MJX-1-TEX-N-3A; 350; 0
 !; MJX-1-TEX-N-21; 350; 0
+'; MJX-1-TEX-V-2032; 350; 0
 (; MJX-1-TEX-N-28; 300; 0
 ); MJX-1-TEX-N-29; 300; 0
 [; MJX-1-TEX-N-5B; 300; 0
@@ -137,9 +138,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 # ----- Misc -----
 # TODO: separate arrows to own category
 
-
-
-
+\approx; MJX-1-TEX-N-2248; 800; 0
 \cap; MJX-1-TEX-N-2229; 950; 100
 \circ; MJX-1-TEX-N-2218; 600; 50
 \cup; MJX-1-TEX-N-222A; 950; 100
@@ -167,6 +166,10 @@ z; MJX-1-TEX-I-1D467; 500; 0
 \nearrow; MJX-1-TEX-N-2197; 1400; 200
 \notin; MJX-1-TEX-N-2209; 950; 100
 \nwarrow; MJX-1-TEX-N-2196; 1400; 200
+\oint; MJX-1-TEX-LO-222E; 1000; 0
+\oplus; MJX-1-TEX-N-2295; 750; 0
+\otimes; MJX-1-TEX-N-2297; 750; 0
+\partial; MJX-1-TEX-I-1D715; 575; 0
 \prod; MJX-1-TEX-LO-220F; 1400; 0
 \rightarrow; MJX-1-TEX-N-2192; 1400; 200
 \Rightarrow; MJX-1-TEX-N-21D2; 1400; 200
@@ -174,8 +177,13 @@ z; MJX-1-TEX-I-1D467; 500; 0
 \rightharpoonup; MJX-1-TEX-N-21C0; 1400; 200
 \rightleftharpoons; MJX-1-TEX-V-21CC; 1400; 200
 \searrow; MJX-1-TEX-N-2198; 1400; 200
+\sim; MJX-1-TEX-N-223C; 800; 0
 \sqrt; MJX-1-TEX-N-221A; 860; 100
+\subset; MJX-1-TEX-N-2282; 750; 0
+\subseteq; MJX-1-TEX-N-2286; 750; 0
 \sum; MJX-1-TEX-LO-2211; 1500; 0
+\supset; MJX-1-TEX-N-2283; 750; 0
+\supseteq; MJX-1-TEX-N-2287; 750; 0
 \swarrow; MJX-1-TEX-N-2199; 1400; 200
 \times; MJX-1-TEX-N-D7; 950; 100
 \to; MJX-1-TEX-N-2192; 1200; 100
@@ -224,9 +232,9 @@ z; MJX-1-TEX-I-1D467; 500; 0
 \text{j}; MJX-1-TEX-N-6A; 300; 0
 \text{k}; MJX-1-TEX-N-6B; 550; 0
 \text{l}; MJX-1-TEX-N-6C; 350; 0
-\text{m}; MJX-1-TEX-N-6D; 700; 0
+\text{m}; MJX-1-TEX-N-6D; 800; 0
 \text{n}; MJX-1-TEX-N-6E; 550; 0
-\text{o}; MJX-1-TEX-N-6F; 550; 0
+\text{o}; MJX-1-TEX-N-6F; 500; 0
 \text{p}; MJX-1-TEX-N-70; 550; 0
 \text{q}; MJX-1-TEX-N-71; 550; 0
 \text{r}; MJX-1-TEX-N-72; 450; 0
