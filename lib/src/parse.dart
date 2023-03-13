@@ -113,19 +113,32 @@ void postProcessList(List<TeXNode> items) {
         numArgs.containsKey(items[i].tk)) {
       var item = items[i];
       var n = numArgs[item.tk] as int;
+      TeXNode? sub;
+      TeXNode? sup;
       for (var j = 0; j < n; j++) {
         if (i + 1 >= items.length) {
           throw Exception(
               'ERROR: ${item.tk} excepts ${n.toString()} arguments!');
         }
         var item2 = items.removeAt(i + 1);
-
+        if (item2.sub != null) {
+          // TODO: error, if this is not the last arg
+          sub = item2.sub;
+          item2.sub = null;
+        }
+        if (item2.sup != null) {
+          // TODO: error, if this is not the last arg
+          sup = item2.sup;
+          item2.sup = null;
+        }
         if (item2.type == TeXNodeType.unary) {
           item2 = TeXNode(TeXNodeType.list, [item2]);
         }
-
         item.args.add(item2);
       }
+      // move inner sub and/or sup to outer
+      item.sub = sub;
+      item.sup = sup;
     }
   }
 }

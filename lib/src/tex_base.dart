@@ -106,6 +106,7 @@ class TeX {
       root.getActuallyUsedGlyphs(usedLetters);
       for (var id in usedLetters) {
         var d = svgData[id];
+        if (d == null) continue;
         svgPaths += '    <path id="$id" d="$d"></path>\n';
       }
       // optionally generate bounding rectangles around glyphs for debugging

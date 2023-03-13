@@ -15,7 +15,7 @@ for (let line of lines) {
   if (tex == "\\sqrt") {
     tex += "{}";
   }
-  src += tex + " ";
+  src += " {}" + tex + "{} ";
 }
 console.log(src);
 

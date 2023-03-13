@@ -1,3 +1,10 @@
+## 0.3.0
+
+- added glyphs for \angle, \blacksquare, \Box, \boxtimes, \cdots, \complement, \cong, \ddots, \div, \equiv, \Im, \langle, \lnot, \nabla, \neg, \neq, \perp, \rangle, \Re, \setminus, \simeq, \square, \triangle, \varnothing, \vdots, \wp
+- improved \lim
+- fixed parsing and typesetting bugs
+- fixed SVG output, s.t. that no longer an exception in flutter_svg is thrown for \overline and \sqrt
+
 ## 0.2.0
 
 - color can be set as RGB value

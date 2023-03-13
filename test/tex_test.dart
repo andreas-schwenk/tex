@@ -12,7 +12,10 @@ void main() {
       //"xx\\begin{pmatrix} a xxxxxx & \\alpha \\\\ c+1 & d^2 \\end{pmatrix}yy";
       //"sssss\\begin{pmatrix}aaa&b^{3^{3^{44}}}\\\\c&d_3\\\\1&2\\end{pmatrix}xx^33";
       //"sgn(x)=\\begin{cases} -1 & x<0\\\\ 1 & x>0\\\\ 0 & \\text{else} \\end{cases}";
-      "\\begin{matrix}[lc]\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}";
+      //"\\begin{matrix}[lc]\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}";
+      //"\\mathbb{N}^2";
+      "\\lim_{x\\to\\infty}\\frac1x";
+  //"\\lim_{x \\to \\infty} x";
   //"f(x)=x+{x}^2";
   //"\\frac12";
   //"\\sqrt{\\frac12} \\sqrt x";

@@ -15,6 +15,8 @@ final examples = [
   '\\sin(x)',
   "\\sqrt{x+1}",
   "\\overline{abc}",
+  '\\NN^2',
+  '\\lim_{x\\to\\infty}\\frac1x',
   "\\begin{matrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}",
   "\\begin{pmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{pmatrix}",
   "\\begin{bmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{bmatrix}",
@@ -25,6 +27,7 @@ final examples = [
   "\\int_2^5 x \\, dx",
   "\\sum_{i=1}^5 i^2",
   "\\prod_{i=1}^5 i^2",
+  "\\{1, 2, \\dots, 5\\}",
 ];
 
 final customMacros = ['\\CC', '\\NN', '\\QQ', '\\RR', '\\ZZ'];

@@ -59,10 +59,11 @@ class TeXNode {
 
   // TODO: doc
   void calcGeometry() {
-    minX = double.infinity;
-    minY = double.infinity;
-    var maxX = -double.infinity;
-    var maxY = -double.infinity;
+    var count = renderedNodes.length;
+    minX = count == 0 ? 0 : double.infinity;
+    minY = count == 0 ? 0 : double.infinity;
+    var maxX = count == 0 ? 0 : -double.infinity;
+    var maxY = count == 0 ? 0 : -double.infinity;
     width = 0.0;
     height = 0.0;
     for (var n in renderedNodes) {
@@ -105,7 +106,7 @@ class TeXNode {
   /// Gets a set of all actually used glyphs for a [node].
   void getActuallyUsedGlyphs(Set<String> usedLetters) {
     for (var n in renderedNodes) {
-      if (n.svgPathId.isNotEmpty) {
+      if (n.svgPathId.isNotEmpty && n.svgPathId.startsWith("!") == false) {
         usedLetters.add(n.svgPathId);
       }
     }
@@ -121,8 +122,9 @@ class TeXNode {
           s = tk;
           if (args.isNotEmpty) {
             for (var arg in args) {
-              s += ' %arg ${arg.toString()}';
+              s += ' {%arg ${arg.toString()}} ';
             }
+            s = '{$s}';
           }
           break;
         }

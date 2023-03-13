@@ -23,6 +23,7 @@ void typeset(TeXNode node) {
           node.renderedNodes.addAll(item.renderedNodes);
           x += item.width + item.postfixSpacing;
         }
+        node.calcGeometry();
         break;
       }
     case TeXNodeType.unary:
@@ -42,10 +43,12 @@ void typeset(TeXNode node) {
           }
           typeset(node);
           node.calcGeometry();
+          skipSubAndSup = true;
         } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
           // ================ font ================
           setFont(node.args[0], tk);
           typeset(node.args[0]);
+          node.calcGeometry();
           node.renderedNodes.addAll(node.args[0].renderedNodes);
           node.calcGeometry();
         } else if (tk == "\\frac") {
@@ -144,26 +147,38 @@ void typeset(TeXNode node) {
           }
           node.calcGeometry();
           skipSubAndSup = true;
-        } else if (tk == '\\sum' || tk == '\\prod') {
-          // ================ sum, product ================
+        } else if (tk == '\\sum' || tk == '\\prod' || tk == '\\lim') {
+          // ================ sum, product, limes ================
           // main
-          var entry = table[tk] as Map<Object, Object>;
-          var mainGlyph = RenderedTeXNode();
-          mainGlyph.tk = node.tk;
-          mainGlyph.svgPathId = entry["code"] as String;
-          mainGlyph.width = (entry["w"] as int).toDouble();
-          mainGlyph.height = 1000;
-          node.renderedNodes.add(mainGlyph);
-          // TODO: must move everthing to the right, in case that sub or sup is too wide
+          var limStr = 'lim';
+          double mainGlyphWidth = 0.0;
+          for (var i = 0; i < 3; i++) {
+            var glyph = tk == '\\lim' ? '\\text{${limStr[i]}}' : tk;
+            var entry = table[glyph] as Map<Object, Object>;
+            var mainGlyph = RenderedTeXNode();
+            mainGlyph.tk = node.tk;
+            mainGlyph.x = mainGlyphWidth;
+            mainGlyph.svgPathId = entry["code"] as String;
+            mainGlyph.width = (entry["w"] as int).toDouble();
+            mainGlyph.height = 1000;
+            node.renderedNodes.add(mainGlyph);
+            mainGlyphWidth += mainGlyph.width;
+            if (tk != '\\lim') break;
+          }
+          var minX = 0.0;
           // sub
           if (node.sub != null) {
             var sub = node.sub as TeXNode;
             typeset(sub);
             sub.scale(0.7071, 0.7071);
             sub.calcGeometry();
-            sub.translate((mainGlyph.width - sub.width) / 2.0,
-                -1150); // TODO: y must depends on sub dimensions
+            sub.translate(
+                (mainGlyphWidth - sub.width) / 2.0,
+                tk == '\\lim'
+                    ? -600
+                    : -1150); // TODO: y must depends on sub dimensions
             node.renderedNodes.addAll(sub.renderedNodes);
+            if (sub.minX < minX) minX = sub.minX;
           }
           // sup
           if (node.sup != null) {
@@ -171,12 +186,22 @@ void typeset(TeXNode node) {
             typeset(sup);
             sup.scale(0.7071, 0.7071);
             sup.calcGeometry();
-            sup.translate((mainGlyph.width - sup.width) / 2.0,
+            sup.translate((mainGlyphWidth - sup.width) / 2.0,
                 1200); // TODO: y must depends on sup dimensions
             node.renderedNodes.addAll(sup.renderedNodes);
+            if (sup.minX < minX) minX = sup.minX;
           }
           node.calcGeometry();
+          if (minX < 0) {
+            // if minimum x position of any glyph is less zero, then translate
+            // everything to the right
+            node.translate(-minX, 0);
+            node.calcGeometry();
+          }
           skipSubAndSup = true;
+          if (tk == '\\lim') {
+            node.postfixSpacing = 250; // TODO
+          }
         } else if (table.containsKey(tk)) {
           // ================ glyphs from tabular ================
           var entry = table[tk] as Map<Object, Object>;
