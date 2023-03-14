@@ -10,10 +10,11 @@
     <br />
 
     <div id="tex" class="container" style="text-align: center">
-      <h1>
-        <code>tex</code> &mdash; a tiny TeX Engine written in the Dart
-        Programming Language
-      </h1>
+      <img src="tex-logo.svg" style="width: 50%" />
+      <h1>a TeX Engine</h1>
+      <span style="font-size: 16pt"
+        >written in the Dart Programming Language</span
+      ><br /><br />
     </div>
 
     <div id="tex" class="container" style="opacity: 0.8; text-align: center">
@@ -36,19 +37,18 @@
       <h2>Info</h2>
       <p>
         <!-- -->
-        <code>tex</code> is a tiny TeX engine that creates SVG images from TeX
-        strings. Currently, only the math environment (e.g.
-        <code>$ f(x) = x^2 $</code>) is supported. Compared to other TeX
-        renderers, this package does NOT rely on JavaScript or any other
-        dependencies.
+        <i>Dart TeX</i> renders TeX math strings as SVG images.<br />
+        <!--Currently, only the
+        math environment (e.g. <code>$ f(x) = x^2 $</code>) is supported.-->
+        Compared to other TeX renderers, this package does NOT rely on
+        JavaScript or any other dependencies.
       </p>
-      <p style="color: #aa322c; text-align: center">
-        <!-- -->
+      <!--<p style="color: #aa322c; text-align: center">
         <b
           >THE LIBRARY IS CURRENTLY UNDER DEVELOPMENT.<br />
           MANY FEATURES WILL BE ADDED SOON.</b
         >
-      </p>
+      </p>-->
     </div>
 
     <br />
@@ -57,19 +57,10 @@
       <h2>Playground</h2>
 
       <div class="row">
-        <b>Input TeX Code:</b>&nbsp;
         <input type="text" id="tex-input" class="u-full-width" />
-        <button id="runTex" type="button">typeset</button>
-        <br />
-      </div>
-
-      <div class="row" style="padding-top: 5px">
-        <b>Parsed Term:</b>&nbsp;
-        <div id="tex-term">(empty)</div>
-      </div>
-
-      <div class="row" style="padding-top: 5px">
-        <b>Rendering:</b>&nbsp;
+        <button class="button-primary" id="runTex" type="button">
+          typeset
+        </button>
         <div
           id="tex-rendering"
           style="
@@ -82,10 +73,6 @@
             margin: 5px auto;
           "
         ></div>
-      </div>
-
-      <div class="row" style="padding-top: 5px">
-        <b>Rendering (with boxes):</b>&nbsp;
         <div
           id="tex-rendering-with-boxes"
           style="
@@ -98,6 +85,13 @@
             margin: 5px auto;
           "
         ></div>
+        Parser output:
+        <div
+          id="tex-term"
+          style="font-family: 'Courier New', Courier, monospace"
+        >
+          (empty)
+        </div>
       </div>
     </div>
 
@@ -152,16 +146,6 @@
           Blind text. Blind text. Blind text. Blind text. Blind text. Blind
           text. Blind text. Blind text. Blind text.
         </p>
-        <p style="font-size: large">
-          Blind text. Blind text. Blind text. Blind text. Blind text. Blind
-          text. Blind text. Blind text. Blind text. Blind text. Blind text. Some
-          inline equation here <span id="example-inline-large-1"></span> and
-          another one here <span id="example-inline-large-2"></span>. Blind
-          text. Blind text. Blind text. Blind text. Blind text. Blind text.
-          Blind text. Blind text. Blind text. Blind text. Blind text. Blind
-          text. Blind text. Blind text. Blind text. Blind text. Blind text.
-          Blind text. Blind text. Blind text. Blind text. Blind text.
-        </p>
       </div>
     </div>
 
@@ -189,5 +173,5 @@
     <br />
   </body>
 
-  <script src="index.min.js?version=1678734278"></script>
+  <script src="index.min.js?version=1678822092"></script>
 </html>

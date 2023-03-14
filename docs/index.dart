@@ -48,28 +48,24 @@ void main() {
   // inline equation examples
   var inlineExamples = ["x^2+y^2", "f(x)=\\frac 1 2 x"];
   for (var k = 0; k < inlineExamples.length; k++) {
-    for (var j = 0; j < 2; j++) {
-      var tex = TeX();
-      tex.scalingFactor = j == 0 ? 1.0 : 1.25;
-      var imgData = tex.tex2svg(inlineExamples[k]);
-      var outputBase64 = base64Encode(utf8.encode(imgData));
-      var img = document.createElement('img') as ImageElement;
-      img.src = "data:image/svg+xml;base64,$outputBase64";
-      img.style.verticalAlign = "bottom";
-      var spanId = j == 0
-          ? '#example-inline-${k + 1}'
-          : '#example-inline-large-${k + 1}';
-      var span = querySelector(spanId) as SpanElement;
-      span.innerHtml = '';
-      //span.style.borderColor = '#EEEEEE';
-      //span.style.borderStyle = 'solid';
-      //span.style.borderWidth = '2px';
-      span.style.paddingLeft = "3px";
-      span.style.paddingRight = "3px";
-      span.style.display = "inline-block";
-      span.style.verticalAlign = "middle";
-      span.append(img);
-    }
+    var tex = TeX();
+    tex.scalingFactor = 1.2;
+    var imgData = tex.tex2svg(inlineExamples[k]);
+    var outputBase64 = base64Encode(utf8.encode(imgData));
+    var img = document.createElement('img') as ImageElement;
+    img.src = "data:image/svg+xml;base64,$outputBase64";
+    img.style.verticalAlign = "bottom";
+    var spanId = '#example-inline-${k + 1}';
+    var span = querySelector(spanId) as SpanElement;
+    span.innerHtml = '';
+    //span.style.borderColor = '#EEEEEE';
+    //span.style.borderStyle = 'solid';
+    //span.style.borderWidth = '2px';
+    span.style.paddingLeft = "3px";
+    span.style.paddingRight = "3px";
+    span.style.display = "inline-block";
+    span.style.verticalAlign = "middle";
+    span.append(img);
   }
 
   // examples

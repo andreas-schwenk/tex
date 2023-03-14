@@ -185,7 +185,7 @@ html {
   font-size: 62.5%;
 }
 body {
-  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  font-size: 1.75em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
   font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial,
@@ -285,7 +285,7 @@ input[type="button"] {
   padding: 0 30px;
   color: #555;
   text-align: center;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 38px;
   letter-spacing: 0.1rem;
@@ -358,6 +358,7 @@ select {
   border-radius: 4px;
   box-shadow: none;
   box-sizing: border-box;
+  font-size: 14pt;
 }
 /* Removes awkward default styles on some inputs for iOS */
 input[type="email"],
