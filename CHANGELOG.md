@@ -1,3 +1,9 @@
+## 0.3.1
+
+- the height attribute is now exported in the SVG data
+- added examples
+- website updates
+
 ## 0.3.0
 
 - added glyphs for \angle, \blacksquare, \Box, \boxtimes, \cdots, \complement, \cong, \ddots, \div, \equiv, \Im, \langle, \lnot, \nabla, \neg, \neq, \perp, \rangle, \Re, \setminus, \simeq, \square, \triangle, \varnothing, \vdots, \wp
