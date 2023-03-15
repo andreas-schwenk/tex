@@ -1,3 +1,7 @@
+<div style="text-align: center">
+  <img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/docs/tex-logo.svg" style="max-width: 256px;"/>
+</div>
+
 `tex` is a tiny TeX engine that creates SVG images from TeX strings.
 Currently, only the math environment (e.g. `$ f(x) = x^2 $`) is supported.
 Compared to other TeX renderers, this package does NOT rely on JavaScript or any other dependencies.
@@ -17,22 +21,34 @@ Add the package into your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tex: ^0.1.1
+  tex: ^0.3.1
 ```
 
 Make sure to use the latest version!
 
 ## Usage
 
+The following example creates an SVG image data string from a TeX string.
+
 ```dart
 import 'package:tex/tex.dart';
 
 void main() {
+  // set the equation to render
+  var src = "f(x,y) = x^2 + y^2";
+  // instantiate tex
   var tex = TeX();
-  var svgImageData = tex.tex2svg("f(x,y) = x^2 + y^2");
+  // set the color (from black) to red
+  tex.setColor(255, 0, 0); 
+  // set the scaling factor
+  tex.scalingFactor = 2.0;
+  // create SVG data
+  var svgImageData = tex.tex2svg(src);
+  // check for errors
   if (svgImageData.isEmpty) {
     print('Errors occurred: ${tex.error}');
   } else {
+    // prints "<svg ...";
     print(svgImageData);
   }
 }
@@ -40,7 +56,86 @@ void main() {
 
 Output SVG:
 
-<img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/img/example.svg" style="height:48px; background-color: white;">
+<img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/img/example.svg" style="height:48px; background-color: white;"/>
+
+## Website integration
+
+This example displays an equation as inline math in fluent text.
+
+CSS:
+```css
+.equation {
+  padding-left: 1px;
+  padding-right: 1px;
+  display: inline-block;
+  vertical-align: middle;
+}
+```
+
+HTML:
+```html
+<p>
+  Einsteins famous equation is
+  <span id="einstein" class="equation"></span>.
+  <script src="index.min.js"></script>
+</p>
+```
+
+Dart:
+```dart
+import 'dart:html';
+import 'dart:convert';
+
+import 'package:tex/tex.dart';
+
+void main() {
+  setEquationToSpan("#einstein", "E=mc^2");
+}
+
+void setEquationToSpan(String spanId, String src) {
+  var tex = TeX();
+  tex.scalingFactor = 1.0;
+  var svg = tex.tex2svg(src);
+  print(svg);
+  if (svg.isNotEmpty) {
+    var svgBase64 = base64Encode(utf8.encode(svg));
+    var img = document.createElement('img') as ImageElement;
+    img.src = "data:image/svg+xml;base64,$svgBase64";
+    img.style.verticalAlign = "bottom";
+    var span = querySelector(spanId) as SpanElement;
+    span.innerHtml = '';
+    span.append(img);
+  }
+}
+```
+
+## Flutter
+
+The following code excerpt creates a Span Widget that displays inline math. We use the package `flutter_svg` to render SVG images.
+
+```dart
+import 'package:tex/tex.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+...
+Widget equationWidget;
+var tex = TeX();
+tex.scalingFactor = 1.1;
+var svg = tex.tex2svg(texSrc);
+if (svg.isEmpty) {
+  equationWidget = TextSpan(
+    text: tex.error,
+    style: TextStyle(color: Colors.red),
+  );
+} else {
+  var width = tex.width.toDouble()
+  equationWidget = WidgetSpan(
+    alignment: PlaceholderAlignment.middle,
+    child: SvgPicture.string(svg, width: width),
+  );
+}
+...
+```
 
 ## Additional information
 
@@ -54,6 +149,6 @@ For building the fonts, [python3](https://www.python.org) and [node](https://nod
 
 ## License of MathJax
 
-This package extracts SVG image data of glyphs from [MathJax](https://www.mathjax.org). All rights remain to the authors. MathJax is licensed under the Apache2 license. You will find a copy of Apache2 license in folder `licenses/mathJax/` of this repository.
+This package extracts SVG image data of glyphs from [MathJax](https://www.mathjax.org). All rights remain to the authors. MathJax is licensed under the Apache2 license. You will find a copy of Apache2 license in folder `/licenses/mathJax/` of this repository.
 
 All extracted data from MathJax can be found in variable `svgData` of file `/lib/src/svg.dart`.

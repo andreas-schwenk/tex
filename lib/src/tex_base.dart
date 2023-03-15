@@ -17,8 +17,11 @@ class TeX {
   /// The recently parsed TeX input, stringified.
   String _parsed = '';
 
-  /// The width of recently parsed TeX rendering.
+  /// The width of the most recent parsed TeX rendering.
   int _width = 0;
+
+  /// The height of the most recent parsed TeX rendering.
+  int _height = 0;
 
   /// The error messages.
   String _error = '';
@@ -48,6 +51,11 @@ class TeX {
   /// Gets the width of the last rendering.
   int get width {
     return _width;
+  }
+
+  /// Gets the height of the last rendering.
+  int get height {
+    return _height;
   }
 
   /// Sets the scaling factor.
@@ -81,7 +89,7 @@ class TeX {
       // generate SVG data
       var svgDATA = gen(paintBox, root, 4, _colorRed, _colorGreen, _colorBlue);
       if (svgDATA.isEmpty) {
-        // TODO: do NOT handle as error!
+        // TODO: do NOT handle as error; just output an empty image!
         _error += "nothing to render";
         return "";
       }
@@ -98,8 +106,9 @@ class TeX {
       // make sure, that the view box width is always positive;
       // otherwise some SVG libraries might crash..
       if (viewBoxWidth == 0) viewBoxWidth = 100;
-      // get the image width in pixels
+      // set the image width and height in pixels
       _width = (viewBoxWidth * 0.02 * _scalingFactor).round();
+      _height = (viewBoxHeight * 0.02 * _scalingFactor).round();
       // generate SVG paths, i.e. polygons for all actually used glyphs
       var svgPaths = '';
       Set<String> usedLetters = {};
@@ -121,23 +130,18 @@ class TeX {
             ' width="100" height="100"'
             ' fill="red">'
             '</rect>\n';
-        /*boundingBoxes +=
-            '<rect x="${root.minX}" y="${root.minY /* - root.height - globalTranslateY*/}"'
-            ' width="${root.width}" height="${root.height}"'
-            ' fill="none" stroke="rgb(200,200,200)" stroke-width="20">'
-            '</rect>\n';*/
-        //boundingBoxes += genBoundingBoxes(root);
       }
       // create final output
-      var output =
-          '<svg width="$_width" style="" xmlns="http://www.w3.org/2000/svg" role="img"'
-          ' focusable="false" viewBox="$viewBoxX $viewBoxY $viewBoxWidth $viewBoxHeight"'
+      var output = '<svg width="$_width" height="$_height"'
+          ' xmlns="http://www.w3.org/2000/svg" role="img"'
+          ' focusable="false"'
+          ' viewBox="$viewBoxX $viewBoxY $viewBoxWidth $viewBoxHeight"'
           ' xmlns:xlink="http://www.w3.org/1999/xlink">\n'
           '  <defs>\n$svgPaths  </defs>\n'
           '$boundingBoxes'
           '  <g transform="scale(1,-1)">\n'
           '$svgDATA'
-          '  </g>'
+          '  </g>\n'
           '</svg>\n';
       return output;
     } catch (e, stacktrace) {

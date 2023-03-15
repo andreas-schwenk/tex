@@ -14,15 +14,16 @@ String gen(bool paintBox, TeXNode node, int indent, int colorRed,
       // TODO: put height into constants.dart
       svg += indentString(
           '<rect x="${n.x}" y="${n.y}"'
-          ' width="${n.width}" height="20" fill="none"'
+          ' width="${n.width}" height="20" fill="rgb($colorRed,$colorGreen,$colorBlue)"'
           ' stroke="rgb($colorRed,$colorGreen,$colorBlue)" stroke-width="20" data-token="\\frac">'
           '</rect>',
           indent + 2);
     } else if (n.svgPathId.isNotEmpty) {
       svg += indentString(
-          '<g fill="rgb($colorRed,$colorGreen,$colorBlue)" transform="translate('
-          '${n.x},${n.y}'
-          ') scale(${n.xScaling.toStringAsFixed(4)}'
+          '<g fill="rgb($colorRed,$colorGreen,$colorBlue)"'
+          ' stroke-width="0"'
+          ' transform="translate(${n.x},${n.y})'
+          ' scale(${n.xScaling.toStringAsFixed(4)}'
           ',${n.yScaling.toStringAsFixed(4)})"'
           ' data-token="${xmlStringEncode(n.tk)}">',
           indent);
