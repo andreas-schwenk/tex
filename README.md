@@ -77,7 +77,6 @@ HTML:
 <p>
   Einsteins famous equation is
   <span id="einstein" class="equation"></span>.
-  <script src="index.min.js"></script>
 </p>
 ```
 
@@ -93,15 +92,22 @@ void main() {
 }
 
 void setEquationToSpan(String spanId, String src) {
+  // instantiate tex
   var tex = TeX();
+  // set the scaling factor
   tex.scalingFactor = 1.0;
+  // create SVG data from TeX data
   var svg = tex.tex2svg(src);
+  // debug output
   print(svg);
+  // successful?
   if (svg.isNotEmpty) {
+    // create an image element
     var svgBase64 = base64Encode(utf8.encode(svg));
     var img = document.createElement('img') as ImageElement;
     img.src = "data:image/svg+xml;base64,$svgBase64";
     img.style.verticalAlign = "bottom";
+    // get the span element and add the image
     var span = querySelector(spanId) as SpanElement;
     span.innerHtml = '';
     span.append(img);
@@ -118,16 +124,24 @@ import 'package:tex/tex.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 ...
+// create a target widget element
 Widget equationWidget;
+// instantiate TeX
 var tex = TeX();
+// set the scaling factor
 tex.scalingFactor = 1.1;
+// create SVG data from TeX data
 var svg = tex.tex2svg(texSrc);
 if (svg.isEmpty) {
+  // in case of errors: generate a TextSpan
+  // element containing an error description.
   equationWidget = TextSpan(
     text: tex.error,
     style: TextStyle(color: Colors.red),
   );
 } else {
+  // in case everything works: create a WidgetSpan
+  // element containing an SVG image.
   var width = tex.width.toDouble()
   equationWidget = WidgetSpan(
     alignment: PlaceholderAlignment.middle,
