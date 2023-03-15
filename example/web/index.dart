@@ -15,15 +15,22 @@ void main() {
 }
 
 void setEquationToSpan(String spanId, String src) {
+  // instantiate tex
   var tex = TeX();
+  // set the scaling factor
   tex.scalingFactor = 1.0;
+  // create SVG data from TeX data
   var svg = tex.tex2svg(src);
+  // debug output
   print(svg);
+  // successful?
   if (svg.isNotEmpty) {
+    // create an image element
     var svgBase64 = base64Encode(utf8.encode(svg));
     var img = document.createElement('img') as ImageElement;
     img.src = "data:image/svg+xml;base64,$svgBase64";
     img.style.verticalAlign = "bottom";
+    // get the span element and add the image
     var span = querySelector(spanId) as SpanElement;
     span.innerHtml = '';
     span.append(img);
