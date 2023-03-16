@@ -1,5 +1,5 @@
 <div style="text-align: center">
-  <img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/docs/tex-logo.svg" style="max-width: 256px;"/>
+  <img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/docs/tex-logo.svg?v=2" style="max-width: 256px;"/>
 </div>
 
 `tex` is a tiny TeX engine that creates SVG images from TeX strings.
