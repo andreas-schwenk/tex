@@ -10,18 +10,22 @@ import time
 # get unit time
 unix_time = int(time.time())
 
-# read index.html
-f = open("index.html", "r")
-lines = f.readlines()
-f.close()
+files = ["index.html","compare.html"]
 
-# replace version number(s)
-for i, line in enumerate(lines):
-    if '?version=' in line:
-        tokens = line.split('?')
-        lines[i] = tokens[0] + '?version=' + str(unix_time) + '"></script>\n'
+for file in files:
 
-# write index.html
-f = open("index.html", "w")
-f.write("".join(lines))
-f.close()
+    # read file
+    f = open(file, "r")
+    lines = f.readlines()
+    f.close()
+
+    # replace version number(s)
+    for i, line in enumerate(lines):
+        if '?version=' in line:
+            tokens = line.split('?')
+            lines[i] = tokens[0] + '?version=' + str(unix_time) + '"></script>\n'
+
+    # write file
+    f = open(file, "w")
+    f.write("".join(lines))
+    f.close()

@@ -21,7 +21,7 @@ Add the package into your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tex: ^0.3.1
+  tex: ^0.4.0
 ```
 
 Make sure to use the latest version!
@@ -43,7 +43,7 @@ void main() {
   // set the scaling factor
   tex.scalingFactor = 2.0;
   // create SVG data
-  var svgImageData = tex.tex2svg(src);
+  var svgImageData = tex.tex2svg(src, displayStyle=true);
   // check for errors
   if (svgImageData.isEmpty) {
     print('Errors occurred: ${tex.error}');
@@ -60,7 +60,7 @@ Output SVG:
 
 ## Website integration
 
-This example displays an equation as inline math in fluent text.
+This example displays an equation as inline math in fluent text. The complete code can be found in directory `/examples/web`.
 
 CSS:
 ```css
@@ -97,7 +97,7 @@ void setEquationToSpan(String spanId, String src) {
   // set the scaling factor
   tex.scalingFactor = 1.0;
   // create SVG data from TeX data
-  var svg = tex.tex2svg(src);
+  var svg = tex.tex2svg(src, displayStyle=false);
   // debug output
   print(svg);
   // successful?

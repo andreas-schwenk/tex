@@ -8,7 +8,7 @@ import 'tab.dart';
 
 /// Parses a TeX list. Braces "{", "}" are consumed, if [parseBraces] is true.
 ///
-/// Formal grammar: texList = "{" { texNode } "}";
+/// Formal grammar: texList = "{" { texNode } "}" [ texSubSup ];
 TeXNode parseTexList(Lex lex, bool parseBraces, bool forbidParsingSubSup) {
   if (parseBraces) lex.terminal('{');
   var list = TeXNode(TeXNodeType.list, []);
@@ -25,7 +25,7 @@ TeXNode parseTexList(Lex lex, bool parseBraces, bool forbidParsingSubSup) {
 
 /// Parses a TeX node.
 ///
-/// Formal grammar: texNode = "\" ID { "{" texList "}" } | ID | INT | ...;
+/// Formal grammar: texNode = ("\" ID { "{" texList "}" } | ID | INT | ...) [ texSubSup ];
 TeXNode parseTexNode(Lex lex, bool forbidParsingSubSup) {
   if (lex.token == '{') {
     return parseTexList(lex, true, false);
@@ -37,6 +37,8 @@ TeXNode parseTexNode(Lex lex, bool forbidParsingSubSup) {
     }
     if (node.tk == '\\begin') {
       return parseTexEnv(lex);
+    } else if (node.tk == '\\left') {
+      return parseLeftRight(lex);
     } else if (node.tk.startsWith("\\") && macros.containsKey(node.tk)) {
       var command = node.tk;
       lex.next();
@@ -52,7 +54,9 @@ TeXNode parseTexNode(Lex lex, bool forbidParsingSubSup) {
   }
 }
 
-// TODO: docs + grammar + grammer where called
+/// Parses subscript and superscript tex nodes.
+///
+/// Formal grammar: texSubSup = { "^" texNode | "_" texNode };
 void parseSubSup(Lex lex, TeXNode node) {
   while (lex.token == '^' || lex.token == '_') {
     var del = lex.token;
@@ -63,21 +67,17 @@ void parseSubSup(Lex lex, TeXNode node) {
       throw Exception('ERROR: use { } when chaining _');
     }
     if (del == '_') {
-      node.sub = lex.token == '{'
-          ? parseTexList(lex, true, true)
-          : TeXNode(TeXNodeType.list, [parseTexNode(lex, true)]);
+      node.sub = parseTexNode(lex, true);
     }
     if (del == '^') {
-      node.sup = lex.token == '{'
-          ? parseTexList(lex, true, true)
-          : TeXNode(TeXNodeType.list, [parseTexNode(lex, true)]);
+      node.sup = parseTexNode(lex, true);
     }
   }
 }
 
 /// Parses a TeX environment.
 ///
-/// Formal grammar: env = "\begin" "{" {ID} "}" { texNode } "\end" "{" {ID} "}";
+/// Formal grammar: env = "\begin" "{" {ID} "}" { texNode } "\end" "{" {ID} "}" [ texSubSup ];
 TeXNode parseTexEnv(Lex lex) {
   lex.terminal('\\begin');
   lex.terminal('{');
@@ -103,7 +103,40 @@ TeXNode parseTexEnv(Lex lex) {
     throw Exception('unexpected \\end{$envID2}');
   }
   postProcessList(nodes);
-  return TeXNode(TeXNodeType.environment, nodes, envID);
+  var node = TeXNode(TeXNodeType.environment, nodes, envID);
+  parseSubSup(lex, node);
+  return node;
+}
+
+/// Parses left and right parentheses.
+///
+/// Formal grammar: lr = "\left" PARENTHESIS { texNode } "\right" PARENTHESIS [ texSubSup ];
+TeXNode parseLeftRight(Lex lex) {
+  const parentheses = ["(", "[", "\\{", ".", ")", "]", "\\}"];
+  var left = '';
+  var right = '';
+  lex.terminal('\\left');
+  if (parentheses.contains(lex.token)) {
+    left = lex.token;
+    lex.next();
+  } else {
+    throw Exception('invalid token after \\left');
+  }
+  List<TeXNode> nodes = [];
+  while (lex.token != Lex.lexEnd && lex.token != '\\right') {
+    nodes.add(parseTexNode(lex, false));
+  }
+  lex.terminal('\\right');
+  if (parentheses.contains(lex.token)) {
+    right = lex.token;
+    lex.next();
+  } else {
+    throw Exception('invalid token after \\right');
+  }
+  postProcessList(nodes);
+  var node = TeXNode(TeXNodeType.environment, nodes, "left-right:$left:$right");
+  parseSubSup(lex, node);
+  return node;
 }
 
 /// post-process: populate node.args (as lists)

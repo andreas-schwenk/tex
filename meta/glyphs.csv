@@ -79,7 +79,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 :; MJX-1-TEX-N-3A; 350; 0
 !; MJX-1-TEX-N-21; 350; 0
 '; MJX-1-TEX-V-2032; 350; 0
-(; MJX-1-TEX-N-28; 300; 0
+(; MJX-1-TEX-N-28; 350; 0
 ); MJX-1-TEX-N-29; 300; 0
 [; MJX-1-TEX-N-5B; 300; 0
 ]; MJX-1-TEX-N-5D; 300; 0
@@ -92,7 +92,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 <; MJX-1-TEX-N-3C; 1200; 200
 =; MJX-1-TEX-N-3D; 1200; 200
 >; MJX-1-TEX-N-3E; 1200; 200
-|; MJX-1-TEX-N-7C; 500; 100
+|; MJX-1-TEX-N-7C; 300; 50
 
 # ----- Greek -----
 \alpha; MJX-1-TEX-I-1D6FC; 650; 0
@@ -185,6 +185,7 @@ z; MJX-1-TEX-I-1D467; 500; 0
 \otimes; MJX-1-TEX-N-2297; 750; 0
 \partial; MJX-1-TEX-I-1D715; 575; 0
 \perp; MJX-1-TEX-N-22A5; 750; 0
+\pm; MJX-1-TEX-N-B1; 1200; 200
 \prod; MJX-1-TEX-LO-220F; 1400; 0
 \rangle; MJX-1-TEX-N-27E9; 350; 0
 \Re; MJX-1-TEX-N-211C; 875; 0

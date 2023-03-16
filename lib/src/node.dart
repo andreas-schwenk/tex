@@ -2,7 +2,7 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
-import 'rendered_node.dart';
+import 'glyph.dart';
 
 /// The type of the node
 enum TeXNodeType {
@@ -36,8 +36,8 @@ class TeXNode {
   /// The optional superscript node.
   TeXNode? sup;
 
-  /// The list rendered glyphs.
-  List<RenderedTeXNode> renderedNodes = [];
+  /// The list of rendered glyphs.
+  List<Glyph> glyphs = [];
 
   /// The x minimum positions of all rendered glyphs.
   double minX = 0.0;
@@ -57,16 +57,16 @@ class TeXNode {
   /// Constructor.
   TeXNode(this.type, this.items, [this.tk = '']);
 
-  // TODO: doc
+  /// Calculates the geometry.
   void calcGeometry() {
-    var count = renderedNodes.length;
+    var count = glyphs.length;
     minX = count == 0 ? 0 : double.infinity;
     minY = count == 0 ? 0 : double.infinity;
     var maxX = count == 0 ? 0 : -double.infinity;
     var maxY = count == 0 ? 0 : -double.infinity;
     width = 0.0;
     height = 0.0;
-    for (var n in renderedNodes) {
+    for (var n in glyphs) {
       if (n.x < minX) minX = n.x;
       if (n.y < minY) minY = n.y;
       if (n.x + n.width > maxX) maxX = n.x + n.width;
@@ -76,24 +76,24 @@ class TeXNode {
     height = maxY - minY;
   }
 
-  // Translates all rendered nodes.
+  /// Translates all rendered nodes.
   void translate(double x, double y) {
     minX += x;
     minY += y;
-    for (var n in renderedNodes) {
+    for (var n in glyphs) {
       n.x += x;
       n.y += y;
     }
   }
 
-  // Scales all rendered nodes.
+  /// Scales all rendered nodes.
   void scale(double xFactor, double yFactor) {
     minX *= xFactor;
     minY *= yFactor;
     width *= xFactor;
     height *= yFactor;
     postfixSpacing *= xFactor;
-    for (var n in renderedNodes) {
+    for (var n in glyphs) {
       n.xScaling *= xFactor;
       n.yScaling *= yFactor;
       n.x *= xFactor;
@@ -105,7 +105,7 @@ class TeXNode {
 
   /// Gets a set of all actually used glyphs for a [node].
   void getActuallyUsedGlyphs(Set<String> usedLetters) {
-    for (var n in renderedNodes) {
+    for (var n in glyphs) {
       if (n.svgPathId.isNotEmpty && n.svgPathId.startsWith("!") == false) {
         usedLetters.add(n.svgPathId);
       }

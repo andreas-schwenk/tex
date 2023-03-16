@@ -72,13 +72,19 @@ class TeX {
 
   /// Generates an SVG String from TeX [src].
   ///
-  /// A debug output can be achieved by rendering bounding boxes via [paintBox].
-  String tex2svg(String src, [paintBox = false]) {
+  /// A debug output can be achieved by rendering bounding boxes via [debugMode].
+  String tex2svg(String src, {displayStyle = false, debugMode = false}) {
+    _error = '';
     // tokenize input
     _lex.set(src);
     try {
       // recursively parse input into TexNodes
       var root = parseTexList(_lex, false, false);
+      // check, if lexer is at the end position of input string
+      if (_lex.token != Lex.lexEnd) {
+        _error += 'Unexpected token ${_lex.token}';
+        return "";
+      }
       // stringify TexNodes for debug purposes
       _parsed = root.toString();
       // typeset, i.e. calculate relative positions and scaling
@@ -87,10 +93,10 @@ class TeX {
       // glyph "x" intersect.
       root.translate(0, globalTranslateY);
       // generate SVG data
-      var svgDATA = gen(paintBox, root, 4, _colorRed, _colorGreen, _colorBlue);
+      var svgDATA = gen(debugMode, root, 4, _colorRed, _colorGreen, _colorBlue);
       if (svgDATA.isEmpty) {
         // TODO: do NOT handle as error; just output an empty image!
-        _error += "nothing to render";
+        _error += "Nothing to render.";
         return "";
       }
       // calculate the view box of the SVG image; note that the y-axis is
@@ -121,7 +127,7 @@ class TeX {
       // optionally generate bounding rectangles around glyphs for debugging
       // purposes
       String boundingBoxes = '';
-      if (paintBox) {
+      if (debugMode) {
         boundingBoxes = '<rect x="-50" y="-50"'
             ' width="100" height="100"'
             ' fill="red">'

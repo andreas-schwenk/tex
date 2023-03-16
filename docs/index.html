@@ -10,10 +10,11 @@
     <br />
 
     <div id="tex" class="container" style="text-align: center">
-      <img src="tex-logo.svg" style="width: 50%" />
-      <h1>a TeX Engine</h1>
+      <a href="index.html">
+        <img src="tex-logo.svg?v=2" style="width: 50%" /><br /><br />
+      </a>
       <span style="font-size: 16pt"
-        >written in the Dart Programming Language</span
+        >a TeX Engine written in the Dart Programming Language</span
       ><br /><br />
     </div>
 
@@ -34,7 +35,7 @@
     </div>
 
     <div id="tex" class="container">
-      <h2>Info</h2>
+      <!--<h2>Info</h2>-->
       <p>
         <!-- -->
         <i>Dart TeX</i> renders TeX math strings as SVG images. Compared to
@@ -50,6 +51,10 @@
         GitHub repository. All extracted data from MathJax can be found in
         variable <code>svgData</code> of file <code>/lib/src/svg.dart`</code>.
       </p>
+      <p>
+        <!-- -->
+        <a href="compare.html">Compare Dart-TeX with MathJax</a>.
+      </p>
     </div>
 
     <br />
@@ -62,8 +67,15 @@
         <button class="button-primary" id="runTex" type="button">
           typeset
         </button>
+        <div style="text-align: center; color: #aa322c">
+          <b>
+            Currently, display style and inline math render the same output!
+          </b>
+        </div>
+        <br />
+        Display Style:
         <div
-          id="tex-rendering"
+          id="tex-rendering-displaystyle"
           style="
             border-style: solid;
             border-color: rgb(187, 187, 187);
@@ -74,8 +86,35 @@
             margin: 5px auto;
           "
         ></div>
+        Inline Math:
         <div
-          id="tex-rendering-with-boxes"
+          id="tex-rendering-inlinemath"
+          style="
+            border-style: solid;
+            border-color: rgb(187, 187, 187);
+            border-width: 2px;
+            border-radius: 5px;
+            padding: 8px;
+            overflow-y: scroll;
+            margin: 5px auto;
+          "
+        ></div>
+        Display Style (Debug Output):
+        <div
+          id="tex-rendering-displaystyle-debug"
+          style="
+            border-style: solid;
+            border-color: rgb(187, 187, 187);
+            border-width: 2px;
+            border-radius: 5px;
+            padding: 8px;
+            overflow-y: scroll;
+            margin: 5px auto;
+          "
+        ></div>
+        Inline Math (Debug Output):
+        <div
+          id="tex-rendering-inlinemath-debug"
           style="
             border-style: solid;
             border-color: rgb(187, 187, 187);
@@ -105,8 +144,8 @@
           <thead>
             <tr>
               <th>TeX</th>
-              <th>Rendering</th>
-              <th>Rendering (with boxes)</th>
+              <th>Display Style</th>
+              <th>Inline Math</th>
             </tr>
           </thead>
           <tbody id="examples-table"></tbody>
@@ -170,9 +209,8 @@
     </div>
 
     <br />
-
     <br />
-  </body>
 
-  <script src="index.min.js?version=1678877902"></script>
+    <script src="index.min.js?version=1678978286"></script>
+  </body>
 </html>

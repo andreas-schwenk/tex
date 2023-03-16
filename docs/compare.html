@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tex</title>
+    <link rel="stylesheet" href="index.css?v=2" />
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+        },
+        svg: {
+          fontCache: "global",
+        },
+      };
+    </script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+    ></script>
+  </head>
+  <body>
+    <br />
+
+    <div id="tex" class="container" style="text-align: center">
+      <a href="index.html">
+        <img src="tex-logo.svg?v=2" style="width: 50%" /><br /><br />
+      </a>
+      <span style="font-size: 16pt"
+        >a TeX Engine written in the Dart Programming Language</span
+      ><br /><br />
+    </div>
+
+    <div id="tex" class="container" style="opacity: 0.8; text-align: center">
+      <p>
+        &copy; 2023 by Andreas Schwenk
+        <br /><br />
+        License: GPLv3 (GNU General Public License, Version 3)
+        <br />
+        GitHub:
+        <a href="https://github.com/andreas-schwenk/tex"
+          >https://github.com/andreas-schwenk/tex</a
+        >
+        <br />
+        Dart Package:
+        <a href="https://pub.dev/packages/tex">https://pub.dev/packages/tex</a>
+      </p>
+    </div>
+
+    <div id="tex" class="container">
+      <p>This site compares Dart-TeX with MathJax.</p>
+      <p>
+        <!-- -->
+        <a href="index.html">Go to the main website</a>.
+      </p>
+    </div>
+
+    <div id="tex" class="container">
+      <h2>Playground</h2>
+
+      <div class="row">
+        <input type="text" id="tex-input" class="u-full-width" />
+        <button class="button-primary" id="runTex" type="button">
+          typeset
+        </button>
+        <br />
+        Dart-TeX
+        <div
+          id="tex-rendering"
+          style="
+            text-align: center;
+            border-style: solid;
+            border-color: rgb(187, 187, 187);
+            border-width: 2px;
+            border-radius: 5px;
+            padding: 8px;
+            overflow-y: scroll;
+            margin: 5px auto;
+          "
+        >
+          xx
+        </div>
+        MathJax
+        <div
+          id="mathjax-rendering"
+          style="
+            text-align: center;
+            border-style: solid;
+            border-color: rgb(187, 187, 187);
+            border-width: 2px;
+            border-radius: 5px;
+            padding: 8px;
+            overflow-y: scroll;
+            margin: 5px auto;
+            font-size: 1.8em;
+          "
+        >
+          $$x^2$$
+        </div>
+      </div>
+    </div>
+
+    <br /><br />
+
+    <div id="tex" class="container">
+      <h2>Examples</h2>
+      <div class="row" style="padding-top: 5px">
+        <table class="" style="margin-left: auto; margin-right: auto">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Dart-TeX</th>
+              <th>MathJax</th>
+            </tr>
+          </thead>
+          <tbody id="examples-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <br />
+
+    <script>
+      window.addEventListener(
+        "message",
+        (event) => {
+          if (event.data == "typesetMathjax") {
+            console.log("... received Mathjax typesetting message!");
+            if (typeof MathJax.typesetPromise !== "undefined") {
+              MathJax.typesetPromise();
+            }
+          }
+        },
+        false
+      );
+    </script>
+
+    <script src="compare.min.js?version=1678978286"></script>
+  </body>
+</html>

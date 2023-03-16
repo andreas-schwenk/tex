@@ -2,8 +2,8 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
-/// Description of a rendered glyph.
-class RenderedTeXNode {
+/// Description of a glyph.
+class Glyph {
   /// The x coordinate.
   double x = 0.0;
 

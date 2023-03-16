@@ -9,7 +9,7 @@ import 'node.dart';
 String gen(bool paintBox, TeXNode node, int indent, int colorRed,
     int colorGreen, int colorBlue) {
   String svg = '';
-  for (var n in node.renderedNodes) {
+  for (var n in node.glyphs) {
     if (n.svgPathId == '!fraction' || n.svgPathId == '!overline') {
       // TODO: put height into constants.dart
       svg += indentString(

@@ -25,8 +25,7 @@ void main() {
   //"\\sqrt 3"; //"\\frac x {y+1}"; //"\\frac x{ \\sum_1^{{6}} w } \\cdot 5";
   //"x^2  + {4*5}";
   var output = '';
-  var paintBox = true;
-  output = tex.tex2svg(src, paintBox);
+  output = tex.tex2svg(src, debugMode: true, displayStyle: true);
   if (output.isEmpty) {
     print("ERROR: tex2svg failed: ${tex.error}");
     assert(false);

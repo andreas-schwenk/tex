@@ -5,8 +5,10 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:tex/tex.dart';
-import 'package:tex/src/tab.dart' as tab;
+// ignore: avoid_relative_lib_imports
+import '../lib/tex.dart';
+// ignore: avoid_relative_lib_imports
+import '../lib/src/tab.dart' as tab;
 
 final examples = [
   'f(x)=x^2',
@@ -18,7 +20,7 @@ final examples = [
   '\\NN^2',
   '\\lim_{x\\to\\infty}\\frac1x',
   "\\begin{matrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}",
-  "\\begin{pmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{pmatrix}",
+  "\\begin{pmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{pmatrix}^T",
   "\\begin{bmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{bmatrix}",
   "\\begin{Bmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{Bmatrix}",
   "\\begin{vmatrix}\n  1+\\alpha & 2 \\\\\n  3 & 4 \\\\\n\\end{vmatrix}",
@@ -28,6 +30,7 @@ final examples = [
   "\\sum_{i=1}^5 i^2",
   "\\prod_{i=1}^5 i^2",
   "\\{1, 2, \\dots, 5\\}",
+  "\\left( \\frac1x \\right)^2",
 ];
 
 final customMacros = ['\\CC', '\\NN', '\\QQ', '\\RR', '\\ZZ'];
@@ -78,13 +81,20 @@ void main() {
 
 void typeset() {
   var src = (querySelector('#tex-input') as InputElement).value as String;
-  document.getElementById('tex-rendering')?.innerHtml = '';
-  document.getElementById('tex-rendering-with-boxes')?.innerHtml = '';
+  var elements = [
+    document.getElementById('tex-rendering-displaystyle') as DivElement,
+    document.getElementById('tex-rendering-inlinemath') as DivElement,
+    document.getElementById('tex-rendering-displaystyle-debug') as DivElement,
+    document.getElementById('tex-rendering-inlinemath-debug') as DivElement,
+  ];
   var tex = TeX();
   print(src);
   tex.scalingFactor = 2.0;
-  for (var i = 0; i < 2; i++) {
-    var output = tex.tex2svg(src, i == 0 ? false : true);
+  for (var i = 0; i < elements.length; i++) {
+    var element = elements[i];
+    element.innerHtml = '';
+    var output =
+        tex.tex2svg(src, debugMode: i >= 2, displayStyle: (i % 2) == 0);
     if (i == 0) {
       print(output);
     }
@@ -94,11 +104,7 @@ void typeset() {
       img.src = "data:image/svg+xml;base64,$outputBase64";
       img.style.verticalAlign = "bottom";
       document.getElementById('tex-term')?.innerHtml = tex.parsed;
-      if (i == 0) {
-        document.getElementById('tex-rendering')?.append(img);
-      } else {
-        document.getElementById('tex-rendering-with-boxes')?.append(img);
-      }
+      element.append(img);
     } else {
       document.getElementById('tex-term')?.innerHtml = tex.error;
     }
@@ -123,7 +129,7 @@ void showExamples(String tableId, List<String> exampleList) {
     tr.append(cell1);
 
     var cell2 = document.createElement('td') as TableCellElement;
-    var output = tex.tex2svg(example, false);
+    var output = tex.tex2svg(example, displayStyle: true);
     if (output.isEmpty) {
       print(tex.error);
     }
@@ -144,7 +150,7 @@ void showExamples(String tableId, List<String> exampleList) {
     }
 
     var cell3 = document.createElement('td') as TableCellElement;
-    output = tex.tex2svg(example, true);
+    output = tex.tex2svg(example, displayStyle: false);
     if (output.isEmpty) {
       print(tex.error);
     }
@@ -178,7 +184,7 @@ void showGlyphTests() {
     if (texSrc == "'") texSrc = "{}'";
 
     var tex = TeX();
-    var output = tex.tex2svg(texSrc, true);
+    var output = tex.tex2svg(texSrc, debugMode: true);
     if (output.isEmpty) {
       print(tex.error);
     }
