@@ -25,7 +25,7 @@ class Lex {
   }
 
   /// Tokenizes a string [src], inserts it to the current position and returns
-  /// the successes.
+  /// the success.
   bool insert(String src) {
     if (_pos >= _len) return false;
     var tokens = _tokenize(src);
@@ -64,7 +64,6 @@ class Lex {
         i = j - 1;
         tokens.add(tk);
       } else if (c == "'") {
-        //TODO: multiple '
         tokens.add("^");
         tokens.add("{");
         while (i < n && src[i] == "'") {
@@ -101,7 +100,7 @@ class Lex {
   }
 }
 
-/* 
+/* /// lexer test
 void main() {
   var lex = Lex();
   lex.set('abc\\{def\\}ghi');

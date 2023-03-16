@@ -31,7 +31,7 @@ void typeset(TeXNode node) {
         var tk = node.tk;
         if (tk == '\\,' || tk == '~') {
           // ================ spacing ================
-          node.postfixSpacing = 300; // TODO: \, and ~ are not the same...
+          node.postfixSpacing = 300; // TODO: \, and \~ are not the same...
           return;
         } else if (functions.contains(tk)) {
           // ================ functions ================

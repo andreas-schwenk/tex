@@ -58,21 +58,22 @@ class TeX {
     return _height;
   }
 
-  /// Sets the scaling factor.
+  /// Sets the scaling [factor].
   set scalingFactor(double factor) {
     _scalingFactor = factor;
   }
 
-  /// Sets the RGB color in range 0 to 255.
+  /// Sets the [red], [green] and [blue] (RGB) color range 0 to 255 each.
   void setColor(int red, int green, int blue) {
     _colorRed = red;
     _colorGreen = green;
     _colorBlue = blue;
   }
 
-  /// Generates an SVG String from TeX [src].
-  ///
-  /// A debug output can be achieved by rendering bounding boxes via [debugMode].
+  /// Generates an SVG String from TeX [src]. By default, inline math is
+  /// generated. Enable display style equations via [displayStyle].
+  /// Parameter [debugMode] enables rendering bounding boxes around glyphs
+  /// and groups of glyphs.
   String tex2svg(String src, {displayStyle = false, debugMode = false}) {
     _error = '';
     // tokenize input
