@@ -1,3 +1,7 @@
+## 0.4.1
+
+- fixed a parsing bug that mixed sub and sup for \sum and \prod
+
 ## 0.4.0
 
 - added \left and \right

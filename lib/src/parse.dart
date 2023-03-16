@@ -28,7 +28,7 @@ TeXNode parseTexList(Lex lex, bool parseBraces, bool forbidParsingSubSup) {
 /// Formal grammar: texNode = ("\" ID { "{" texList "}" } | ID | INT | ...) [ texSubSup ];
 TeXNode parseTexNode(Lex lex, bool forbidParsingSubSup) {
   if (lex.token == '{') {
-    return parseTexList(lex, true, false);
+    return parseTexList(lex, true, forbidParsingSubSup);
   } else {
     var node = TeXNode(TeXNodeType.unary, []);
     node.tk += lex.token;
