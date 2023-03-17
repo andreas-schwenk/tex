@@ -35,13 +35,23 @@
     </div>
 
     <div id="tex" class="container">
-      <!--<h2>Info</h2>-->
       <p>
         <!-- -->
-        <i>Dart TeX</i> renders TeX math strings as SVG images. Compared to
-        other TeX renderers, this package does NOT rely on JavaScript or any
-        other dependencies.
+        <i>Dart TeX</i> renders TeX math strings as SVG images. Head to the
+        <a href="https://github.com/andreas-schwenk/tex" target="_blank"
+          >GitHub repository</a
+        >
+        for a detailed description on how to use Dart TeX in websites and
+        <a href="https://flutter.dev" target="_blank">Flutter</a>.
       </p>
+
+      <blockquote>
+        <b>
+          Compared to other TeX renderers, this package does NOT rely on
+          JavaScript or any other dependencies.
+        </b>
+      </blockquote>
+
       <p>
         <!-- -->
         We extract all glyphs as SVG paths from
@@ -59,17 +69,49 @@
 
     <br />
 
-    <div id="tex" class="container">
+    <div id="menu" class="container">
+      <div class="row" style="text-align: center">
+        <button class="button-primary" type="button" onclick="show('play');">
+          play
+        </button>
+        <button
+          class="button-primary"
+          type="button"
+          onclick="show('examples');"
+        >
+          examples
+        </button>
+        <button class="button-primary" type="button" onclick="show('inline');">
+          inline
+        </button>
+        <button class="button-primary" type="button" onclick="show('macros');">
+          macros
+        </button>
+        <button class="button-primary" type="button" onclick="show('glyphs');">
+          glyphs
+        </button>
+        <button
+          class="button-primary"
+          type="button"
+          onclick="show('changelog');"
+        >
+          changelog
+        </button>
+      </div>
+    </div>
+
+    <br />
+
+    <div id="play" class="container" style="display: block">
       <h2>Playground</h2>
 
       <div class="row">
         <input type="text" id="tex-input" class="u-full-width" />
-        <button class="button-primary" id="runTex" type="button">
-          typeset
-        </button>
+        <button class="button" id="runTex" type="button">typeset</button>
         <div style="text-align: center; color: #aa322c">
           <b>
-            Currently, display style and inline math render the same output!
+            Warning: Currently, display style and inline math render the same
+            output!
           </b>
         </div>
         <br />
@@ -135,9 +177,7 @@
       </div>
     </div>
 
-    <br /><br />
-
-    <div id="tex" class="container">
+    <div id="examples" class="container" style="display: none">
       <h2>Examples</h2>
       <div class="row" style="padding-top: 5px">
         <table class="" style="margin-left: auto; margin-right: auto">
@@ -153,9 +193,7 @@
       </div>
     </div>
 
-    <br />
-
-    <div id="tex" class="container">
+    <div id="macros" class="container" style="display: none">
       <h2>Custom Macros</h2>
       <div class="row" style="padding-top: 5px">
         <table class="" style="margin-left: auto; margin-right: auto">
@@ -171,9 +209,7 @@
       </div>
     </div>
 
-    <br />
-
-    <div id="tex" class="container">
+    <div id="inline" class="container" style="display: none">
       <h2>Inline Examples</h2>
       <div class="row" style="padding-top: 5px">
         <p>
@@ -189,9 +225,7 @@
       </div>
     </div>
 
-    <br />
-
-    <div id="tex" class="container">
+    <div id="glyphs" class="container" style="display: none">
       <h2>List of Glyphs</h2>
       <div class="row" style="padding-top: 5px">
         <table class="" style="margin-left: auto; margin-right: auto">
@@ -208,9 +242,40 @@
       </div>
     </div>
 
+    <div id="changelog" class="container" style="display: none">
+      <h2>Changelog</h2>
+      <div id="changelog-contents"></div>
+    </div>
+
     <br />
     <br />
 
-    <script src="index.min.js?version=1678998055"></script>
+    <script>
+      function show(id) {
+        document.getElementById("play").style.display =
+          id == "play" ? "block" : "none";
+        document.getElementById("examples").style.display =
+          id == "examples" ? "block" : "none";
+        document.getElementById("inline").style.display =
+          id == "inline" ? "block" : "none";
+        document.getElementById("macros").style.display =
+          id == "macros" ? "block" : "none";
+        document.getElementById("glyphs").style.display =
+          id == "glyphs" ? "block" : "none";
+        document.getElementById("changelog").style.display =
+          id == "changelog" ? "block" : "none";
+      }
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("changelog-contents").innerHTML =
+            req.responseText;
+        }
+      };
+      req.open("GET", "changelog.txt", true);
+      req.send();
+    </script>
+
+    <script src="index.min.js?version=1679038029"></script>
   </body>
 </html>

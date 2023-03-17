@@ -1,0 +1,89 @@
+<h3>0.4.1</h3>
+<ul>
+  <li>fixed a parsing bug that mixed sub and sup for \sum and \prod</li>
+</ul>
+<h3>0.4.0</h3>
+<ul>
+  <li>added \left and \right</li>
+  <li>initial support for display style vs inline math mode</li>
+  <li>added glyph for \pm</li>
+  <li>added website that compares Dart-TeX with MathJax</li>
+  <li>sub and sup for matrixes are now vertically aligned correctly</li>
+  <li>improved glyph dimensions</li>
+  <li>fixing of minor bugs</li>
+</ul>
+<h3>0.3.1</h3>
+<ul>
+  <li>the height attribute is now exported in the SVG data</li>
+  <li>added examples</li>
+  <li>website updates</li>
+</ul>
+<h3>0.3.0</h3>
+<ul>
+  <li>added glyphs for \angle, \blacksquare, \Box, \boxtimes, \cdots, \complement, \cong, \ddots, \div, \equiv, \Im, \langle, \lnot, \nabla, \neg, \neq, \perp, \rangle, \Re, \setminus, \simeq, \square, \triangle, \varnothing, \vdots, \wp</li>
+  <li>improved \lim</li>
+  <li>fixed parsing and typesetting bugs</li>
+  <li>fixed SVG output, s.t. that no longer an exception in flutter_svg is thrown for \overline and \sqrt</li>
+</ul>
+<h3>0.2.0</h3>
+<ul>
+  <li>color can be set as RGB value</li>
+  <li>added glyphs for ', \oint, \otimes, \oplus, \subset, \supset, \subseteq, \supseteq, \sim, \approx, \partial</li>
+  <li>added \matrix, \bmatrix, \Bmatrix, \vmatrix</li>
+  <li>matrix columns now be aligned to left, center or right</li>
+  <li>added \cases</li>
+  <li>added \overline</li>
+  <li>added standard functions \arccos, \arcsin, \arctan, \arg, \cos, \cosh, \cot, \coth, \csc, \deg, \det, \dim, \exp, \gcd, \hom, \inf, \ker, \lg, \lim, \liminf, \limsup, \ln, \log, \max, \min, \mod, \Pr, \sec, \sin, \sinh, \sup, \tan, \tanh</li>
+  <li>improved glyph dimensions</li>
+</ul>
+<h3>0.1.1</h3>
+<ul>
+  <li>integrals via \int</li>
+  <li>(initial) support for sums and products via \sum and \prod</li>
+  <li>spacing via \, and ~</li>
+</ul>
+<h3>0.1.0</h3>
+<ul>
+  <li>initial support for matrices</li>
+  <li>restructured and simplified code</li>
+  <li>bug fixes</li>
+</ul>
+<h3>0.0.7</h3>
+<ul>
+  <li>support for macros (yet w/o parameters)</li>
+  <li>added glyphs: decimal point, braces, emptyset</li>
+  <li>extended example page</li>
+</ul>
+<h3>0.0.6</h3>
+<ul>
+  <li>bug fixes</li>
+</ul>
+<h3>0.0.5</h3>
+<ul>
+  <li>inline text rendering is now correctly vertical aligned</li>
+  <li>basic support for \sqrt</li>
+  <li>SVG output is not any more hierarchically; all glyphs have global coordinates</li>
+  <li>increased code readability</li>
+  <li>added code comments</li>
+</ul>
+<h3>0.0.4</h3>
+<ul>
+  <li>image width encoded into SVG data</li>
+  <li>API offers scaling factor</li>
+  <li>better support for fractions</li>
+  <li>inline equation examples on demo page (alignment is still WIP)</li>
+</ul>
+<h3>0.0.3</h3>
+<ul>
+  <li>code documentation</li>
+</ul>
+<h3>0.0.2</h3>
+<ul>
+  <li>added rudimentary support for fractions</li>
+  <li>added \sin, \cos, ...</li>
+  <li>minor fixes</li>
+</ul>
+<h3>0.0.1</h3>
+<ul>
+  <li>Initial version.</li>
+</ul>
