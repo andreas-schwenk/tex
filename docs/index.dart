@@ -13,6 +13,7 @@ import '../lib/src/tab.dart' as tab;
 final examples = [
   'f(x)=x^2',
   '\\frac 1 {x+1}',
+  '\\frac{z_1}{z_2}',
   '\\sin x',
   '\\sin(x)',
   "\\sqrt{x+1}",

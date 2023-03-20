@@ -138,6 +138,8 @@ TeXNode _processMacros(TeXNode node) {
   for (var i = 0; i < node.items.length; i++) {
     node.items[i] = _processMacros(node.items[i]);
   }
+  // note: node.sub, node.sup and node.args must not be processed, since
+  //       they are not set, when _processMacros is called.
   return node;
 }
 
@@ -146,6 +148,8 @@ TeXNode _processArguments(TeXNode node) {
   for (var i = 0; i < node.items.length; i++) {
     node.items[i] = _processArguments(node.items[i]);
   }
+  // note: node.sub, node.sup must not be processed, since
+  //       they are not set, when _processMacros is called.
   for (var i = 0; i < node.items.length; i++) {
     if (node.items[i].type == TeXNodeType.unary &&
         numArgs.containsKey(node.items[i].tk)) {
@@ -171,6 +175,9 @@ TeXNode _processArguments(TeXNode node) {
 TeXNode _processSubSup(TeXNode node) {
   for (var i = 0; i < node.items.length; i++) {
     node.items[i] = _processSubSup(node.items[i]);
+  }
+  for (var i = 0; i < node.args.length; i++) {
+    node.args[i] = _processSubSup(node.args[i]);
   }
   for (var i = 0; i < node.items.length; i++) {
     if (i > 0 && node.items[i].tk == '^' && i + 1 < node.items.length) {

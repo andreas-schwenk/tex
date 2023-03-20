@@ -21,14 +21,14 @@ class TeXNode {
   /// The node type;
   TeXNodeType type;
 
+  /// The nodes token, i.e. text.
+  String tk = '';
+
   /// The children.
   List<TeXNode> items = [];
 
   /// The arguments (e.g. "x" and "y" are the args of "\\frac{x}{y}").
   List<TeXNode> args = [];
-
-  /// The nodes token, i.e. text.
-  String tk = '';
 
   /// The optional subscript node.
   TeXNode? sub;

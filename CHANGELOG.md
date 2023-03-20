@@ -1,3 +1,7 @@
+## 0.4.3
+
+- fixed a parsing bug: sub and sup of arguments were not processed
+
 ## 0.4.2
 
 - fixed a bug that calculated the width of the SVG output incorrectly in some cases
