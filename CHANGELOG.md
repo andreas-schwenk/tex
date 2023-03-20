@@ -1,6 +1,6 @@
 ## 0.4.2
 
-- fixed a bug that calculate the width of the SVG output incorrectly in some cases
+- fixed a bug that calculated the width of the SVG output incorrectly in some cases
 - fixed a parsing bug; rewrote much of the parser
 
 ## 0.4.1
