@@ -8,7 +8,7 @@ class Lex {
   static const lexEnd = '%%%';
 
   /// The list of tokens.
-  List<String> _tokens = [];
+  final List<String> _tokens = [];
 
   /// The current position.
   int _pos = 0;
@@ -19,29 +19,11 @@ class Lex {
   /// Sets a source code [src], performs tokenization and replaces tokens.
   set(String src) {
     _pos = 0;
-    _tokens = _tokenize(src);
-    _tokens.add(lexEnd);
-    _len = _tokens.length;
-  }
-
-  /// Tokenizes a string [src], inserts it to the current position and returns
-  /// the success.
-  bool insert(String src) {
-    if (_pos >= _len) return false;
-    var tokens = _tokenize(src);
-    _tokens.insertAll(_pos, tokens);
-    _len = _tokens.length;
-    return true;
-  }
-
-  /// Tokenizes a string [src].
-  List<String> _tokenize(String src) {
-    List<String> tokens = [];
     var n = src.length;
     for (var i = 0; i < n; i++) {
       var c = src[i];
       if (c == '\\' && (i + 1) < n && '\\,'.contains(src[i + 1])) {
-        tokens.add('\\${src[i + 1]}');
+        _tokens.add('\\${src[i + 1]}');
         i++;
       } else if (c == '\\') {
         var tk = '\\';
@@ -62,21 +44,27 @@ class Lex {
           }
         }
         i = j - 1;
-        tokens.add(tk);
+        _tokens.add(tk);
       } else if (c == "'") {
-        tokens.add("^");
-        tokens.add("{");
+        _tokens.add("^");
+        _tokens.add("{");
         while (i < n && src[i] == "'") {
-          tokens.add("'");
+          _tokens.add("'");
           i++;
         }
         i--;
-        tokens.add("}");
+        _tokens.add("}");
       } else if (" \n\t".contains(c) == false) {
-        tokens.add(c);
+        _tokens.add(c);
       }
     }
-    return tokens;
+    _tokens.add(lexEnd);
+    _len = _tokens.length;
+  }
+
+  /// Gets the current position.
+  int get pos {
+    return _pos;
   }
 
   /// Moves the position pointer to the next token.

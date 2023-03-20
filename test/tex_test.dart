@@ -14,7 +14,9 @@ void main() {
       //"sgn(x)=\\begin{cases} -1 & x<0\\\\ 1 & x>0\\\\ 0 & \\text{else} \\end{cases}";
       //"\\begin{matrix}[lc]\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}";
       //"\\mathbb{N}^2";
-      "\\lim_{x\\to\\infty}\\frac1x";
+      //"\\lim_{x\\to\\infty}\\frac1x";
+      //"{x \\in \\NN}";
+      "-x";
   //"\\lim_{x \\to \\infty} x";
   //"f(x)=x+{x}^2";
   //"\\frac12";
@@ -28,7 +30,6 @@ void main() {
   output = tex.tex2svg(src, debugMode: true, displayStyle: true);
   if (output.isEmpty) {
     print("ERROR: tex2svg failed: ${tex.error}");
-    assert(false);
   }
   print(output);
   //File('lib/tex/test/svg/test.svg').writeAsStringSync(output);

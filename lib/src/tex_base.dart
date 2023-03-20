@@ -4,16 +4,12 @@
 
 import 'config.dart';
 import 'gen.dart';
-import 'lex.dart';
 import 'parse.dart';
 import 'svg.dart';
 import 'typeset.dart';
 
 /// Root class that provides TeX to SVG conversion.
 class TeX {
-  /// The lexer.
-  final Lex _lex = Lex();
-
   /// The recently parsed TeX input, stringified.
   String _parsed = '';
 
@@ -76,16 +72,9 @@ class TeX {
   /// and groups of glyphs.
   String tex2svg(String src, {displayStyle = false, debugMode = false}) {
     _error = '';
-    // tokenize input
-    _lex.set(src);
     try {
       // recursively parse input into TexNodes
-      var root = parseTexList(_lex, false, false);
-      // check, if lexer is at the end position of input string
-      if (_lex.token != Lex.lexEnd) {
-        _error += 'Unexpected token ${_lex.token}';
-        return "";
-      }
+      var root = parse(src);
       // stringify TexNodes for debug purposes
       _parsed = root.toString();
       // typeset, i.e. calculate relative positions and scaling
@@ -107,7 +96,7 @@ class TeX {
       var deltaY = -rootMinY > rootMaxY ? -rootMinY : rootMaxY;
       deltaY += 100; // TODO: add const to config.dart
       int viewBoxX = 0;
-      int viewBoxWidth = root.width.round();
+      int viewBoxWidth = (root.minX + root.width).round();
       int viewBoxY = -deltaY.round();
       int viewBoxHeight = (deltaY * 2.0).ceil();
       // make sure, that the view box width is always positive;

@@ -1,3 +1,8 @@
+<h3>0.4.2</h3>
+<ul>
+  <li>fixed a bug that calculate the width of the SVG output incorrectly in some cases</li>
+  <li>fixed a parsing bug; rewrote much of the parser</li>
+</ul>
 <h3>0.4.1</h3>
 <ul>
   <li>fixed a parsing bug that mixed sub and sup for \sum and \prod</li>

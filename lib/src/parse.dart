@@ -6,79 +6,67 @@ import 'lex.dart';
 import 'node.dart';
 import 'tab.dart';
 
-/// Parses a TeX list. Braces "{", "}" are consumed, if [parseBraces] is true.
+/// Parses a TeX string given by [src].
+TeXNode parse(String src) {
+  // tokenize input
+  var lex = Lex();
+  lex.set(src);
+  // parse src
+  var root = TeXNode(TeXNodeType.list, []);
+  while (lex.token != Lex.lexEnd) {
+    root.items.add(_parseTexNode(lex));
+  }
+  // in case our "list" has only one item, we do not need a list
+  if (root.items.length == 1) {
+    root = root.items[0];
+  }
+  // replace macros
+  root = _processMacros(root);
+  // set arguments
+  root = _processArguments(root);
+  // set sub/sup
+  root = _processSubSup(root);
+  return root;
+}
+
+/// Parses a TeX list.
 ///
-/// Formal grammar: texList = "{" { texNode } "}" [ texSubSup ];
-TeXNode parseTexList(Lex lex, bool parseBraces, bool forbidParsingSubSup) {
-  if (parseBraces) lex.terminal('{');
+/// Formal grammar:
+///   texList = "{" { texNode } "}";
+TeXNode _parseTexList(Lex lex) {
+  lex.terminal('{');
   var list = TeXNode(TeXNodeType.list, []);
   while (lex.token != Lex.lexEnd && lex.token != '}') {
-    list.items.add(parseTexNode(lex, false));
+    list.items.add(_parseTexNode(lex));
   }
-  if (parseBraces) lex.terminal('}');
-  postProcessList(list.items);
-  if (forbidParsingSubSup == false) {
-    parseSubSup(lex, list);
-  }
+  lex.terminal('}');
   return list;
 }
 
 /// Parses a TeX node.
 ///
-/// Formal grammar: texNode = ("\" ID { "{" texList "}" } | ID | INT | ...) [ texSubSup ];
-TeXNode parseTexNode(Lex lex, bool forbidParsingSubSup) {
+/// Formal grammar:
+///   texNode = texList | texEnv | lr | TOKEN;
+TeXNode _parseTexNode(Lex lex) {
   if (lex.token == '{') {
-    return parseTexList(lex, true, forbidParsingSubSup);
+    return _parseTexList(lex);
+  } else if (lex.token == '\\begin') {
+    return _parseTexEnv(lex);
+  } else if (lex.token == '\\left') {
+    return _parseLeftRight(lex);
   } else {
     var node = TeXNode(TeXNodeType.unary, []);
     node.tk += lex.token;
-    if (node.tk.startsWith("\\") == false && node.tk.length != 1) {
-      throw Exception("unimplemented!");
-    }
-    if (node.tk == '\\begin') {
-      return parseTexEnv(lex);
-    } else if (node.tk == '\\left') {
-      return parseLeftRight(lex);
-    } else if (node.tk.startsWith("\\") && macros.containsKey(node.tk)) {
-      var command = node.tk;
-      lex.next();
-      var replacement = macros[command] as String;
-      lex.insert(replacement);
-      node = parseTexList(lex, false, false);
-    }
     lex.next();
-    if (forbidParsingSubSup == false) {
-      parseSubSup(lex, node);
-    }
     return node;
-  }
-}
-
-/// Parses subscript and superscript tex nodes.
-///
-/// Formal grammar: texSubSup = { "^" texNode | "_" texNode };
-void parseSubSup(Lex lex, TeXNode node) {
-  while (lex.token == '^' || lex.token == '_') {
-    var del = lex.token;
-    lex.next();
-    if (del == '^' && node.sup != null) {
-      throw Exception('ERROR: use { } when chaining ^');
-    } else if (del == '_' && node.sub != null) {
-      throw Exception('ERROR: use { } when chaining _');
-    }
-    if (del == '_') {
-      node.sub = parseTexNode(lex, true);
-    }
-    if (del == '^') {
-      node.sup = parseTexNode(lex, true);
-    }
   }
 }
 
 /// Parses a TeX environment.
 ///
-/// Formal grammar: env = "\begin" "{" {ID} "}" { texNode } "\end" "{" {ID} "}" [ texSubSup ];
-TeXNode parseTexEnv(Lex lex) {
+/// Formal grammar:
+///   env = "\begin" "{" {TOKEN} "}" { texNode } "\end" "{" {TOKEN} "}";
+TeXNode _parseTexEnv(Lex lex) {
   lex.terminal('\\begin');
   lex.terminal('{');
   var envID = '';
@@ -89,7 +77,7 @@ TeXNode parseTexEnv(Lex lex) {
   lex.terminal('}');
   List<TeXNode> nodes = [];
   while (lex.token != Lex.lexEnd && lex.token != '\\end') {
-    nodes.add(parseTexNode(lex, false));
+    nodes.add(_parseTexNode(lex));
   }
   lex.terminal('\\end');
   lex.terminal('{');
@@ -102,16 +90,14 @@ TeXNode parseTexEnv(Lex lex) {
   if (envID != envID2) {
     throw Exception('unexpected \\end{$envID2}');
   }
-  postProcessList(nodes);
-  var node = TeXNode(TeXNodeType.environment, nodes, envID);
-  parseSubSup(lex, node);
-  return node;
+  return TeXNode(TeXNodeType.environment, nodes, envID);
 }
 
 /// Parses left and right parentheses.
 ///
-/// Formal grammar: lr = "\left" PARENTHESIS { texNode } "\right" PARENTHESIS [ texSubSup ];
-TeXNode parseLeftRight(Lex lex) {
+/// Formal grammar:
+///   lr = "\left" PARENTHESIS { texNode } "\right" PARENTHESIS;
+TeXNode _parseLeftRight(Lex lex) {
   const parentheses = ["(", "[", "\\{", ".", ")", "]", "\\}"];
   var left = '';
   var right = '';
@@ -124,7 +110,7 @@ TeXNode parseLeftRight(Lex lex) {
   }
   List<TeXNode> nodes = [];
   while (lex.token != Lex.lexEnd && lex.token != '\\right') {
-    nodes.add(parseTexNode(lex, false));
+    nodes.add(_parseTexNode(lex));
   }
   lex.terminal('\\right');
   if (parentheses.contains(lex.token)) {
@@ -133,45 +119,77 @@ TeXNode parseLeftRight(Lex lex) {
   } else {
     throw Exception('invalid token after \\right');
   }
-  postProcessList(nodes);
   var node = TeXNode(TeXNodeType.environment, nodes, "left-right:$left:$right");
-  parseSubSup(lex, node);
   return node;
 }
 
-/// post-process: populate node.args (as lists)
-void postProcessList(List<TeXNode> items) {
-  for (var i = 0; i < items.length; i++) {
-    if (items[i].type == TeXNodeType.unary &&
-        numArgs.containsKey(items[i].tk)) {
-      var item = items[i];
+/// Replaces macros.
+TeXNode _processMacros(TeXNode node) {
+  if (macros.containsKey(node.tk)) {
+    var command = node.tk;
+    var replacement = macros[command] as String;
+    var lex = Lex();
+    lex.set(replacement);
+    node = TeXNode(TeXNodeType.list, []);
+    while (lex.token != Lex.lexEnd) {
+      node.items.add(_parseTexNode(lex));
+    }
+  }
+  for (var i = 0; i < node.items.length; i++) {
+    node.items[i] = _processMacros(node.items[i]);
+  }
+  return node;
+}
+
+/// Sets arguments.
+TeXNode _processArguments(TeXNode node) {
+  for (var i = 0; i < node.items.length; i++) {
+    node.items[i] = _processArguments(node.items[i]);
+  }
+  for (var i = 0; i < node.items.length; i++) {
+    if (node.items[i].type == TeXNodeType.unary &&
+        numArgs.containsKey(node.items[i].tk)) {
+      var item = node.items[i];
       var n = numArgs[item.tk] as int;
-      TeXNode? sub;
-      TeXNode? sup;
       for (var j = 0; j < n; j++) {
-        if (i + 1 >= items.length) {
+        if (i + 1 >= node.items.length) {
           throw Exception(
               'ERROR: ${item.tk} excepts ${n.toString()} arguments!');
         }
-        var item2 = items.removeAt(i + 1);
-        if (item2.sub != null) {
-          // TODO: error, if this is not the last arg
-          sub = item2.sub;
-          item2.sub = null;
-        }
-        if (item2.sup != null) {
-          // TODO: error, if this is not the last arg
-          sup = item2.sup;
-          item2.sup = null;
-        }
+        var item2 = node.items.removeAt(i + 1);
         if (item2.type == TeXNodeType.unary) {
           item2 = TeXNode(TeXNodeType.list, [item2]);
         }
         item.args.add(item2);
       }
-      // move inner sub and/or sup to outer
-      item.sub = sub;
-      item.sup = sup;
     }
   }
+  return node;
+}
+
+/// Sets subscript ("_") and superscript ("^") to tex nodes.
+TeXNode _processSubSup(TeXNode node) {
+  for (var i = 0; i < node.items.length; i++) {
+    node.items[i] = _processSubSup(node.items[i]);
+  }
+  for (var i = 0; i < node.items.length; i++) {
+    if (i > 0 && node.items[i].tk == '^' && i + 1 < node.items.length) {
+      if (node.items[i - 1].sup != null) {
+        throw Exception('ERROR: use braces "{...}" when chaining "^"');
+      }
+      node.items[i - 1].sup = node.items[i + 1];
+      node.items.removeAt(i); // remove "^"
+      node.items.removeAt(i); // remove arg
+      i--;
+    } else if (i > 0 && node.items[i].tk == '_' && i + 1 < node.items.length) {
+      if (node.items[i - 1].sub != null) {
+        throw Exception('ERROR: use braces "{...}" when chaining "_"');
+      }
+      node.items[i - 1].sub = node.items[i + 1];
+      node.items.removeAt(i); // remove "_"
+      node.items.removeAt(i); // remove arg
+      i--;
+    }
+  }
+  return node;
 }
