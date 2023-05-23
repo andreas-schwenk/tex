@@ -8,8 +8,10 @@ import 'node.dart';
 import 'glyph.dart';
 import 'tab.dart';
 
-/// Typesets node [node].
-void typeset(TeXNode node) {
+bool globalDisplayStyle = false;
+
+/// Typesets node [node]. The fraction depth is defined by [fracDepth].
+void typeset(TeXNode node, int fracDepth) {
   var skipSubAndSup = false;
   switch (node.type) {
     case TeXNodeType.list:
@@ -18,7 +20,8 @@ void typeset(TeXNode node) {
         double y = 0;
         for (var i = 0; i < node.items.length; i++) {
           var item = node.items[i];
-          typeset(item);
+          //var itemNext = i + 1 < node.items.length ? node.items[i + 1] : null;
+          typeset(item, fracDepth);
           item.translate(x, y);
           node.glyphs.addAll(item.glyphs);
           x += item.width + item.postfixSpacing;
@@ -41,13 +44,14 @@ void typeset(TeXNode node) {
             n.tk = '\\text{${tk[i + 1]}}';
             node.items.add(n);
           }
-          typeset(node);
+          typeset(node, fracDepth);
           node.calcGeometry();
           skipSubAndSup = true;
+          node.postfixSpacing = 150;
         } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
           // ================ font ================
           setFont(node.args[0], tk);
-          typeset(node.args[0]);
+          typeset(node.args[0], fracDepth);
           node.calcGeometry();
           node.glyphs.addAll(node.args[0].glyphs);
           node.calcGeometry();
@@ -55,14 +59,18 @@ void typeset(TeXNode node) {
           // ================ fraction ================
           var numerator = node.args[0];
           var denominator = node.args[1];
-          typeset(numerator);
-          typeset(denominator);
-          numerator.scale(0.7071, 0.7071);
-          numerator.translate(
-              0, 600 - numerator.minY); // TODO: add constant to config.dart
-          denominator.scale(0.7071, 0.7071);
-          denominator.translate(
-              0, 150 - denominator.height); // TODO: add constant to config.dart
+          typeset(numerator, fracDepth + 1);
+          typeset(denominator, fracDepth + 1);
+          var scale =
+              !globalDisplayStyle || globalDisplayStyle && fracDepth > 0;
+          if (scale) {
+            numerator.scale(0.7071, 0.7071);
+          }
+          numerator.translate(0, 600 - numerator.minY);
+          if (scale) {
+            denominator.scale(0.7071, 0.7071);
+          }
+          denominator.translate(0, 150 - denominator.height);
           node.glyphs.addAll(numerator.glyphs);
           node.glyphs.addAll(denominator.glyphs);
           node.calcGeometry();
@@ -72,9 +80,9 @@ void typeset(TeXNode node) {
           var glyph = Glyph();
           glyph.svgPathId = '!fraction';
           glyph.width = node.width;
-          glyph.y = 240; // TODO: add constant to config.dart
+          glyph.y = 240;
           node.glyphs.add(glyph);
-          node.postfixSpacing = 200; // TODO: add constant to config.dart
+          node.postfixSpacing = 200;
         } else if (tk == "\\sqrt") {
           // ================ sqrt ================
           // root
@@ -85,7 +93,7 @@ void typeset(TeXNode node) {
           node.glyphs.add(root);
           // arg
           var arg = node.args[0];
-          typeset(arg);
+          typeset(arg, fracDepth);
           arg.translate(root.width, 0);
           node.glyphs.addAll(arg.glyphs);
           // overline
@@ -93,19 +101,17 @@ void typeset(TeXNode node) {
           overline.svgPathId = '!overline';
           overline.width = arg.width;
           overline.x = root.width;
-          overline.y =
-              arg.minY + arg.height + 200; // TODO: add constant to config.dart
+          overline.y = arg.minY + arg.height + 200;
           node.glyphs.add(overline);
           // scale root
-          root.yScaling =
-              overline.y / 780.0; // TODO: add constant to config.dart
+          root.yScaling = overline.y / 780.0;
           node.calcGeometry();
           // TODO: "\sqrt{}" is not scaled well
         } else if (tk == "\\overline") {
           // ================ overline ================
           // arg
           var arg = node.args[0];
-          typeset(arg);
+          typeset(arg, fracDepth);
           arg.translate(0, 0);
           node.glyphs.addAll(arg.glyphs);
           // overline
@@ -113,12 +119,14 @@ void typeset(TeXNode node) {
           overline.svgPathId = '!overline';
           overline.width = arg.width;
           overline.x = 0;
-          overline.y =
-              arg.minY + arg.height + 200; // TODO: add constant to config.dart
+          overline.y = arg.minY + arg.height + 200;
           node.glyphs.add(overline);
           node.calcGeometry();
         } else if (tk == '\\int' || tk == '\\oint') {
           // ================ integral ================
+          if (globalDisplayStyle == false) {
+            tk += '-INLINE';
+          }
           // int
           var entry = table[tk] as Map<Object, Object>;
           var intGlyph = Glyph();
@@ -127,22 +135,32 @@ void typeset(TeXNode node) {
           intGlyph.width = (entry["w"] as int).toDouble();
           intGlyph.height = 1400;
           node.glyphs.add(intGlyph);
-          // TODO: set node.min + node.height; this is necesssary, when sub/sup are not given!
+          // TODO: set node.min + node.height; this is necessary, when sub/sup are not given!
           // sub
           if (node.sub != null) {
             var sub = node.sub as TeXNode;
-            typeset(sub);
+            typeset(sub, fracDepth);
             sub.scale(0.7071, 0.7071);
-            sub.translate(550, -900);
+            if (globalDisplayStyle) {
+              sub.translate(550, -900);
+            } else {
+              sub.translate(500, -350);
+              node.postfixSpacing = 125.0;
+            }
             sub.calcGeometry();
             node.glyphs.addAll(sub.glyphs);
           }
           // sup
           if (node.sup != null) {
             var sup = node.sup as TeXNode;
-            typeset(sup);
+            typeset(sup, fracDepth);
             sup.scale(0.7071, 0.7071);
-            sup.translate(1000, 1100);
+            if (globalDisplayStyle) {
+              sup.translate(1000, 1100);
+            } else {
+              sup.translate(750, 600);
+              node.postfixSpacing = 125.0;
+            }
             sup.calcGeometry();
             node.glyphs.addAll(sup.glyphs);
           }
@@ -150,6 +168,9 @@ void typeset(TeXNode node) {
           skipSubAndSup = true;
         } else if (tk == '\\sum' || tk == '\\prod' || tk == '\\lim') {
           // ================ sum, product, limes ================
+          if (globalDisplayStyle == false && tk != '\\lim') {
+            tk += '-INLINE';
+          }
           // main
           var limStr = 'lim';
           double mainGlyphWidth = 0.0;
@@ -170,25 +191,35 @@ void typeset(TeXNode node) {
           // sub
           if (node.sub != null) {
             var sub = node.sub as TeXNode;
-            typeset(sub);
+            typeset(sub, fracDepth);
             sub.scale(0.7071, 0.7071);
             sub.calcGeometry();
-            sub.translate(
-                (mainGlyphWidth - sub.width) / 2.0,
-                tk == '\\lim'
-                    ? -600
-                    : -1150); // TODO: y must depends on sub dimensions
+            if (globalDisplayStyle) {
+              sub.translate(
+                  (mainGlyphWidth - sub.width) / 2.0,
+                  tk == '\\lim'
+                      ? -600
+                      : -1150); // TODO: y must depend on sub dimensions
+            } else {
+              sub.translate(mainGlyphWidth, -300);
+              node.postfixSpacing = 125.0;
+            }
             node.glyphs.addAll(sub.glyphs);
             if (sub.minX < minX) minX = sub.minX;
           }
           // sup
           if (node.sup != null) {
             var sup = node.sup as TeXNode;
-            typeset(sup);
+            typeset(sup, fracDepth);
             sup.scale(0.7071, 0.7071);
             sup.calcGeometry();
-            sup.translate((mainGlyphWidth - sup.width) / 2.0,
-                1200); // TODO: y must depends on sup dimensions
+            if (globalDisplayStyle) {
+              sup.translate((mainGlyphWidth - sup.width) / 2.0,
+                  1200); // TODO: y must depend on sup dimensions
+            } else {
+              sup.translate(mainGlyphWidth, 500);
+              node.postfixSpacing = 125.0;
+            }
             node.glyphs.addAll(sup.glyphs);
             if (sup.minX < minX) minX = sup.minX;
           }
@@ -201,7 +232,7 @@ void typeset(TeXNode node) {
           }
           skipSubAndSup = true;
           if (tk == '\\lim') {
-            node.postfixSpacing = 250; // TODO
+            node.postfixSpacing = 250;
           }
         } else if (table.containsKey(tk)) {
           // ================ glyphs from tabular ================
@@ -231,7 +262,7 @@ void typeset(TeXNode node) {
             {
               // content
               var content = TeXNode(TeXNodeType.list, node.items);
-              typeset(content);
+              typeset(content, fracDepth);
               node.glyphs.addAll(content.glyphs);
               node.calcGeometry();
               // left parenthesis
@@ -242,12 +273,12 @@ void typeset(TeXNode node) {
                 var entry = table[leftChar] as Map<Object, Object>;
                 leftParenthesis.svgPathId = entry["code"] as String;
                 leftParenthesis.width = (entry["w"] as int).toDouble();
-                leftParenthesis.yScaling = node.height / 900; // TODO
+                leftParenthesis.yScaling = node.height / 900;
                 if (leftChar != '\\{' && leftChar != '\\}') {
                   leftParenthesis.xScaling = leftParenthesis.yScaling;
                 }
                 leftParenthesis.width *= leftParenthesis.xScaling;
-                leftParenthesis.y -= 120 * leftParenthesis.yScaling; // TODO
+                leftParenthesis.y -= 120 * leftParenthesis.yScaling;
               }
               // right parenthesis
               var rightParenthesis = Glyph();
@@ -257,12 +288,12 @@ void typeset(TeXNode node) {
                 var entry = table[rightChar] as Map<Object, Object>;
                 rightParenthesis.svgPathId = entry["code"] as String;
                 rightParenthesis.width = (entry["w"] as int).toDouble();
-                rightParenthesis.yScaling = node.height / 900; // TODO // TODO
+                rightParenthesis.yScaling = node.height / 900;
                 if (rightChar != '\\{' && rightChar != '\\}') {
                   rightParenthesis.xScaling = rightParenthesis.yScaling;
                 }
                 rightParenthesis.width *= rightParenthesis.xScaling;
-                rightParenthesis.y -= 120 * rightParenthesis.yScaling; // TODO
+                rightParenthesis.y -= 120 * rightParenthesis.yScaling;
               }
               // recalculate geometry
               node.translate(leftParenthesis.width, 0);
@@ -341,7 +372,7 @@ void typeset(TeXNode node) {
               }
               rows = (elements.length / cols).round();
               for (var element in elements) {
-                typeset(element);
+                typeset(element, fracDepth);
                 node.glyphs.addAll(element.glyphs);
               }
               // fill alignment that was not set explicitly
@@ -382,7 +413,7 @@ void typeset(TeXNode node) {
                   x += colWidths[j] + horizontalPadding;
                 }
                 x = 0;
-                y += rowHeights[i] + verticalPadding; // TODO!!
+                y += rowHeights[i] + verticalPadding;
               }
               // parentheses
               var leftParenthesis = Glyph();
@@ -415,25 +446,25 @@ void typeset(TeXNode node) {
                 var entry = table[leftChar] as Map<Object, Object>;
                 leftParenthesis.svgPathId = entry["code"] as String;
                 leftParenthesis.width = (entry["w"] as int).toDouble();
-                leftParenthesis.yScaling = totalHeight / 900; // TODO
+                leftParenthesis.yScaling = totalHeight / 900;
                 if (leftChar != '\\{' && leftChar != '\\}') {
                   leftParenthesis.xScaling = leftParenthesis.yScaling;
                 }
                 leftParenthesis.width *= leftParenthesis.xScaling;
-                leftParenthesis.y -= 120 * leftParenthesis.yScaling; // TODO
+                leftParenthesis.y -= 120 * leftParenthesis.yScaling;
               }
               if (rightChar.isNotEmpty) {
                 // right parenthesis
                 var entry = table[rightChar] as Map<Object, Object>;
                 rightParenthesis.svgPathId = entry["code"] as String;
                 rightParenthesis.width = (entry["w"] as int).toDouble();
-                rightParenthesis.yScaling = totalHeight / 900; // TODO
+                rightParenthesis.yScaling = totalHeight / 900;
                 if (rightChar != '\\{' && rightChar != '\\}') {
                   rightParenthesis.xScaling = rightParenthesis.yScaling;
                 }
                 rightParenthesis.width *= rightParenthesis.xScaling;
                 rightParenthesis.x = leftParenthesis.width + totalWidth;
-                rightParenthesis.y -= 120 * rightParenthesis.yScaling; // TODO
+                rightParenthesis.y -= 120 * rightParenthesis.yScaling;
               }
               // translate matrix
               node.translate(leftChar.isEmpty ? 0 : leftParenthesis.width,
@@ -447,7 +478,7 @@ void typeset(TeXNode node) {
                 node.glyphs.add(rightParenthesis);
               }
               node.calcGeometry();
-              node.postfixSpacing = 150; // TODO
+              node.postfixSpacing = 150;
               break;
             }
           default:
@@ -456,17 +487,17 @@ void typeset(TeXNode node) {
       }
   }
   if (!skipSubAndSup && node.sup != null) {
-    var dy = node.minY + node.height - 375; // TODO: move to config.dart
+    var dy = node.minY + node.height - 375;
     var sup = node.sup as TeXNode;
-    typeset(sup);
+    typeset(sup, fracDepth);
     sup.scale(0.7071, 0.7071);
     sup.translate(node.width, dy);
     node.glyphs.addAll(sup.glyphs);
   }
   if (!skipSubAndSup && node.sub != null) {
-    var dy = node.minY - 150; // TODO: move to config.dart
+    var dy = node.minY - 150;
     var sub = node.sub as TeXNode;
-    typeset(sub);
+    typeset(sub, fracDepth);
     sub.scale(0.7071, 0.7071);
     sub.translate(node.width, dy);
     node.glyphs.addAll(sub.glyphs);

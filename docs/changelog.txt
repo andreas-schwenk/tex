@@ -1,3 +1,10 @@
+<h3>0.5.0</h3>
+<ul>
+  <li>added typesetting support for inline math</li>
+  <li>added \Longleftrightarrow and question mark</li>
+  <li>removed "MJX" prefix in sources</li>
+  <li>fixed minor bugs</li>
+</ul>
 <h3>0.4.3</h3>
 <ul>
   <li>fixed a parsing bug: sub and sup of arguments were not processed</li>

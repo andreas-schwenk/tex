@@ -1,3 +1,10 @@
+## 0.5.0
+
+- added typesetting support for inline math
+- added \Longleftrightarrow and question mark
+- removed "MJX" prefix in sources
+- fixed minor bugs
+
 ## 0.4.3
 
 - fixed a parsing bug: sub and sup of arguments were not processed

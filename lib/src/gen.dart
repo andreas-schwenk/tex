@@ -11,7 +11,6 @@ String gen(bool paintBox, TeXNode node, int indent, int colorRed,
   String svg = '';
   for (var n in node.glyphs) {
     if (n.svgPathId == '!fraction' || n.svgPathId == '!overline') {
-      // TODO: put height into constants.dart
       svg += indentString(
           '<rect x="${n.x}" y="${n.y}"'
           ' width="${n.width}" height="20" fill="rgb($colorRed,$colorGreen,$colorBlue)"'

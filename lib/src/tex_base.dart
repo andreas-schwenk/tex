@@ -71,6 +71,7 @@ class TeX {
   /// Parameter [debugMode] enables rendering bounding boxes around glyphs
   /// and groups of glyphs.
   String tex2svg(String src, {displayStyle = false, debugMode = false}) {
+    globalDisplayStyle = displayStyle;
     _error = '';
     try {
       // recursively parse input into TexNodes
@@ -78,7 +79,7 @@ class TeX {
       // stringify TexNodes for debug purposes
       _parsed = root.toString();
       // typeset, i.e. calculate relative positions and scaling
-      typeset(root);
+      typeset(root, 0);
       // vertically move all glyphs, s.t. y=0 is exactly where the two lines of
       // glyph "x" intersect.
       root.translate(0, globalTranslateY);
@@ -94,7 +95,7 @@ class TeX {
       var rootMinY = root.minY;
       var rootMaxY = root.minY + root.height;
       var deltaY = -rootMinY > rootMaxY ? -rootMinY : rootMaxY;
-      deltaY += 100; // TODO: add const to config.dart
+      deltaY += 100;
       int viewBoxX = 0;
       int viewBoxWidth = (root.minX + root.width).round();
       int viewBoxY = -deltaY.round();

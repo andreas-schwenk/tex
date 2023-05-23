@@ -50,11 +50,11 @@ void main() {
   typeset();
 
   // inline equation examples
-  var inlineExamples = ["x^2+y^2", "f(x)=\\frac 1 2 x"];
+  var inlineExamples = ["x^2+y^2", "f(x)=\\frac 1 2 x", "\\sum_{k=1}^nk^2"];
   for (var k = 0; k < inlineExamples.length; k++) {
     var tex = TeX();
     tex.scalingFactor = 1.2;
-    var imgData = tex.tex2svg(inlineExamples[k]);
+    var imgData = tex.tex2svg(inlineExamples[k], displayStyle: false);
     var outputBase64 = base64Encode(utf8.encode(imgData));
     var img = document.createElement('img') as ImageElement;
     img.src = "data:image/svg+xml;base64,$outputBase64";
@@ -185,7 +185,13 @@ void showGlyphTests() {
     if (texSrc == "'") texSrc = "{}'";
 
     var tex = TeX();
-    var output = tex.tex2svg(texSrc, debugMode: true);
+    var displayStyle = true;
+    if (texSrc.endsWith("-INLINE")) {
+      displayStyle = false;
+      texSrc = texSrc.substring(0, texSrc.length - "-INLINE".length);
+    }
+    var output =
+        tex.tex2svg(texSrc, displayStyle: displayStyle, debugMode: true);
     if (output.isEmpty) {
       print(tex.error);
     }
