@@ -24,7 +24,7 @@
 - initial support for display style vs inline math mode
 - added glyph for \pm
 - added website that compares Dart-TeX with MathJax
-- sub and sup for matrixes are now vertically aligned correctly
+- sub and sup for matrices are now vertically aligned correctly
 - improved glyph dimensions
 - fixing of minor bugs
 
