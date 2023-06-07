@@ -154,7 +154,25 @@ TeXNode _processArguments(TeXNode node) {
     if (node.items[i].type == TeXNodeType.unary &&
         numArgs.containsKey(node.items[i].tk)) {
       var item = node.items[i];
-      var n = numArgs[item.tk] as int;
+      var n = numArgs[item.tk] as int; // number of arguments
+      // hack to convert "\\sqrt[n+m]{x+y}" to "\\nroot{n+m}{x+y}"
+      if (item.tk == '\\sqrt' &&
+          node.items.length >= i + 1 &&
+          node.items[i + 1].tk == '[') {
+        item.tk = '\\nroot';
+        var arg1 = TeXNode(TeXNodeType.list, []);
+        item.args.add(arg1);
+        node.items.removeAt(i + 1);
+        while (node.items.length >= i + 1 && node.items[i + 1].tk != ']') {
+          arg1.items.add(node.items.removeAt(i + 1));
+        }
+        if (node.items[i + 1].tk == ']') {
+          node.items.removeAt(i + 1);
+        } else {
+          throw Exception('ERROR: \\sqrt is not well formatted');
+        }
+      }
+      // gather arguments
       for (var j = 0; j < n; j++) {
         if (i + 1 >= node.items.length) {
           throw Exception(

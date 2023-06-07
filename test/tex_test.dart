@@ -4,11 +4,13 @@
 
 //import 'dart:io';
 //import 'package:test/test.dart';
+import 'dart:io';
+
 import 'package:tex/tex.dart';
 
 void main() {
   var tex = TeX();
-  var displayStyle = false;
+  var displayStyle = true;
   var src =
       //"xx\\begin{pmatrix} a xxxxxx & \\alpha \\\\ c+1 & d^2 \\end{pmatrix}yy";
       //"sssss\\begin{pmatrix}aaa&b^{3^{3^{44}}}\\\\c&d_3\\\\1&2\\end{pmatrix}xx^33";
@@ -19,8 +21,14 @@ void main() {
       //"{x \\in \\NN}";
       //"-x";
       //"\\frac{x}{x}";
-      //"\\sin x"; // TODO: "\\sin(x)"
-      "\\sum";
+      //"\\sin x";
+      //"\\sum";
+      //"\\frac12 e^{\\frac12}";
+      //"\\overline{a}\\overline{A}";
+      //"\\sqrt[n+1]{x+y}";
+      //"\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\\\ \\end{pmatrix}^T";
+      "\\left( \\frac1x \\right)^2";
+
   //"\\lim_{x \\to \\infty} x";
   //"f(x)=x+{x}^2";
   //"\\frac12";
@@ -34,6 +42,7 @@ void main() {
   output = tex.tex2svg(src, debugMode: true, displayStyle: displayStyle);
   if (output.isEmpty) {
     print("ERROR: tex2svg failed: ${tex.error}");
+    exit(-1);
   }
   print(output);
   //File('lib/tex/test/svg/test.svg').writeAsStringSync(output);

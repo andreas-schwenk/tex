@@ -2,9 +2,12 @@
 # FORMAT = TEX; NUM_PARAMS
 # keep all entries in alphabetical order!
 #########################################
+\dot; 1
 \frac; 2
+\hat; 1
 \mathbb; 1
 \mathcal; 1
 \overline; 1
 \sqrt; 1
 \text; 1
+\tilde; 1

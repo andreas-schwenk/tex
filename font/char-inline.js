@@ -7,7 +7,7 @@
 let process = require("process");
 
 if (process.argv.length != 3) {
-  console.log('usage example: node test.js "x^2+y^2"');
+  console.log('usage example: node char-inline.js "x^2+y^2"');
   process.exit(0);
 }
 let texSrc = process.argv[2];

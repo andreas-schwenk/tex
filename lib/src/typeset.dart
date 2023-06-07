@@ -83,16 +83,28 @@ void typeset(TeXNode node, int fracDepth) {
           glyph.y = 240;
           node.glyphs.add(glyph);
           node.postfixSpacing = 200;
-        } else if (tk == "\\sqrt") {
+        } else if (tk == "\\sqrt" || tk == "\\nroot") {
           // ================ sqrt ================
+          // (note: \\nroot{X}Y is a pseudo command for \\sqrt[X]Y)
           // root
           var root = Glyph();
-          var entry = table[tk] as Map<Object, Object>;
+          var entry = table["\\sqrt"] as Map<Object, Object>;
           root.svgPathId = entry["code"] as String;
           root.width = (entry["w"] as int).toDouble();
           node.glyphs.add(root);
+          // args
+          var minX = 0.0;
+          var nth = tk == "\\nroot" ? node.args[0] : null;
+          if (nth != null) {
+            typeset(nth, fracDepth);
+            nth.scale(0.7071, 0.7071);
+            nth.calcGeometry();
+            nth.translate(-nth.width + 450, 450);
+            node.glyphs.addAll(nth.glyphs);
+            minX = nth.minX;
+          }
           // arg
-          var arg = node.args[0];
+          var arg = node.args[nth == null ? 0 : 1];
           typeset(arg, fracDepth);
           arg.translate(root.width, 0);
           node.glyphs.addAll(arg.glyphs);
@@ -106,7 +118,12 @@ void typeset(TeXNode node, int fracDepth) {
           // scale root
           root.yScaling = overline.y / 780.0;
           node.calcGeometry();
-          // TODO: "\sqrt{}" is not scaled well
+          if (minX < 0) {
+            // if minimum x position of any glyph is less zero, then translate
+            // everything to the right
+            node.translate(-minX, 0);
+            node.calcGeometry();
+          }
         } else if (tk == "\\overline") {
           // ================ overline ================
           // arg
@@ -121,6 +138,26 @@ void typeset(TeXNode node, int fracDepth) {
           overline.x = 0;
           overline.y = arg.minY + arg.height + 200;
           node.glyphs.add(overline);
+          node.calcGeometry();
+        } else if (tk == "\\dot" || tk == "\\hat" || tk == "\\tilde") {
+          // ================ dot, hat, tilde ================
+          // arg
+          var arg = node.args[0];
+          typeset(arg, fracDepth);
+          arg.translate(0, 0);
+          node.glyphs.addAll(arg.glyphs);
+          // dot, hat, tilde
+          var accent = Glyph();
+          var entry = table[tk] as Map<Object, Object>;
+          accent.svgPathId = entry["code"] as String;
+          accent.width = (entry["w"] as int).toDouble();
+          accent.height = (entry["h"] as int).toDouble();
+          accent.x = (arg.width - accent.width) / 2;
+          accent.y = arg.minY + arg.height - 400;
+          if (tk == "\\tilde") {
+            accent.y += 300;
+          }
+          node.glyphs.add(accent);
           node.calcGeometry();
         } else if (tk == '\\int' || tk == '\\oint') {
           // ================ integral ================
@@ -244,7 +281,7 @@ void typeset(TeXNode node, int fracDepth) {
             glyph.x = (entry["d"] as int).toDouble(); // delta x
           }
           glyph.width = (entry["w"] as int).toDouble();
-          glyph.height = standardFontHeight;
+          glyph.height = (entry["h"] as int).toDouble(); //standardFontHeight;
           node.glyphs.add(glyph);
           node.calcGeometry();
         } else {
@@ -487,9 +524,14 @@ void typeset(TeXNode node, int fracDepth) {
       }
   }
   if (!skipSubAndSup && node.sup != null) {
-    var dy = node.minY + node.height - 375;
+    var dy = 0.0;
+    if (node.tk.contains("matrix") || node.tk.startsWith("left-right")) {
+      dy = node.minY + node.height - 375;
+    } else {
+      dy = node.minY + 375;
+    }
     var sup = node.sup as TeXNode;
-    typeset(sup, fracDepth);
+    typeset(sup, fracDepth + 1);
     sup.scale(0.7071, 0.7071);
     sup.translate(node.width, dy);
     node.glyphs.addAll(sup.glyphs);
@@ -497,7 +539,7 @@ void typeset(TeXNode node, int fracDepth) {
   if (!skipSubAndSup && node.sub != null) {
     var dy = node.minY - 150;
     var sub = node.sub as TeXNode;
-    typeset(sub, fracDepth);
+    typeset(sub, fracDepth + 1);
     sub.scale(0.7071, 0.7071);
     sub.translate(node.width, dy);
     node.glyphs.addAll(sub.glyphs);

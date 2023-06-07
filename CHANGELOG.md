@@ -1,3 +1,12 @@
+
+## 0.5.1
+
+- added \dot{}, \hat{} and \tilde{}
+- added \sqrt[X]Y
+- fixed display style size of fractions in sub/sup (e.g. in \frac12 e^{\frac12})
+- added hight attribute to glyphs -> e.g. \overline{} height now relates to concrete glyph heights
+- fixed spacing for \approx
+
 ## 0.5.0
 
 - added typesetting support for inline math

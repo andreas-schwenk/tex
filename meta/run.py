@@ -87,7 +87,7 @@ for line in lines:
     if line.startswith("#") or len(line) == 0:
         continue
     tokens = line.split(";")
-    if len(tokens) < 4:
+    if len(tokens) < 5:
         print(
             "ERROR:gen.py:glyphs.csv:"
             + str(i)
@@ -98,7 +98,8 @@ for line in lines:
     command = tokens[0].strip().replace("\\", "\\\\")
     mjx_id = tokens[1].strip()
     width = tokens[2].strip()
-    delta_x = tokens[3].strip()
+    height = tokens[3].strip()
+    delta_x = tokens[4].strip()
     res += (
         '  "'
         + command
@@ -106,6 +107,8 @@ for line in lines:
         + mjx_id.replace("MJX-1-", "")
         + '", "w": '
         + width
+        + ', "h": '
+        + height
         + ', "d": '
         + delta_x
         + "},\n"

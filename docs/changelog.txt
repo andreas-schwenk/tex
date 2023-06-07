@@ -1,3 +1,11 @@
+<h3>0.5.1</h3>
+<ul>
+  <li>added \dot{}, \hat{} and \tilde{}</li>
+  <li>added \sqrt[X]Y</li>
+  <li>fixed display style size of fractions in sub/sup (e.g. in \frac12 e^{\frac12})</li>
+  <li>added hight attribute to glyphs -> e.g. \overline{} height now relates to concrete glyph heights</li>
+  <li>fixed spacing for \approx</li>
+</ul>
 <h3>0.5.0</h3>
 <ul>
   <li>added typesetting support for inline math</li>
@@ -24,7 +32,7 @@
   <li>initial support for display style vs inline math mode</li>
   <li>added glyph for \pm</li>
   <li>added website that compares Dart-TeX with MathJax</li>
-  <li>sub and sup for matrixes are now vertically aligned correctly</li>
+  <li>sub and sup for matrices are now vertically aligned correctly</li>
   <li>improved glyph dimensions</li>
   <li>fixing of minor bugs</li>
 </ul>
