@@ -70,7 +70,13 @@ class TeX {
   /// generated. Enable display style equations via [displayStyle].
   /// Parameter [debugMode] enables rendering bounding boxes around glyphs
   /// and groups of glyphs.
-  String tex2svg(String src, {displayStyle = false, debugMode = false}) {
+  /// Parameter [deltaYOffset] is e.g. useful for inline math.
+  /// It adds (or subtracts in case it is negative) vertical space to the
+  /// SVG view box. E.g. in the "flutter_svg" package you can set attribute
+  /// "allowDrawingOutsideViewBox: true" to allow rendering outside the Widget.
+  /// This allows better embedding of equations within TextWidgets.
+  String tex2svg(String src,
+      {displayStyle = false, debugMode = false, deltaYOffset = 128}) {
     globalDisplayStyle = displayStyle;
     _error = '';
     try {
@@ -95,7 +101,7 @@ class TeX {
       var rootMinY = root.minY;
       var rootMaxY = root.minY + root.height;
       var deltaY = -rootMinY > rootMaxY ? -rootMinY : rootMaxY;
-      deltaY += 100;
+      deltaY += deltaYOffset;
       int viewBoxX = 0;
       int viewBoxWidth = (root.minX + root.width).round();
       int viewBoxY = -deltaY.round();
@@ -125,6 +131,14 @@ class TeX {
             '</rect>\n';
         boundingBoxes += '<rect x="${viewBoxWidth - 50}" y="-50"'
             ' width="100" height="100"'
+            ' fill="red">'
+            '</rect>\n';
+        boundingBoxes += '<rect x="-50" y="${viewBoxHeight / 2 - 10}"'
+            ' width="$viewBoxWidth" height="20"'
+            ' fill="red">'
+            '</rect>\n';
+        boundingBoxes += '<rect x="-50" y="${-viewBoxHeight / 2 - 10}"'
+            ' width="$viewBoxWidth" height="20"'
             ' fill="red">'
             '</rect>\n';
       }

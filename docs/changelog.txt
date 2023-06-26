@@ -1,3 +1,8 @@
+<h3>0.5.2</h3>
+<ul>
+  <li>added support for | in \left and \right</li>
+  <li>added parameter "deltaYOffset" in function tex2svg(..). This is e.g. useful for inline math. It adds (or subtracts in case it is negative) vertical space to the SVG view box. E.g. in the "flutter_svg" package you can set attribute "allowDrawingOutsideViewBox: true" to allow rendering outside the Widget. This allows better embedding of equations within TextWidgets.</li>
+</ul>
 <h3>0.5.1</h3>
 <ul>
   <li>added \dot{}, \hat{} and \tilde{}</li>

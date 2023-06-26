@@ -98,7 +98,7 @@ TeXNode _parseTexEnv(Lex lex) {
 /// Formal grammar:
 ///   lr = "\left" PARENTHESIS { texNode } "\right" PARENTHESIS;
 TeXNode _parseLeftRight(Lex lex) {
-  const parentheses = ["(", "[", "\\{", ".", ")", "]", "\\}"];
+  const parentheses = ["(", "[", "\\{", ".", ")", "]", "\\}", "|"];
   var left = '';
   var right = '';
   lex.terminal('\\left');

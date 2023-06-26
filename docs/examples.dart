@@ -28,4 +28,5 @@ final examples = [
   "\\prod_{i=1}^5 i^2",
   "\\{1, 2, \\dots, 5\\}",
   "\\left( \\frac1x \\right)^2",
+  "\\left| \\frac1x \\right|",
 ];
