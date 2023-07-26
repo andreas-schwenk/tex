@@ -14,7 +14,7 @@ final examples = [
   "\\dot{x}",
   "\\hat{x}y\\hat{X}",
   "\\tilde{x}",
-  '\\NN^2',
+  '\\mathbb{N}^2',
   '\\lim_{x\\to\\infty}\\frac1x',
   "\\begin{matrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}",
   "\\begin{pmatrix}\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{pmatrix}^T",

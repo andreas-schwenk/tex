@@ -29,43 +29,47 @@ void showExamples() {
   var examplesTable = querySelector('#examples-table') as TableSectionElement;
   examplesTable.innerHtml = '';
   for (var example in examples) {
+    if (example.contains("\\begin{vmatrix}[lc]")) continue;
+    // create table row
     var tr = document.createElement('tr') as TableRowElement;
-
+    // TeX input
     var cell1 = document.createElement('td') as TableCellElement;
     cell1.innerHtml = '<pre><code>$example</code></pre>';
     cell1.style.maxWidth = "250px";
     cell1.style.wordBreak = "break-all";
     tr.append(cell1);
-
-    var cell2 = document.createElement('td') as TableCellElement;
-    var output = tex.tex2svg(example);
-    if (output.isEmpty) {
-      print(tex.error);
-    }
-    if (output.isEmpty) {
-      cell2.innerHtml = '<code>Error: ${tex.error}</code>';
-      tr.append(cell2);
-    } else {
-      var outputBase64 = base64Encode(utf8.encode(output));
-      var img = document.createElement('img') as ImageElement;
-      img.src = "data:image/svg+xml;base64,$outputBase64";
-      img.style.verticalAlign = "bottom";
+    for (var i = 0; i < 2; i++) {
+      // Dart TeX
+      var cell2 = document.createElement('td') as TableCellElement;
+      var output = tex.tex2svg(example, displayStyle: i == 0);
+      if (output.isEmpty) {
+        print(tex.error);
+      }
+      if (output.isEmpty) {
+        cell2.innerHtml = '<code>Error: ${tex.error}</code>';
+        tr.append(cell2);
+      } else {
+        var outputBase64 = base64Encode(utf8.encode(output));
+        var img = document.createElement('img') as ImageElement;
+        img.src = "data:image/svg+xml;base64,$outputBase64";
+        img.style.verticalAlign = "bottom";
+        var span = document.createElement('span');
+        span.style.verticalAlign = "middle";
+        span.style.display = "inline-block";
+        span.append(img);
+        cell2.append(span);
+        tr.append(cell2);
+      }
+      // Math Jax
+      var cell3 = document.createElement('td') as TableCellElement;
       var span = document.createElement('span');
       span.style.verticalAlign = "middle";
       span.style.display = "inline-block";
-      span.append(img);
-      cell2.append(span);
-      tr.append(cell2);
+      span.innerHtml = i == 0 ? '\$\$$example\$\$' : '\$$example\$';
+      cell3.append(span);
+      tr.append(cell3);
     }
-
-    var cell3 = document.createElement('td') as TableCellElement;
-    var span = document.createElement('span');
-    span.style.verticalAlign = "middle";
-    span.style.display = "inline-block";
-    span.innerHtml = '\$\$$example\$\$';
-    cell3.append(span);
-    tr.append(cell3);
-
+    // append row
     examplesTable.append(tr);
   }
 }
@@ -77,7 +81,7 @@ void typeset() {
   var tex = TeX();
   print(src);
   tex.scalingFactor = 2.0;
-  var output = tex.tex2svg(src);
+  var output = tex.tex2svg(src, displayStyle: true);
   if (output.isNotEmpty) {
     var outputBase64 = base64Encode(utf8.encode(output));
     var img = document.createElement('img') as ImageElement;

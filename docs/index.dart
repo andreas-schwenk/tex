@@ -20,7 +20,7 @@ void main() {
   print("License: GPL-3.0-or-later");
 
   setTextInput('tex-input',
-      'f(x,y)=3x+y^{2^{8+1}}+z^{3+2}+\\alpha_{\\gamma}+\\beta+\\sin(x)+\\frac x {y+1}');
+      'f(x,y,z)=3x+y^{2^{8+1}}+z^{3+2}+\\sin(x)+\\frac x {y+1}+\\alpha_{\\gamma}+\\beta');
   querySelector('#runTex')?.onClick.listen((event) {
     typeset();
   });
