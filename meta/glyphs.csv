@@ -225,6 +225,7 @@ z; TEX-I-1D467; 500; 500; 0
 \Updownarrow; TEX-N-21D5; 1000; 750; 200
 \varnothing; TEX-V-2205; 750; 750; 0
 \vdots; TEX-N-22EE; 250; 750; 0
+\wedge; MJX-1-TEX-N-2227; 1000; 750; 200
 \wp; TEX-N-2118; 675; 750; 0
 
 # ----- large text -----

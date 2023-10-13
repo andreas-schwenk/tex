@@ -1,3 +1,6 @@
+## 0.5.3
+
+- added glyph for \wedge
 
 ## 0.5.2
 

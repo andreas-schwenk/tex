@@ -269,6 +269,7 @@ const table = {
   "\\Updownarrow": {"code": "TEX-N-21D5", "w": 1000, "h": 750, "d": 200},
   "\\varnothing": {"code": "TEX-V-2205", "w": 750, "h": 750, "d": 0},
   "\\vdots": {"code": "TEX-N-22EE", "w": 250, "h": 750, "d": 0},
+  "\\wedge": {"code": "TEX-N-2227", "w": 1000, "h": 750, "d": 200},
   "\\wp": {"code": "TEX-N-2118", "w": 675, "h": 750, "d": 0},
   "\\text{A}": {"code": "TEX-N-41", "w": 750, "h": 750, "d": 0},
   "\\text{B}": {"code": "TEX-N-42", "w": 700, "h": 750, "d": 0},
