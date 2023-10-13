@@ -1,3 +1,7 @@
+## 0.5.4
+
+- improved \left \right
+
 ## 0.5.3
 
 - added glyph for \wedge

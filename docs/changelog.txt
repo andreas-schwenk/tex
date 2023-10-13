@@ -1,3 +1,7 @@
+<h3>0.5.4</h3>
+<ul>
+  <li>improved \left \right</li>
+</ul>
 <h3>0.5.3</h3>
 <ul>
   <li>added glyph for \wedge</li>

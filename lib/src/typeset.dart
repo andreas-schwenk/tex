@@ -302,6 +302,9 @@ void typeset(TeXNode node, int fracDepth) {
               typeset(content, fracDepth);
               node.glyphs.addAll(content.glyphs);
               node.calcGeometry();
+              var height = node.height < 950 ? 950 : node.height;
+              var xScalingFac = 1.0;
+              var yOffsetFac = 75; // 120
               // left parenthesis
               var leftParenthesis = Glyph();
               var leftChar = tokens[1];
@@ -310,12 +313,13 @@ void typeset(TeXNode node, int fracDepth) {
                 var entry = table[leftChar] as Map<Object, Object>;
                 leftParenthesis.svgPathId = entry["code"] as String;
                 leftParenthesis.width = (entry["w"] as int).toDouble();
-                leftParenthesis.yScaling = node.height / 900;
+                leftParenthesis.yScaling = height / 900;
                 if (leftChar != '\\{' && leftChar != '\\}') {
-                  leftParenthesis.xScaling = leftParenthesis.yScaling;
+                  leftParenthesis.xScaling =
+                      leftParenthesis.yScaling * xScalingFac;
                 }
                 leftParenthesis.width *= leftParenthesis.xScaling;
-                leftParenthesis.y -= 120 * leftParenthesis.yScaling;
+                leftParenthesis.y -= yOffsetFac * leftParenthesis.yScaling;
               }
               // right parenthesis
               var rightParenthesis = Glyph();
@@ -325,12 +329,13 @@ void typeset(TeXNode node, int fracDepth) {
                 var entry = table[rightChar] as Map<Object, Object>;
                 rightParenthesis.svgPathId = entry["code"] as String;
                 rightParenthesis.width = (entry["w"] as int).toDouble();
-                rightParenthesis.yScaling = node.height / 900;
+                rightParenthesis.yScaling = height / 900;
                 if (rightChar != '\\{' && rightChar != '\\}') {
-                  rightParenthesis.xScaling = rightParenthesis.yScaling;
+                  rightParenthesis.xScaling =
+                      rightParenthesis.yScaling * xScalingFac;
                 }
                 rightParenthesis.width *= rightParenthesis.xScaling;
-                rightParenthesis.y -= 120 * rightParenthesis.yScaling;
+                rightParenthesis.y -= yOffsetFac * rightParenthesis.yScaling;
               }
               // recalculate geometry
               node.translate(leftParenthesis.width, 0);
