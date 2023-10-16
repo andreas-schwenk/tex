@@ -1,3 +1,9 @@
+<h3>0.5.5</h3>
+<ul>
+  <li>suppressed any scientific number notation in SVG output (e.g. "3e-5"). Now only numbers with a fixed number of decimal numbers are written. (Note: flutter_svg cannot handle scientific number notation)</li>
+  <li>added support for \;</li>
+  <li>reduced spacing for \,</li>
+</ul>
 <h3>0.5.4</h3>
 <ul>
   <li>improved \left \right</li>

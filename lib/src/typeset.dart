@@ -32,9 +32,9 @@ void typeset(TeXNode node, int fracDepth) {
     case TeXNodeType.unary:
       {
         var tk = node.tk;
-        if (tk == '\\,' || tk == '~') {
+        if (tk == '\\;' || tk == '\\,' || tk == '~') {
           // ================ spacing ================
-          node.postfixSpacing = 300; // TODO: \, and \~ are not the same...
+          node.postfixSpacing = tk == '\\,' ? 150 : 300;
           return;
         } else if (functions.contains(tk)) {
           // ================ functions ================

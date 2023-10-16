@@ -21,7 +21,7 @@ Add the package into your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tex: ^0.5.4
+  tex: ^0.5.5
 ```
 
 Make sure to use the latest version!

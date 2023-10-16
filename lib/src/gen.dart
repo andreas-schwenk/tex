@@ -12,8 +12,8 @@ String gen(bool paintBox, TeXNode node, int indent, int colorRed,
   for (var n in node.glyphs) {
     if (n.svgPathId == '!fraction' || n.svgPathId == '!overline') {
       svg += indentString(
-          '<rect x="${n.x}" y="${n.y}"'
-          ' width="${n.width}" height="20" fill="rgb($colorRed,$colorGreen,$colorBlue)"'
+          '<rect x="${n.x.toStringAsFixed(4)}" y="${n.y.toStringAsFixed(4)}"'
+          ' width="${n.width.toStringAsFixed(4)}" height="20" fill="rgb($colorRed,$colorGreen,$colorBlue)"'
           ' stroke="rgb($colorRed,$colorGreen,$colorBlue)" stroke-width="20" data-token="\\frac">'
           '</rect>',
           indent + 2);
@@ -21,7 +21,7 @@ String gen(bool paintBox, TeXNode node, int indent, int colorRed,
       svg += indentString(
           '<g fill="rgb($colorRed,$colorGreen,$colorBlue)"'
           ' stroke-width="0"'
-          ' transform="translate(${n.x},${n.y})'
+          ' transform="translate(${n.x.toStringAsFixed(4)},${n.y.toStringAsFixed(4)})'
           ' scale(${n.xScaling.toStringAsFixed(4)}'
           ',${n.yScaling.toStringAsFixed(4)})"'
           ' data-token="${xmlStringEncode(n.tk)}">',
@@ -32,8 +32,8 @@ String gen(bool paintBox, TeXNode node, int indent, int colorRed,
     }
     if (paintBox) {
       svg += indentString(
-          '<rect x="${n.x}" y="${n.y}"'
-          ' width="${n.width}" height="${n.height}" fill="none"'
+          '<rect x="${n.x.toStringAsFixed(4)}" y="${n.y.toStringAsFixed(4)}"'
+          ' width="${n.width.toStringAsFixed(4)}" height="${n.height.toStringAsFixed(4)}" fill="none"'
           ' stroke="rgb(200,200,200)" stroke-width="20" data-token="\\frac">'
           '</rect>',
           indent + 2);
