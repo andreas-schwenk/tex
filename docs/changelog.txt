@@ -1,3 +1,8 @@
+<h3>1.0.0</h3>
+<ul>
+  <li>added success() function that should be used to check rendering success</li>
+  <li>minor fixes and updates</li>
+</ul>
 <h3>0.5.5</h3>
 <ul>
   <li>suppressed any scientific number notation in SVG output (e.g. "3e-5"). Now only numbers with a fixed number of decimal numbers are written. (Note: flutter_svg cannot handle scientific number notation)</li>

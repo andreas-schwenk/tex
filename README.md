@@ -35,17 +35,17 @@ import 'package:tex/tex.dart';
 
 void main() {
   // set the equation to render
-  var src = "f(x,y) = x^2 + y^2";
+  var src = "\\sum_{k=1}^n \\frac{1}{k(k+1)} = \\frac{n}{n+1}";
   // instantiate tex
   var tex = TeX();
-  // set the color (from black) to red
-  tex.setColor(255, 0, 0); 
+  // set the RGB color (black)
+  tex.setColor(0, 0, 0); 
   // set the scaling factor
   tex.scalingFactor = 2.0;
   // create SVG data
-  var svgImageData = tex.tex2svg(src, displayStyle=true);
+  var svgImageData = tex.tex2svg(src, displayStyle: true);
   // check for errors
-  if (svgImageData.isEmpty) {
+  if (tex.success() == false) {
     print('Errors occurred: ${tex.error}');
   } else {
     // prints "<svg ...";
@@ -56,7 +56,7 @@ void main() {
 
 Output SVG:
 
-<img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/img/example.svg" style="height:48px; background-color: white;"/>
+<img src="https://raw.githubusercontent.com/andreas-schwenk/tex/main/img/example2.svg" style="height:48px; background-color: white;"/>
 
 ## Website integration
 
@@ -101,7 +101,7 @@ void setEquationToSpan(String spanId, String src) {
   // debug output
   print(svg);
   // successful?
-  if (svg.isNotEmpty) {
+  if (tex.success()) {
     // create an image element
     var svgBase64 = base64Encode(utf8.encode(svg));
     var img = document.createElement('img') as ImageElement;
@@ -132,7 +132,7 @@ var tex = TeX();
 tex.scalingFactor = 1.1;
 // create SVG data from TeX data
 var svg = tex.tex2svg(texSrc);
-if (svg.isEmpty) {
+if (tex.success() == false) {
   // in case of errors: generate a TextSpan
   // element containing an error description.
   equationWidget = TextSpan(

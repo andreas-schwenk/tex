@@ -21,10 +21,10 @@ void setEquationToSpan(String spanId, String src) {
   tex.scalingFactor = 1.0;
   // create SVG data from TeX data
   var svg = tex.tex2svg(src);
-  // debug output
+  // debug output to console
   print(svg);
   // successful?
-  if (svg.isNotEmpty) {
+  if (tex.success()) {
     // create an image element
     var svgBase64 = base64Encode(utf8.encode(svg));
     var img = document.createElement('img') as ImageElement;

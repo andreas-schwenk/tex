@@ -18,3 +18,8 @@ dart format lib/src/tab.dart
 cd docs
 ./build.sh
 cd ..
+
+# build web example
+cd example/web
+./build.sh
+cd ../..

@@ -6,7 +6,13 @@
       "request": "launch",
       "type": "dart",
       "program": "${workspaceFolder}/test/tex_test.dart",
-      "console": "externalTerminal"
+      "args": []
+    },
+    {
+      "name": "example/simple",
+      "type": "dart",
+      "request": "launch",
+      "program": "example/simple/example.dart"
     }
   ]
 }

@@ -4,59 +4,27 @@
 
 //import 'dart:io';
 //import 'package:test/test.dart';
-import 'dart:io';
 
 import 'package:tex/tex.dart';
 
 void main() {
+  print("test");
+  // set the equation to render
+  var src = "\\sum_{i=1}^5 i^2";
+  // instantiate tex
   var tex = TeX();
-  var displayStyle = true;
-  var src =
-      //"xx\\begin{pmatrix} a xxxxxx & \\alpha \\\\ c+1 & d^2 \\end{pmatrix}yy";
-      //"sssss\\begin{pmatrix}aaa&b^{3^{3^{44}}}\\\\c&d_3\\\\1&2\\end{pmatrix}xx^33";
-      //"sgn(x)=\\begin{cases} -1 & x<0\\\\ 1 & x>0\\\\ 0 & \\text{else} \\end{cases}";
-      //"\\begin{matrix}[lc]\n  1 & 2 \\\\\n  3 & 4 \\\\\n\\end{matrix}";
-      //"\\mathbb{N}^2";
-      //"\\lim_{x\\to\\infty}\\frac1x";
-      //"{x \\in \\NN}";
-      //"-x";
-      //"\\frac{x}{x}";
-      //"\\sin x";
-      //"\\sum";
-      //"\\frac12 e^{\\frac12}";
-      //"\\overline{a}\\overline{A}";
-      //"\\sqrt[n+1]{x+y}";
-      //"\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\\\ \\end{pmatrix}^T";
-      "\\left( \\frac1x \\right)^2";
-
-  //"\\lim_{x \\to \\infty} x";
-  //"f(x)=x+{x}^2";
-  //"\\frac12";
-  //"\\sqrt{\\frac12} \\sqrt x";
-  //"\\frac12 \\frac12";
-
-  //var src = "abc\\NN def";
-  //"\\sqrt 3"; //"\\frac x {y+1}"; //"\\frac x{ \\sum_1^{{6}} w } \\cdot 5";
-  //"x^2  + {4*5}";
-  var output = '';
-  output = tex.tex2svg(src, debugMode: true, displayStyle: displayStyle);
-  if (output.isEmpty) {
-    print("ERROR: tex2svg failed: ${tex.error}");
-    exit(-1);
+  // set red color
+  tex.setColor(255, 0, 0); // red, green, blue
+  // set the scaling factor
+  tex.scalingFactor = 2.0;
+  // create SVG data
+  var svgImageData = tex.tex2svg(src, displayStyle: true);
+  // check for errors
+  if (tex.success() == false) {
+    print('Errors occurred: ${tex.error}');
+  } else {
+    // prints "<svg ...";
+    print(svgImageData);
+    //File('lib/tex/test/svg/test.svg').writeAsStringSync(output);
   }
-  print(output);
-  //File('lib/tex/test/svg/test.svg').writeAsStringSync(output);
-
-  // TODO
-  /*group('A group of tests', () {
-    final awesome = Awesome();
-
-    setUp(() {
-      // Additional setup goes here.
-    });
-
-    test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
-    });
-  });*/
 }

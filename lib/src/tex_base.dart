@@ -66,6 +66,11 @@ class TeX {
     _colorBlue = blue;
   }
 
+  /// Returns the success: true := OK, false := errors occurred.
+  bool success() {
+    return _error.isEmpty;
+  }
+
   /// Generates an SVG String from TeX [src]. By default, inline math is
   /// generated. Enable display style equations via [displayStyle].
   /// Parameter [debugMode] enables rendering bounding boxes around glyphs
@@ -91,11 +96,6 @@ class TeX {
       root.translate(0, globalTranslateY);
       // generate SVG data
       var svgDATA = gen(debugMode, root, 4, _colorRed, _colorGreen, _colorBlue);
-      if (svgDATA.isEmpty) {
-        // TODO: do NOT handle as error; just output an empty image!
-        _error += "Nothing to render.";
-        return "";
-      }
       // calculate the view box of the SVG image; note that the y-axis is
       // mirrored, since glyphs data in "svg.dart" are mirrored.
       var rootMinY = root.minY;
