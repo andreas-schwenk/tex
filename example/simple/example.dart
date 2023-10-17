@@ -10,7 +10,7 @@ void main() {
   // instantiate tex
   var tex = TeX();
   // set red color
-  tex.setColor(255, 0, 0); // red, green, blue
+  tex.setColor(157, 59, 50); // red, green, blue
   // set the scaling factor
   tex.scalingFactor = 2.0;
   // create SVG data
