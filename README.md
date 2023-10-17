@@ -24,7 +24,7 @@ dependencies:
   tex: ^1.0.0
 ```
 
-Make sure to use the latest version!
+Make sure to use the most recent version from [https://pub.dev/packages/tex](https://pub.dev/packages/tex).
 
 ## Usage
 
@@ -45,11 +45,12 @@ void main() {
   // create SVG data
   var svgImageData = tex.tex2svg(src, displayStyle: true);
   // check for errors
-  if (tex.success() == false) {
-    print('Errors occurred: ${tex.error}');
-  } else {
+  if (tex.success()) {
     // prints "<svg ...";
     print(svgImageData);
+  } else {
+    // error handling
+    print('Errors occurred: ${tex.error}');
   }
 }
 ```
