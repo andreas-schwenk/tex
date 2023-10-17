@@ -38,8 +38,8 @@ void main() {
   var src = "\\sum_{k=1}^n \\frac{1}{k(k+1)} = \\frac{n}{n+1}";
   // instantiate tex
   var tex = TeX();
-  // set the RGB color (black)
-  tex.setColor(0, 0, 0); 
+  // set the RGB color (red color)
+  tex.setColor(157, 59, 50); 
   // set the scaling factor
   tex.scalingFactor = 2.0;
   // create SVG data
