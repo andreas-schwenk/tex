@@ -8,6 +8,7 @@ import 'node.dart';
 import 'glyph.dart';
 import 'tab.dart';
 
+// TODO: this should NOT be global
 bool globalDisplayStyle = false;
 
 /// Typesets node [node]. The fraction depth is defined by [fracDepth].
@@ -139,14 +140,17 @@ void typeset(TeXNode node, int fracDepth) {
           overline.y = arg.minY + arg.height + 200;
           node.glyphs.add(overline);
           node.calcGeometry();
-        } else if (tk == "\\dot" || tk == "\\hat" || tk == "\\tilde") {
-          // ================ dot, hat, tilde ================
+        } else if (tk == "\\dot" ||
+            tk == "\\ddot" ||
+            tk == "\\hat" ||
+            tk == "\\tilde") {
+          // ================ dot, ddot, hat, tilde ================
           // arg
           var arg = node.args[0];
           typeset(arg, fracDepth);
           arg.translate(0, 0);
           node.glyphs.addAll(arg.glyphs);
-          // dot, hat, tilde
+          // dot, ddot, hat, tilde
           var accent = Glyph();
           var entry = table[tk] as Map<Object, Object>;
           accent.svgPathId = entry["code"] as String;

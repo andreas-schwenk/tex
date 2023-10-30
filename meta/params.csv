@@ -3,6 +3,7 @@
 # keep all entries in alphabetical order!
 #########################################
 \dot; 1
+\ddot; 1
 \frac; 2
 \hat; 1
 \mathbb; 1

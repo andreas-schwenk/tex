@@ -1,3 +1,9 @@
+## 1.0.1
+
+- rudimentary support for \displaystyle (if used anywhere in the input source, it is set globally)
+- added \mp, \lfloor, \rfloor
+- added \ddot
+
 ## 1.0.0
 
 - added success() function that should be used to check rendering success

@@ -159,6 +159,7 @@ void showGlyphTests() {
     var rowData = tab.table[texSrc] as Map<String, Object>;
 
     if (texSrc == '\\dot' ||
+        texSrc == '\\ddot' ||
         texSrc == '\\hat' ||
         texSrc == '\\sqrt' ||
         texSrc == '\\tilde') {

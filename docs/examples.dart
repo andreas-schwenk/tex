@@ -12,6 +12,7 @@ final examples = [
   "\\sqrt[n+1]{x}",
   "\\overline{abc}",
   "\\dot{x}",
+  "\\ddot{a}",
   "\\hat{x}y\\hat{X}",
   "\\tilde{x}",
   '\\mathbb{N}^2',

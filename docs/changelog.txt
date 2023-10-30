@@ -1,3 +1,9 @@
+<h3>1.0.1</h3>
+<ul>
+  <li>rudimentary support for \displaystyle (if used anywhere in the input source, it is set globally)</li>
+  <li>added \mp, \lfloor, \rfloor</li>
+  <li>added \ddot</li>
+</ul>
 <h3>1.0.0</h3>
 <ul>
   <li>added success() function that should be used to check rendering success</li>

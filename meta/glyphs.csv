@@ -6,6 +6,7 @@
 
 # ----- special chars (only used in context) -----
 \dot; TEX-N-2D9; 500; 750; 0
+\ddot; MJX-1-TEX-N-A8; 500; 750; 0
 \hat; TEX-N-5E; 500; 750; 0
 \sqrt; TEX-N-221A; 860; 750; 100
 \tilde; TEX-N-7E; 550; 350; 0
@@ -179,10 +180,15 @@ z; TEX-I-1D467; 500; 500; 0
 \Leftrightarrow; TEX-N-21D4; 1400; 750; 200
 \Longleftrightarrow; TEX-N-27FA; 1900; 750; 200
 \leq; TEX-N-2264; 950; 750; 100
+
+\lfloor; MJX-1-TEX-N-230A; 500; 750; 50
+\rfloor; MJX-1-TEX-N-230B; 500; 750; 50
+
 \lnot; TEX-N-AC; 700; 750; 0
 \longmapsto; TEX-N-27FC; 2000; 750; 200
 \lor; TEX-N-2228; 950; 750; 100
 \mapsto; TEX-N-21A6; 1100; 750; 100
+\mp; MJX-1-TEX-N-2213; 1200; 750; 200
 \nabla; TEX-N-2207; 800; 750; 0
 \nearrow; TEX-N-2197; 1400; 750; 200
 \neg; TEX-N-AC; 700; 750; 0

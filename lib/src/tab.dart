@@ -15,6 +15,7 @@ const Map<String, String> macros = {
 
 const Map<String, int> numArgs = {
   "\\dot": 1,
+  "\\ddot": 1,
   "\\frac": 2,
   "\\hat": 1,
   "\\mathbb": 1,
@@ -62,6 +63,7 @@ const Set<String> functions = {
 
 const table = {
   "\\dot": {"code": "TEX-N-2D9", "w": 500, "h": 750, "d": 0},
+  "\\ddot": {"code": "TEX-N-A8", "w": 500, "h": 750, "d": 0},
   "\\hat": {"code": "TEX-N-5E", "w": 500, "h": 750, "d": 0},
   "\\sqrt": {"code": "TEX-N-221A", "w": 860, "h": 750, "d": 100},
   "\\tilde": {"code": "TEX-N-7E", "w": 550, "h": 350, "d": 0},
@@ -223,10 +225,13 @@ const table = {
   "\\Leftrightarrow": {"code": "TEX-N-21D4", "w": 1400, "h": 750, "d": 200},
   "\\Longleftrightarrow": {"code": "TEX-N-27FA", "w": 1900, "h": 750, "d": 200},
   "\\leq": {"code": "TEX-N-2264", "w": 950, "h": 750, "d": 100},
+  "\\lfloor": {"code": "TEX-N-230A", "w": 500, "h": 750, "d": 50},
+  "\\rfloor": {"code": "TEX-N-230B", "w": 500, "h": 750, "d": 50},
   "\\lnot": {"code": "TEX-N-AC", "w": 700, "h": 750, "d": 0},
   "\\longmapsto": {"code": "TEX-N-27FC", "w": 2000, "h": 750, "d": 200},
   "\\lor": {"code": "TEX-N-2228", "w": 950, "h": 750, "d": 100},
   "\\mapsto": {"code": "TEX-N-21A6", "w": 1100, "h": 750, "d": 100},
+  "\\mp": {"code": "TEX-N-2213", "w": 1200, "h": 750, "d": 200},
   "\\nabla": {"code": "TEX-N-2207", "w": 800, "h": 750, "d": 0},
   "\\nearrow": {"code": "TEX-N-2197", "w": 1400, "h": 750, "d": 200},
   "\\neg": {"code": "TEX-N-AC", "w": 700, "h": 750, "d": 0},

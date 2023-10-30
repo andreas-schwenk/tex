@@ -82,6 +82,10 @@ class TeX {
   /// This allows better embedding of equations within TextWidgets.
   String tex2svg(String src,
       {displayStyle = false, debugMode = false, deltaYOffset = 128}) {
+    if (src.contains("\\displaystyle")) {
+      displayStyle = true;
+      src = src.replaceAll("\\displaystyle", "");
+    }
     globalDisplayStyle = displayStyle;
     _error = '';
     try {
