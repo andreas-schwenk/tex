@@ -1,3 +1,10 @@
+<h3>1.0.2</h3>
+<ul>
+  <li>fixed matrix spacing</li>
+  <li>fixed fraction typesetting</li>
+  <li>fixed spaces before/after functions (e.g. \sin)</li>
+  <li>fixed size of parentheses for \left .. \right  (TODO: must replace parentheses by different glyphs if size is large)</li>
+</ul>
 <h3>1.0.1</h3>
 <ul>
   <li>rudimentary support for \displaystyle (if used anywhere in the input source, it is set globally)</li>

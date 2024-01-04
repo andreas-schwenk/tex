@@ -19,13 +19,23 @@ void typeset(TeXNode node, int fracDepth) {
       {
         double x = 0;
         double y = 0;
+        var isLastItemTextLike = false;
+        var isLastItemFunction = false;
         for (var i = 0; i < node.items.length; i++) {
           var item = node.items[i];
-          //var itemNext = i + 1 < node.items.length ? node.items[i + 1] : null;
+          // the next two calls must be done BEFORE typesetting
+          var isTextLike = item.isTextLike();
+          var isFunction = item.isFunction();
+          if (isFunction && isLastItemTextLike ||
+              isTextLike && isLastItemFunction) {
+            x += 150.0;
+          }
           typeset(item, fracDepth);
           item.translate(x, y);
           node.glyphs.addAll(item.glyphs);
           x += item.width + item.postfixSpacing;
+          isLastItemTextLike = isTextLike;
+          isLastItemFunction = isFunction;
         }
         node.calcGeometry();
         break;
@@ -48,7 +58,7 @@ void typeset(TeXNode node, int fracDepth) {
           typeset(node, fracDepth);
           node.calcGeometry();
           skipSubAndSup = true;
-          node.postfixSpacing = 150;
+          //node.postfixSpacing = 150;
         } else if (tk == "\\mathbb" || tk == "\\mathcal" || tk == "\\text") {
           // ================ font ================
           setFont(node.args[0], tk);
@@ -64,14 +74,21 @@ void typeset(TeXNode node, int fracDepth) {
           typeset(denominator, fracDepth + 1);
           var scale =
               !globalDisplayStyle || globalDisplayStyle && fracDepth > 0;
-          if (scale) {
-            numerator.scale(0.7071, 0.7071);
-          }
-          numerator.translate(0, 600 - numerator.minY);
-          if (scale) {
-            denominator.scale(0.7071, 0.7071);
-          }
-          denominator.translate(0, 150 - denominator.height);
+          var numeratorDeltaY = !globalDisplayStyle ||
+                  fracDepth > 0 ||
+                  numerator.containsSubNode("\\frac")
+              ? 350
+              : 750;
+          if (scale) numerator.scale(0.7071, 0.7071);
+          numerator.translate(0, numeratorDeltaY - numerator.minY);
+          if (scale) denominator.scale(0.7071, 0.7071);
+          var denominatorDeltaY = !globalDisplayStyle ||
+                  fracDepth > 0 ||
+                  denominator.containsSubNode("\\frac")
+              ? 200
+              : 0;
+          denominator.translate(
+              0, denominatorDeltaY - denominator.height - denominator.minY);
           node.glyphs.addAll(numerator.glyphs);
           node.glyphs.addAll(denominator.glyphs);
           node.calcGeometry();
@@ -301,14 +318,15 @@ void typeset(TeXNode node, int fracDepth) {
         switch (envType) {
           case "left-right":
             {
+              // TODO: generate and use scaled versions of (),[],{},|.
               // content
               var content = TeXNode(TeXNodeType.list, node.items);
               typeset(content, fracDepth);
               node.glyphs.addAll(content.glyphs);
               node.calcGeometry();
               var height = node.height < 950 ? 950 : node.height;
-              var xScalingFac = 1.0;
-              var yOffsetFac = 75; // 120
+              var yScalingFac = 950.0;
+              var yOffsetFac = 0.26;
               // left parenthesis
               var leftParenthesis = Glyph();
               var leftChar = tokens[1];
@@ -317,13 +335,8 @@ void typeset(TeXNode node, int fracDepth) {
                 var entry = table[leftChar] as Map<Object, Object>;
                 leftParenthesis.svgPathId = entry["code"] as String;
                 leftParenthesis.width = (entry["w"] as int).toDouble();
-                leftParenthesis.yScaling = height / 900;
-                if (leftChar != '\\{' && leftChar != '\\}') {
-                  leftParenthesis.xScaling =
-                      leftParenthesis.yScaling * xScalingFac;
-                }
-                leftParenthesis.width *= leftParenthesis.xScaling;
-                leftParenthesis.y -= yOffsetFac * leftParenthesis.yScaling;
+                leftParenthesis.yScaling = height / yScalingFac;
+                leftParenthesis.y -= (height - yScalingFac) * yOffsetFac;
               }
               // right parenthesis
               var rightParenthesis = Glyph();
@@ -333,13 +346,8 @@ void typeset(TeXNode node, int fracDepth) {
                 var entry = table[rightChar] as Map<Object, Object>;
                 rightParenthesis.svgPathId = entry["code"] as String;
                 rightParenthesis.width = (entry["w"] as int).toDouble();
-                rightParenthesis.yScaling = height / 900;
-                if (rightChar != '\\{' && rightChar != '\\}') {
-                  rightParenthesis.xScaling =
-                      rightParenthesis.yScaling * xScalingFac;
-                }
-                rightParenthesis.width *= rightParenthesis.xScaling;
-                rightParenthesis.y -= yOffsetFac * rightParenthesis.yScaling;
+                rightParenthesis.yScaling = height / yScalingFac;
+                rightParenthesis.y -= (height - yScalingFac) * yOffsetFac;
               }
               // recalculate geometry
               node.translate(leftParenthesis.width, 0);
@@ -361,9 +369,8 @@ void typeset(TeXNode node, int fracDepth) {
           case "cases":
             {
               // matrix
-              double horizontalPadding =
-                  700.0; // TODO: depends on concrete matrix???
-              double verticalPadding = 400.0;
+              double horizontalPadding = 1150.0;
+              double verticalPadding = 650.0;
               // parse
               var itemPos = 0;
               // (a) parse alignment
@@ -418,7 +425,7 @@ void typeset(TeXNode node, int fracDepth) {
               }
               rows = (elements.length / cols).round();
               for (var element in elements) {
-                typeset(element, fracDepth);
+                typeset(element, fracDepth + (globalDisplayStyle ? 1 : 0));
                 node.glyphs.addAll(element.glyphs);
               }
               // fill alignment that was not set explicitly
@@ -428,26 +435,27 @@ void typeset(TeXNode node, int fracDepth) {
               // calculate column and row dimensions
               List<double> colWidths = List.generate(cols, (index) => 0.0);
               List<double> rowHeights = List.generate(rows, (index) => 0.0);
+              List<double> rowMinYs = List.generate(rows, (index) => 0.0);
               for (var i = 0; i < rows; i++) {
                 for (var j = 0; j < cols; j++) {
                   var e = elements[i * cols + j];
-                  if (e.width > colWidths[j]) {
-                    colWidths[j] = e.width;
-                  }
-                  if (e.height > rowHeights[i]) {
-                    // TODO: not calculated correctly!!
-                    rowHeights[i] = e.height;
-                  }
+                  if (e.width > colWidths[j]) colWidths[j] = e.width;
+                  if (e.height > rowHeights[i]) rowHeights[i] = e.height;
+                  var min = e.minY;
+                  if (e.containsSubNode("\\frac")) min += 250.0;
+                  if (min < rowMinYs[i]) rowMinYs[i] = min;
                 }
               }
               double totalWidth =
-                  sum(colWidths) + (cols - 1).toDouble() * horizontalPadding;
+                  sum(colWidths) + (cols - 1) * horizontalPadding;
               double totalHeight =
                   sum(rowHeights) + (rows - 1) * verticalPadding;
               // translate elements and apply alignment
-              var x = 0.0;
-              var y = 0.0;
-              for (var i = rows - 1; i >= 0; i--) {
+              var paddingLeftRight = 75.0;
+              var x = paddingLeftRight;
+              var y = totalHeight;
+              for (var i = 0; i < rows; i++) {
+                y -= rowHeights[i] + rowMinYs[i];
                 for (var j = 0; j < cols; j++) {
                   var e = elements[i * cols + j];
                   e.translate(x, y);
@@ -455,11 +463,12 @@ void typeset(TeXNode node, int fracDepth) {
                     case "c":
                       e.translate((colWidths[j] - e.width) / 2.0, 0);
                       break;
+                    // TODO: case "r":
                   }
                   x += colWidths[j] + horizontalPadding;
                 }
-                x = 0;
-                y += rowHeights[i] + verticalPadding;
+                x = paddingLeftRight;
+                y += rowMinYs[i] - verticalPadding;
               }
               // parentheses
               var leftParenthesis = Glyph();
@@ -487,30 +496,26 @@ void typeset(TeXNode node, int fracDepth) {
                   leftChar = "\\{";
                   break;
               }
+              var yScalingFac = 950.0;
+              var yOffsetFac = 0.26;
               if (leftChar.isNotEmpty) {
                 // left parenthesis
                 var entry = table[leftChar] as Map<Object, Object>;
                 leftParenthesis.svgPathId = entry["code"] as String;
                 leftParenthesis.width = (entry["w"] as int).toDouble();
-                leftParenthesis.yScaling = totalHeight / 900;
-                if (leftChar != '\\{' && leftChar != '\\}') {
-                  leftParenthesis.xScaling = leftParenthesis.yScaling;
-                }
-                leftParenthesis.width *= leftParenthesis.xScaling;
-                leftParenthesis.y -= 120 * leftParenthesis.yScaling;
+                leftParenthesis.yScaling = totalHeight / yScalingFac;
+                //leftParenthesis.y -= 120 * leftParenthesis.yScaling;
+                leftParenthesis.y -= (totalHeight - yScalingFac) * yOffsetFac;
               }
               if (rightChar.isNotEmpty) {
                 // right parenthesis
                 var entry = table[rightChar] as Map<Object, Object>;
                 rightParenthesis.svgPathId = entry["code"] as String;
                 rightParenthesis.width = (entry["w"] as int).toDouble();
-                rightParenthesis.yScaling = totalHeight / 900;
-                if (rightChar != '\\{' && rightChar != '\\}') {
-                  rightParenthesis.xScaling = rightParenthesis.yScaling;
-                }
-                rightParenthesis.width *= rightParenthesis.xScaling;
-                rightParenthesis.x = leftParenthesis.width + totalWidth;
-                rightParenthesis.y -= 120 * rightParenthesis.yScaling;
+                rightParenthesis.yScaling = totalHeight / yScalingFac;
+                rightParenthesis.x =
+                    2.0 * paddingLeftRight + leftParenthesis.width + totalWidth;
+                rightParenthesis.y -= (totalHeight - yScalingFac) * yOffsetFac;
               }
               // translate matrix
               node.translate(leftChar.isEmpty ? 0 : leftParenthesis.width,

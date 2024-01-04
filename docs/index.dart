@@ -101,10 +101,15 @@ void showExamples(String tableId, List<String> exampleList) {
     var tr = document.createElement('tr') as TableRowElement;
 
     var cell1 = document.createElement('td') as TableCellElement;
-    cell1.innerHtml = '<pre><code>$example</code></pre>';
     cell1.style.maxWidth = "250px";
-    cell1.style.wordBreak = "break-all";
+    //cell1.style.wordBreak = "break-all";
     tr.append(cell1);
+
+    var s = example;
+    var div = document.createElement('div') as DivElement;
+    div.innerHtml = '<pre><code>$s</code></pre>';
+    div.style.overflowX = "scroll";
+    cell1.append(div);
 
     var cell2 = document.createElement('td') as TableCellElement;
     var output = tex.tex2svg(example, displayStyle: true);

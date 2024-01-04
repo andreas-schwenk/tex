@@ -1,3 +1,10 @@
+## 1.0.2
+
+- fixed matrix spacing
+- fixed fraction typesetting
+- fixed spaces before/after functions (e.g. \sin)
+- fixed size of parentheses for \left .. \right  (TODO: must replace parentheses by different glyphs if size is large)
+
 ## 1.0.1
 
 - rudimentary support for \displaystyle (if used anywhere in the input source, it is set globally)

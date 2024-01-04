@@ -2,6 +2,8 @@
 /// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
+import 'package:tex/src/tab.dart';
+
 import 'glyph.dart';
 
 /// The type of the node
@@ -110,6 +112,31 @@ class TeXNode {
         usedLetters.add(n.svgPathId);
       }
     }
+  }
+
+  bool containsSubNode(String tk) {
+    if (this.tk == tk) return true;
+    for (var item in items) {
+      if (item.containsSubNode(tk)) return true;
+    }
+    return false;
+  }
+
+  bool isFunction() {
+    if (type != TeXNodeType.unary) return false;
+    return functions.contains(tk);
+  }
+
+  bool isTextLike() {
+    if (type != TeXNodeType.unary) return false;
+    if (functions.contains(tk)) return true;
+    if ((tk.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
+            tk.codeUnitAt(0) <= 'Z'.codeUnitAt(0)) ||
+        (tk.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
+            tk.codeUnitAt(0) <= 'z'.codeUnitAt(0))) {
+      return true;
+    }
+    return false;
   }
 
   /// Stringifies TeX node.
