@@ -1,5 +1,5 @@
 /// tex - a tiny TeX engine
-/// (c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>
+/// (c) 2023-2024 by Andreas Schwenk <mailto:contact@compiler-construction.com>
 /// License: GPL-3.0-or-later
 
 import 'dart:convert';
@@ -16,7 +16,7 @@ final customMacros = ['\\CC', '\\NN', '\\QQ', '\\RR', '\\ZZ'];
 void main() {
   print("tex - a tiny TeX engine");
   print(
-      "(c) 2023 by Andreas Schwenk <mailto:contact@compiler-construction.com>");
+      "(c) 2023-2024 by Andreas Schwenk <mailto:contact@compiler-construction.com>");
   print("License: GPL-3.0-or-later");
 
   setTextInput('tex-input',
